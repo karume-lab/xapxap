@@ -13,6 +13,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useUniwind } from "uniwind";
 import { AuthProvider } from "@/contexts/auth-context";
 import { NAV_THEME } from "@/lib/theme";
@@ -47,13 +48,15 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
-          <StatusBar style={theme === "dark" ? "light" : "dark"} />
-          <Stack />
-          <PortalHost />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <KeyboardProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+            <StatusBar style={theme === "dark" ? "light" : "dark"} />
+            <Stack />
+            <PortalHost />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </KeyboardProvider>
     </AuthProvider>
   );
 }
