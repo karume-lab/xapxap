@@ -14,6 +14,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { useUniwind } from "uniwind";
+import { AuthProvider } from "@/contexts/auth-context";
 import { NAV_THEME } from "@/lib/theme";
 
 const queryClient = new QueryClient();
@@ -45,12 +46,14 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
-        <StatusBar style={theme === "dark" ? "light" : "dark"} />
-        <Stack />
-        <PortalHost />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+          <StatusBar style={theme === "dark" ? "light" : "dark"} />
+          <Stack />
+          <PortalHost />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
