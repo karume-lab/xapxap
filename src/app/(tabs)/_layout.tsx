@@ -11,7 +11,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.mutedForeground,
+        tabBarInactiveTintColor: "rgba(255,255,255,0.45)",
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -19,21 +19,21 @@ export default function TabLayout() {
           backgroundColor: "transparent",
           borderTopWidth: 0,
           elevation: 0,
-          height: 88,
+          height: 94,
           paddingTop: 12,
         },
         tabBarBackground: () => (
           <View style={StyleSheet.absoluteFill}>
-            <BlurView intensity={70} tint="dark" style={StyleSheet.absoluteFill} />
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(6,6,11,0.65)" }]} />
+            <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(6,6,11,0.8)" }]} />
             <View
               style={{
                 position: "absolute",
                 top: 0,
                 left: 0,
                 right: 0,
-                height: StyleSheet.hairlineWidth,
-                backgroundColor: colors.border,
+                height: 1,
+                backgroundColor: "rgba(255,255,255,0.05)",
               }}
             />
           </View>
@@ -43,28 +43,33 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Fame",
-          tabBarIcon: ({ color }) => <ZapIcon size={22} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <ZapIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="fleet"
         options={{
           title: "Fleet",
-          tabBarIcon: ({ color }) => <LayersIcon size={22} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <LayersIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="drop"
         options={{
           title: "Drop",
-          tabBarIcon: ({ focused }) => (
-            <View
-              className="w-12 h-12 rounded-full items-center justify-center -mt-2 border border-primary/40"
-              style={{ backgroundColor: focused ? colors.primary : "rgba(196,255,61,0.15)" }}>
-              <PlusCircleIcon
-                size={24}
-                color={focused ? colors.primaryForeground : colors.primary}
-              />
+          tabBarIcon: () => (
+            <View>
+              <PlusCircleIcon size={32} color="#bef445" strokeWidth={2} />
             </View>
           ),
         }}
@@ -73,14 +78,24 @@ export default function TabLayout() {
         name="gems"
         options={{
           title: "Gems",
-          tabBarIcon: ({ color }) => <DiamondIcon size={22} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <DiamondIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="live"
         options={{
           title: "Live",
-          tabBarIcon: ({ color }) => <VideoIcon size={22} color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <VideoIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
         }}
       />
     </Tabs>

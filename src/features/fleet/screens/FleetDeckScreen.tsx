@@ -92,7 +92,7 @@ export function FleetDeckScreen() {
         />
 
         {/* Floating Action for Low-Bandwidth Drop */}
-        <View className="absolute right-6" style={{ bottom: insets.bottom + 100 }}>
+        <View className="absolute right-6" style={{ bottom: insets.bottom + 120 }}>
           <Button
             size="icon"
             className="rounded-full h-14 w-14 bg-[#bef445] shadow-lg shadow-[#bef445]/40">

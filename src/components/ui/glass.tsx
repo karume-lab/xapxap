@@ -63,7 +63,6 @@ export function Glass({
       <View
         style={{
           backgroundColor: Platform.OS === "ios" ? "rgba(255,255,255,0.03)" : "rgba(20,20,30,0.55)",
-          flex: 1,
         }}>
         {children}
       </View>

@@ -86,8 +86,9 @@ export function WalletScreen() {
       <ScrollView
         className="flex-1 bg-background"
         contentContainerStyle={{
+          flexGrow: 1,
           paddingTop: insets.top + 20,
-          paddingBottom: 100,
+          paddingBottom: 140,
           paddingHorizontal: 20,
         }}>
         <Text variant="h1" className="mb-6 text-[#bef445]">

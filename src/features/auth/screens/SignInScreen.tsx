@@ -66,10 +66,9 @@ export function SignInScreen() {
       <KeyboardAwareScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          justifyContent: "center",
           paddingHorizontal: 24,
           paddingTop: insets.top + (compact ? 12 : 28),
-          paddingBottom: insets.bottom + (compact ? 12 : 28),
+          paddingBottom: insets.bottom + (compact ? 40 : 60),
         }}
         bottomOffset={20}
         keyboardShouldPersistTaps="handled"

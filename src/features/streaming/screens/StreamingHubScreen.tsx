@@ -150,7 +150,7 @@ export function StreamingHubScreen() {
             contentContainerStyle={{
               paddingHorizontal: 20,
               paddingVertical: 20,
-              paddingBottom: 100,
+              paddingBottom: 140,
             }}
             renderItem={({ item }) => <StreamCard item={item} />}
             ListEmptyComponent={
