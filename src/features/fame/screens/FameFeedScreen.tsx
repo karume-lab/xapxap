@@ -4,10 +4,10 @@ import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Dimensions,
   FlatList,
   Pressable,
+  Share,
   StyleSheet,
   View,
 } from "react-native";
@@ -22,7 +22,7 @@ import { useNetwork } from "@/hooks/use-network";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
-function FameItem({ item }: { item: FameBurstItem }) {
+function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
   const insets = useSafeAreaInsets();
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -102,14 +102,27 @@ function FameItem({ item }: { item: FameBurstItem }) {
 
             <View className="items-center">
               <Pressable
-                onPress={() => Alert.alert("Comments", "Coming soon in the next tide!")}
+                onPress={() => {
+                  console.log("Opening comments sheet...");
+                  onShowComments();
+                }}
                 className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
                 <Icon as={MessageCircleIcon} className="text-white" size={26} />
               </Pressable>
               <Text className="text-white text-xs mt-1.5 font-bold">45</Text>
             </View>
 
-            <Pressable className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
+            <Pressable
+              onPress={async () => {
+                try {
+                  await Share.share({
+                    message: `Check out this wave by @${item.author.username} on XapXap!\n\n"${item.content}"`,
+                  });
+                } catch (error) {
+                  console.error("Sharing failed", error);
+                }
+              }}
+              className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
               <Icon as={Share2Icon} className="text-white" size={26} />
             </Pressable>
           </View>
@@ -119,12 +132,15 @@ function FameItem({ item }: { item: FameBurstItem }) {
   );
 }
 
+import { Modal } from "react-native";
 import { XapXapHeader } from "@/components/ui/header";
+import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 
 export function FameFeedScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst();
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
+  const [showComments, setShowComments] = useState(false);
 
   const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -161,7 +177,9 @@ export function FameFeedScreen() {
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <FameItem item={item} />}
+          renderItem={({ item }) => (
+            <FameItem item={item} onShowComments={() => setShowComments(true)} />
+          )}
           pagingEnabled
           showsVerticalScrollIndicator={false}
           onEndReached={() => {
@@ -176,6 +194,18 @@ export function FameFeedScreen() {
             ) : null
           }
         />
+
+        <Modal
+          visible={showComments}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowComments(false)}>
+          <View className="flex-1 justify-end bg-black/40">
+            <View style={{ height: "80%" }}>
+              <CommentsSheet onClose={() => setShowComments(false)} />
+            </View>
+          </View>
+        </Modal>
       </View>
     </ErrorBoundary>
   );
