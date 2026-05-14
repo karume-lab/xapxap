@@ -8,15 +8,19 @@
     "scheme": "xapxap",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "dark": {
+        "image": "./assets/images/splash-icon-dark.png",
+        "backgroundColor": "#000000"
+      }
     },
     "assetBundlePatterns": ["**/*"],
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.Karume-lab.xapxap"
+      "bundleIdentifier": "com.karume-lab.xapxap"
     },
     "android": {
       "adaptiveIcon": {
