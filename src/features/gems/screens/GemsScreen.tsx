@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { DiamondIcon, SendIcon, XIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Pressable, ScrollView, View } from "react-native";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

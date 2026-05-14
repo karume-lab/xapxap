@@ -2,8 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link } from "expo-router";
 import { LockIcon, MailIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import type { TextInput } from "react-native";
 import { Alert, Text, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -27,6 +28,8 @@ export function SignInScreen() {
   const { height } = useWindowDimensions();
   const { signIn } = useAuth();
   const [busy, setBusy] = useState(false);
+
+  const passwordRef = useRef<TextInput>(null);
 
   const {
     control,
@@ -94,6 +97,9 @@ export function SignInScreen() {
                     autoCapitalize="none"
                     keyboardType="email-address"
                     autoComplete="email"
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef.current?.focus()}
+                    blurOnSubmit={false}
                     icon={<MailIcon size={18} color={colors.mutedForeground} />}
                   />
                   {errors.email && (
@@ -109,11 +115,14 @@ export function SignInScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="gap-1">
                   <Input
+                    ref={passwordRef}
                     value={value}
                     onChangeText={onChange}
                     placeholder="Password"
                     secureTextEntry
                     autoComplete="password"
+                    returnKeyType="done"
+                    onSubmitEditing={handleSubmit(onSubmit)}
                     icon={<LockIcon size={18} color={colors.mutedForeground} />}
                   />
                   {errors.password && (
@@ -124,13 +133,18 @@ export function SignInScreen() {
             />
 
             <Button onPress={handleSubmit(onSubmit)} size="lg" className="mt-2 h-14 rounded-[26px]">
-              <Text className="font-bold text-lg">{busy ? "Entering..." : "Enter the wave"}</Text>
+              <Text
+                className="font-bold text-lg text-primary-foreground"
+                numberOfLines={1}
+                adjustsFontSizeToFit>
+                {busy ? "Entering..." : "Enter the wave"}
+              </Text>
             </Button>
           </View>
 
           <View className="flex-row justify-center gap-1 mt-1">
             <Text className="text-muted-foreground text-sm">New here?</Text>
-            <Link href={"/(auth)/sign-up" as any} asChild>
+            <Link href="/(auth)/sign-up" asChild>
               <Text className="text-primary font-semibold text-sm">Create an account</Text>
             </Link>
           </View>

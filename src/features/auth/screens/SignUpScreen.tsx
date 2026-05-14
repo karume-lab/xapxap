@@ -2,8 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import { AtSignIcon, LockIcon, MailIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import type { TextInput } from "react-native";
 import { Alert, Text, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -34,6 +35,9 @@ export function SignUpScreen() {
   const { signUp } = useAuth();
   const [busy, setBusy] = useState(false);
 
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+
   const {
     control,
     handleSubmit,
@@ -57,7 +61,7 @@ export function SignUpScreen() {
         [
           {
             text: "Go to sign in",
-            onPress: () => (router.replace as any)("/(auth)/sign-in"),
+            onPress: () => router.replace("/(auth)/sign-in"),
           },
         ]
       );
@@ -109,6 +113,9 @@ export function SignUpScreen() {
                     onChangeText={onChange}
                     placeholder="username"
                     autoCapitalize="none"
+                    returnKeyType="next"
+                    onSubmitEditing={() => emailRef.current?.focus()}
+                    blurOnSubmit={false}
                     icon={<AtSignIcon size={18} color={colors.mutedForeground} />}
                   />
                   {errors.username && (
@@ -124,12 +131,16 @@ export function SignUpScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="gap-1">
                   <Input
+                    ref={emailRef}
                     value={value}
                     onChangeText={onChange}
                     placeholder="Email"
                     autoCapitalize="none"
                     keyboardType="email-address"
                     autoComplete="email"
+                    returnKeyType="next"
+                    onSubmitEditing={() => passwordRef.current?.focus()}
+                    blurOnSubmit={false}
                     icon={<MailIcon size={18} color={colors.mutedForeground} />}
                   />
                   {errors.email && (
@@ -145,11 +156,14 @@ export function SignUpScreen() {
               render={({ field: { onChange, value } }) => (
                 <View className="gap-1">
                   <Input
+                    ref={passwordRef}
                     value={value}
                     onChangeText={onChange}
                     placeholder="Password (6+ chars)"
                     secureTextEntry
                     autoComplete="new-password"
+                    returnKeyType="done"
+                    onSubmitEditing={handleSubmit(onSubmit)}
                     icon={<LockIcon size={18} color={colors.mutedForeground} />}
                   />
                   {errors.password && (
@@ -164,13 +178,18 @@ export function SignUpScreen() {
               size="lg"
               disabled={busy}
               className="mt-2 h-14 rounded-[26px]">
-              <Text className="font-bold text-lg">{busy ? "Creating..." : "Create my space"}</Text>
+              <Text
+                className="font-bold text-lg text-primary-foreground"
+                numberOfLines={1}
+                adjustsFontSizeToFit>
+                {busy ? "Creating..." : "Create my space"}
+              </Text>
             </Button>
           </View>
 
           <View className="flex-row justify-center gap-1 mt-1">
             <Text className="text-muted-foreground text-sm">Already on XapXap?</Text>
-            <Link href={"/(auth)/sign-in" as any} asChild>
+            <Link href="/(auth)/sign-in" asChild>
               <Text className="text-primary font-semibold text-sm">Sign in</Text>
             </Link>
           </View>

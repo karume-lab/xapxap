@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { AlertCircleIcon, ArrowRightIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
-import React, { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Alert, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,6 +33,9 @@ export function AgeVerifyScreen() {
   const [year, setYear] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const monthRef = useRef<TextInput>(null);
+  const yearRef = useRef<TextInput>(null);
+
   const compact = height < 700;
 
   const dob = useMemo(() => {
@@ -62,9 +65,8 @@ export function AgeVerifyScreen() {
     }
     setBusy(true);
     try {
-      const iso = dob.toISOString().slice(0, 10);
-      await updateProfile({ dateOfBirth: iso as any });
-      (router.replace as any)("/(tabs)");
+      await updateProfile({ dateOfBirth: dob });
+      router.replace("/(tabs)");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Could not save";
       Alert.alert("Age verify", msg);
@@ -109,12 +111,18 @@ export function AgeVerifyScreen() {
               <Glass radius={20}>
                 <TextInput
                   value={day}
-                  onChangeText={(t) => setDay(t.replace(/\D/g, "").slice(0, 2))}
+                  onChangeText={(t) => {
+                    const clean = t.replace(/\D/g, "").slice(0, 2);
+                    setDay(clean);
+                    if (clean.length === 2) monthRef.current?.focus();
+                  }}
                   placeholder="DD"
                   placeholderTextColor={colors.mutedForeground}
                   className="text-foreground font-semibold text-2xl text-center py-4"
                   keyboardType="number-pad"
                   maxLength={2}
+                  returnKeyType="next"
+                  onSubmitEditing={() => monthRef.current?.focus()}
                 />
               </Glass>
             </View>
@@ -124,13 +132,20 @@ export function AgeVerifyScreen() {
               </Text>
               <Glass radius={20}>
                 <TextInput
+                  ref={monthRef}
                   value={month}
-                  onChangeText={(t) => setMonth(t.replace(/\D/g, "").slice(0, 2))}
+                  onChangeText={(t) => {
+                    const clean = t.replace(/\D/g, "").slice(0, 2);
+                    setMonth(clean);
+                    if (clean.length === 2) yearRef.current?.focus();
+                  }}
                   placeholder="MM"
                   placeholderTextColor={colors.mutedForeground}
                   className="text-foreground font-semibold text-2xl text-center py-4"
                   keyboardType="number-pad"
                   maxLength={2}
+                  returnKeyType="next"
+                  onSubmitEditing={() => yearRef.current?.focus()}
                 />
               </Glass>
             </View>
@@ -140,6 +155,7 @@ export function AgeVerifyScreen() {
               </Text>
               <Glass radius={20}>
                 <TextInput
+                  ref={yearRef}
                   value={year}
                   onChangeText={(t) => setYear(t.replace(/\D/g, "").slice(0, 4))}
                   placeholder="YYYY"
@@ -147,6 +163,8 @@ export function AgeVerifyScreen() {
                   className="text-foreground font-semibold text-2xl text-center py-4"
                   keyboardType="number-pad"
                   maxLength={4}
+                  returnKeyType="done"
+                  onSubmitEditing={submit}
                 />
               </Glass>
             </View>
@@ -177,7 +195,12 @@ export function AgeVerifyScreen() {
             disabled={!dob || tooYoung || busy}
             className="h-14 rounded-[26px]">
             <View className="flex-row items-center gap-2">
-              <Text className="font-bold text-lg">{busy ? "Verifying..." : "Continue"}</Text>
+              <Text
+                className="font-bold text-lg text-primary-foreground"
+                numberOfLines={1}
+                adjustsFontSizeToFit>
+                {busy ? "Verifying..." : "Continue"}
+              </Text>
               {!busy && <Icon as={ArrowRightIcon} className="text-primary-foreground" size={18} />}
             </View>
           </Button>

@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";

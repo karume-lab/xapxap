@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { DiamondIcon, PlayIcon, ShieldAlertIcon, VideoIcon } from "lucide-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Alert, FlatList, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Avatar } from "@/components/ui/avatar";

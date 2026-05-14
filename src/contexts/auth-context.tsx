@@ -1,5 +1,5 @@
 import type { Session } from "@supabase/supabase-js";
-import { useRouter, useSegments } from "expo-router";
+import { type Href, useRouter, useSegments } from "expo-router";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -80,19 +80,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!session) {
       if (!inAuthGroup) {
-        (router.replace as any)("/(auth)/sign-in");
+        router.replace("/(auth)/sign-in" as Href);
       }
       return;
     }
 
     const needsAge = !profile?.dateOfBirth;
     if (needsAge && !inAgeVerify) {
-      (router.replace as any)("/(auth)/age-verify");
+      router.replace("/(auth)/age-verify");
       return;
     }
 
     if (!needsAge && inAuthGroup) {
-      (router.replace as any)("/(tabs)");
+      router.replace("/(tabs)");
     }
   }, [session, profile, loading, segments, router]);
 
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!session?.user) throw new Error("Not signed in");
 
       // Map camelCase to snake_case for Supabase
-      const supabasePatch: any = { ...patch };
+      const supabasePatch: Record<string, unknown> = { ...patch };
       if ("dateOfBirth" in patch) {
         supabasePatch.date_of_birth = patch.dateOfBirth;
         delete supabasePatch.dateOfBirth;

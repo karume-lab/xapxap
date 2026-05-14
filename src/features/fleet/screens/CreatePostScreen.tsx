@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { FileTextIcon, ImageIcon, SendIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -30,7 +30,7 @@ export function CreatePostScreen() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       }
       setText("");
-      (router.replace as any)("/(tabs)");
+      router.replace("/(tabs)");
     } catch {
       Alert.alert("Could not drop wave", "Something went wrong.");
     } finally {

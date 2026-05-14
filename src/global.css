@@ -3,7 +3,6 @@
 
 @import "tw-animate-css";
 
-
 @theme {
   --radius: 20px;
   --radius-sm: calc(var(--radius) - 4px);
@@ -15,39 +14,41 @@
   --spacing-hairline: hairlineWidth();
 
   --font-sans: "Inter_400Regular", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 
   /* XapXap Glassmorphism Dark Theme (Base) */
-  --color-background: #06060B;
-  --color-foreground: #F4F4F8;
-  
+  --color-background: #06060b;
+  --color-foreground: #f4f4f8;
+
   --color-card: rgba(255, 255, 255, 0.06);
-  --color-card-foreground: #F4F4F8;
-  
-  --color-popover: #0B0B14;
-  --color-popover-foreground: #F4F4F8;
-  
-  --color-primary: #C4FF3D;
-  --color-primary-foreground: #06060B;
-  
-  --color-secondary: rgba(255, 255, 255, 0.10);
-  --color-secondary-foreground: #F4F4F8;
-  
+  --color-card-foreground: #f4f4f8;
+
+  --color-popover: #0b0b14;
+  --color-popover-foreground: #f4f4f8;
+
+  --color-primary: #c4ff3d;
+  --color-primary-foreground: #06060b;
+
+  --color-secondary: rgba(255, 255, 255, 0.1);
+  --color-secondary-foreground: #f4f4f8;
+
   --color-muted: rgba(255, 255, 255, 0.06);
-  --color-muted-foreground: #9A9AAA;
-  
-  --color-accent: #6CE7FF;
-  --color-accent-foreground: #06060B;
-  
-  --color-destructive: #FF4D6D;
-  
+  --color-muted-foreground: #9a9aaa;
+
+  --color-accent: #6ce7ff;
+  --color-accent-foreground: #06060b;
+
+  --color-destructive: #ff4d6d;
+
   --color-border: rgba(255, 255, 255, 0.08);
   --color-input: rgba(255, 255, 255, 0.06);
-  --color-ring: #C4FF3D;
-  
+  --color-ring: #c4ff3d;
+
   /* Neon Variants */
-  --color-cyan: #6CE7FF;
-  --color-magenta: #FF5FA8;
-  --color-amber: #FFC23D;
-  --color-success: #4CE0B3;
+  --color-cyan: #6ce7ff;
+  --color-magenta: #ff5fa8;
+  --color-amber: #ffc23d;
+  --color-success: #4ce0b3;
 }

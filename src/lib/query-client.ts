@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { type User, UserSchema } from './schemas';
+import { useQuery } from "@tanstack/react-query";
+import { type User, UserSchema } from "@/lib/schemas";
 
 export function useUser(id: string) {
   return useQuery({
-    queryKey: ['user', id],
+    queryKey: ["user", id],
     queryFn: async (): Promise<User> => {
       // Example fetch
       const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);

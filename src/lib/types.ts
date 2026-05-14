@@ -13,9 +13,7 @@ export type FameHeuristic = InferSelectModel<typeof schema.fameHeuristics>;
 export type LiveStream = InferSelectModel<typeof schema.liveStreams>;
 export type StreamTicket = InferSelectModel<typeof schema.streamTickets>;
 
-export type TransactionType = Profile extends any
-  ? "tip" | "deposit" | "withdrawal" | "stream_entry"
-  : never;
+export type TransactionType = "tip" | "deposit" | "withdrawal" | "stream_entry";
 export type TransactionStatus = "pending" | "completed" | "failed" | "fraud_flagged";
 export type FameStatus = "evaluating" | "fame_burst" | "trend_deck" | "rejected";
 export type StreamQuality = "drift_expo" | "aqua_premium";

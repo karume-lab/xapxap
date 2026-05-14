@@ -1,6 +1,6 @@
 import { DiamondIcon, LandmarkIcon, PhoneIcon, WalletIcon } from "lucide-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, TextInput, View } from "react-native";
+import { useRef, useState } from "react";
+import { Alert, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,8 @@ export function WalletScreen() {
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [provider, setProvider] = useState("mpesa");
+
+  const phoneRef = useRef<TextInput>(null);
 
   const handlePayout = () => {
     const numAmount = parseInt(amount, 10);
@@ -146,6 +148,8 @@ export function WalletScreen() {
                 placeholder="0"
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 keyboardType="numeric"
+                returnKeyType="next"
+                onSubmitEditing={() => phoneRef.current?.focus()}
                 className="flex-1 text-white font-bold text-lg"
               />
             </View>
@@ -158,11 +162,14 @@ export function WalletScreen() {
             <View className="flex-row items-center gap-3">
               <Icon as={PhoneIcon} className="text-muted-foreground" size={18} />
               <TextInput
+                ref={phoneRef}
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
                 placeholder="+254..."
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 keyboardType="phone-pad"
+                returnKeyType="done"
+                onSubmitEditing={handlePayout}
                 className="flex-1 text-white font-bold text-lg"
               />
             </View>

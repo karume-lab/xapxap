@@ -1,10 +1,9 @@
 import { ShieldCheckIcon, WifiOffIcon, ZapIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Button } from "@/components/ui/button";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { WaveCard } from "@/components/ui/wave-card";

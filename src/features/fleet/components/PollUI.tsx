@@ -1,4 +1,3 @@
-import React from "react";
 import { Pressable, View } from "react-native";
 import { Glass } from "@/components/ui/glass";
 import { Text } from "@/components/ui/text";
