@@ -96,7 +96,15 @@ type ButtonProps = React.ComponentProps<typeof Pressable> &
     isLoading?: boolean;
   };
 
-function Button({ className, variant, size, isLoading, ...props }: ButtonProps) {
+function Button({ className, variant = 'default', size = 'default', isLoading, ...props }: ButtonProps) {
+  // Determine spinner color based on variant
+  const spinnerColor = 
+    variant === 'default' ? '#06060b' : 
+    variant === 'destructive' ? '#ffffff' : 
+    variant === 'secondary' ? '#f4f4f8' : 
+    variant === 'outline' ? '#c4ff3d' : 
+    '#f4f4f8';
+
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
       <Pressable
@@ -109,7 +117,7 @@ function Button({ className, variant, size, isLoading, ...props }: ButtonProps) 
         disabled={props.disabled || isLoading}
         {...props}>
         {isLoading ? (
-          <ActivityIndicator size="small" color="currentColor" />
+          <ActivityIndicator size="small" color={spinnerColor} />
         ) : (
           props.children
         )}

@@ -93,10 +93,11 @@ export function CreatePostScreen() {
           <Button
             onPress={submit}
             size="lg"
-            disabled={busy || !text.trim()}
+            isLoading={busy}
+            disabled={!text.trim()}
             className="h-14 rounded-[26px]">
             <View className="flex-row items-center gap-2">
-              <Text className="font-bold text-lg">{busy ? "Dropping..." : "Drop the wave"}</Text>
+              <Text className="font-bold text-lg">Drop the wave</Text>
               {!busy && <Icon as={SendIcon} className="text-primary-foreground" size={18} />}
             </View>
           </Button>

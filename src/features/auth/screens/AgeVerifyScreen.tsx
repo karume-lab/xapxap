@@ -192,14 +192,15 @@ export function AgeVerifyScreen() {
           <Button
             onPress={submit}
             size="lg"
-            disabled={!dob || tooYoung || busy}
+            isLoading={busy}
+            disabled={!dob || tooYoung}
             className="h-14 rounded-[26px]">
             <View className="flex-row items-center gap-2">
               <Text
                 className="font-bold text-lg text-primary-foreground"
                 numberOfLines={1}
                 adjustsFontSizeToFit>
-                {busy ? "Verifying..." : "Continue"}
+                Continue
               </Text>
               {!busy && <Icon as={ArrowRightIcon} className="text-primary-foreground" size={18} />}
             </View>

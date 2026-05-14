@@ -132,12 +132,16 @@ export function SignInScreen() {
               )}
             />
 
-            <Button onPress={handleSubmit(onSubmit)} size="lg" className="mt-2 h-14 rounded-[26px]">
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              size="lg"
+              className="mt-2 h-14 rounded-[26px]"
+              isLoading={busy}>
               <Text
                 className="font-bold text-lg text-primary-foreground"
                 numberOfLines={1}
                 adjustsFontSizeToFit>
-                {busy ? "Entering..." : "Enter the wave"}
+                Enter the wave
               </Text>
             </Button>
           </View>

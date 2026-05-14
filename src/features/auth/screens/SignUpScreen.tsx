@@ -176,13 +176,13 @@ export function SignUpScreen() {
             <Button
               onPress={handleSubmit(onSubmit)}
               size="lg"
-              disabled={busy}
+              isLoading={busy}
               className="mt-2 h-14 rounded-[26px]">
               <Text
                 className="font-bold text-lg text-primary-foreground"
                 numberOfLines={1}
                 adjustsFontSizeToFit>
-                {busy ? "Creating..." : "Create my space"}
+                Create my space
               </Text>
             </Button>
           </View>
