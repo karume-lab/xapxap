@@ -80,6 +80,7 @@
     "@biomejs/biome": "^2.4.15",
     "@types/react": "~19.2.10",
     "drizzle-kit": "^0.31.10",
+    "expo-dev-client": "^55.0.33",
     "expo-doctor": "^1.18.22",
     "lefthook": "^2.1.6",
     "typescript": "~5.9.2"
