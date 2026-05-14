@@ -2,16 +2,15 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { FileTextIcon, ImageIcon, SendIcon } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
 import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
-import { useColors } from "@/hooks/use-colors";
+import { Text } from "@/components/ui/text";
 
 export function CreatePostScreen() {
-  const colors = useColors();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [text, setText] = useState("");
@@ -24,7 +23,6 @@ export function CreatePostScreen() {
     }
     setBusy(true);
     try {
-      // Mock submit
       await new Promise((resolve) => setTimeout(resolve, 1500));
       if (Haptics.notificationAsync) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -39,66 +37,61 @@ export function CreatePostScreen() {
   };
 
   return (
-    <View className="flex-1" style={{ backgroundColor: colors.background }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          paddingTop: insets.top + 20,
+          paddingTop: 20,
           paddingBottom: insets.bottom + 120,
           paddingHorizontal: 24,
         }}>
-        <View className="mb-6">
-          <Text className="text-foreground font-bold text-3xl tracking-tight font-[Inter_700Bold]">
-            Drop a Wave
-          </Text>
+        <View className="mb-8">
+          <Text className="text-white text-3xl font-bold font-[Inter_700Bold]">Drop a Wave</Text>
           <Text className="text-muted-foreground mt-1 text-sm font-[Inter_400Regular]">
-            Share a thought with the global tide.
+            Share a thought, an image, a video, or a PDF.
           </Text>
         </View>
 
-        <View className="gap-4">
-          <Glass className="min-h-[180px]">
+        <View className="gap-6">
+          <Glass radius={32} className="min-h-[220px] border border-white/5">
             <TextInput
               value={text}
               onChangeText={setText}
               placeholder="What's rippling through your mind?"
-              placeholderTextColor={colors.mutedForeground}
+              placeholderTextColor="rgba(255,255,255,0.2)"
               multiline
               maxLength={500}
-              className="flex-1 text-foreground font-normal text-lg p-5"
+              className="flex-1 text-white text-lg p-6"
               style={{ textAlignVertical: "top" }}
             />
-            <View className="flex-row justify-end p-4">
-              <Text className="text-muted-foreground font-medium text-xs font-[Inter_500Medium]">
-                {text.length}/500
-              </Text>
+            <View className="flex-row justify-end p-5">
+              <Text className="text-muted-foreground font-medium text-xs">{text.length}/500</Text>
             </View>
           </Glass>
 
-          <View className="flex-row gap-3">
-            <Pressable className="flex-1 flex-row items-center justify-center gap-2 py-4 rounded-full bg-foreground/5 border border-border">
-              <Icon as={ImageIcon} className="text-accent" size={16} />
-              <Text className="text-foreground font-medium text-sm font-[Inter_500Medium]">
-                Media
-              </Text>
-            </Pressable>
-            <Pressable className="flex-1 flex-row items-center justify-center gap-2 py-4 rounded-full bg-foreground/5 border border-border">
-              <Icon as={FileTextIcon} className="text-magenta" size={16} />
-              <Text className="text-foreground font-medium text-sm font-[Inter_500Medium]">
-                PDF
-              </Text>
-            </Pressable>
+          <View className="flex-row gap-4">
+            <Glass radius={24} className="flex-1 border border-white/5 overflow-hidden">
+              <Pressable className="flex-row items-center justify-center gap-3 py-5 active:bg-white/5">
+                <Icon as={ImageIcon} className="text-accent" size={18} />
+                <Text className="text-white font-bold text-sm">Photo / Video</Text>
+              </Pressable>
+            </Glass>
+            <Glass radius={24} className="flex-1 border border-white/5 overflow-hidden">
+              <Pressable className="flex-row items-center justify-center gap-3 py-5 active:bg-white/5">
+                <Icon as={FileTextIcon} className="text-[#FF5FA8]" size={18} />
+                <Text className="text-white font-bold text-sm">PDF</Text>
+              </Pressable>
+            </Glass>
           </View>
 
           <Button
             onPress={submit}
-            size="lg"
             isLoading={busy}
             disabled={!text.trim()}
-            className="h-14 rounded-[26px]">
-            <View className="flex-row items-center gap-2">
-              <Text className="font-bold text-lg">Drop the wave</Text>
-              {!busy && <Icon as={SendIcon} className="text-primary-foreground" size={18} />}
+            className="h-20 rounded-[32px] bg-[#8ba42f]">
+            <View className="flex-row items-center gap-3">
+              <Icon as={SendIcon} className="text-black/60" size={20} />
+              <Text className="text-black/80 font-bold text-xl">Drop the wave</Text>
             </View>
           </Button>
         </View>

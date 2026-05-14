@@ -2,7 +2,15 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, Pressable, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Avatar } from "@/components/ui/avatar";
@@ -90,7 +98,9 @@ function FameItem({ item }: { item: FameBurstItem }) {
             </View>
 
             <View className="items-center">
-              <Pressable className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
+              <Pressable
+                onPress={() => Alert.alert("Comments", "Coming soon in the next tide!")}
+                className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
                 <Icon as={MessageCircleIcon} className="text-white" size={26} />
               </Pressable>
               <Text className="text-white text-xs mt-1.5 font-bold">45</Text>

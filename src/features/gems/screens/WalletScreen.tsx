@@ -1,197 +1,104 @@
-import { DiamondIcon, LandmarkIcon, PhoneIcon, WalletIcon } from "lucide-react-native";
-import { useRef, useState } from "react";
-import { Alert, Pressable, ScrollView, TextInput, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { ArrowDownLeftIcon, DownloadIcon, PlusCircleIcon, ZapIcon } from "lucide-react-native";
+import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
-import { Button } from "@/components/ui/button";
 import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { usePayoutMutation, useWalletBalance } from "@/features/gems/api/queries";
-import { useNetwork } from "@/hooks/use-network";
+import { useWalletBalance } from "@/features/gems/api/queries";
 
-const PROVIDERS = [
-  { id: "mpesa", name: "M-Pesa", color: "#4CAF50" },
-  { id: "airtel", name: "Airtel Money", color: "#F44336" },
-  { id: "mtn", name: "MTN MoMo", color: "#FFC107" },
+const MOCK_ACTIVITY = [
+  { id: "1", type: "received", label: "Received gems", sublabel: "Gift on a wave", amount: "+1" },
+  { id: "2", type: "received", label: "Received gems", sublabel: "Gift on a wave", amount: "+1" },
+  { id: "3", type: "received", label: "Received gems", sublabel: "Welcome gift", amount: "+50" },
 ];
 
 export function WalletScreen() {
   const insets = useSafeAreaInsets();
-  const { isOnline } = useNetwork();
-  const { data: wallet, isLoading: isWalletLoading } = useWalletBalance();
-  const { mutate: payout, isPending } = usePayoutMutation();
-
-  const [amount, setAmount] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [provider, setProvider] = useState("mpesa");
-
-  const phoneRef = useRef<TextInput>(null);
-
-  const handlePayout = () => {
-    const numAmount = parseInt(amount, 10);
-    if (!numAmount || numAmount <= 0) {
-      Alert.alert("Invalid Amount", "Please enter a valid amount of Gems.");
-      return;
-    }
-    if ((wallet?.balance ?? 0) < numAmount) {
-      Alert.alert("Insufficient Balance", "You do not have enough Gems for this payout.");
-      return;
-    }
-    if (!phoneNumber) {
-      Alert.alert("Phone Number Required", "Please enter your mobile money number.");
-      return;
-    }
-
-    payout(
-      {
-        gemAmount: numAmount,
-        provider: provider,
-        mobileMoneyNumber: phoneNumber,
-        fiatAmount: (numAmount / 100).toString(),
-        fiatCurrency: "KES",
-      },
-      {
-        onSuccess: () => {
-          Alert.alert(
-            "Payout Initiated",
-            "Your request is being processed. Funds will arrive in your wallet shortly."
-          );
-          setAmount("");
-        },
-        onError: (error) => {
-          Alert.alert("Payout Failed", error.message || "Something went wrong.");
-        },
-      }
-    );
-  };
-
-  if (!isOnline) {
-    return (
-      <View className="flex-1 items-center justify-center p-6 bg-background">
-        <Glass className="p-6 items-center">
-          <Text variant="h3" className="mb-2">
-            Offline Dashboard
-          </Text>
-          <Text className="text-muted-foreground text-center">
-            Wallet operations require a live connection. Showing last cached balance.
-          </Text>
-        </Glass>
-      </View>
-    );
-  }
+  const { data: wallet } = useWalletBalance();
 
   return (
-    <ErrorBoundary>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       <ScrollView
-        className="flex-1 bg-background"
-        contentContainerStyle={{
-          flexGrow: 1,
-          paddingTop: insets.top + 20,
-          paddingBottom: 140,
-          paddingHorizontal: 20,
-        }}>
-        <Text variant="h1" className="mb-6 text-[#bef445]">
-          Gems Wallet
-        </Text>
-
-        {/* Balance Card */}
-        <Glass intensity={40} className="p-6 mb-8 border border-[#bef445]/20">
-          <View className="flex-row items-center gap-3 mb-2">
-            <Icon as={WalletIcon} className="text-[#bef445]" size={20} />
-            <Text className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">
-              Current Balance
-            </Text>
-          </View>
-          <View className="flex-row items-end gap-2">
-            <Text className="text-4xl font-bold text-white">
-              {isWalletLoading ? "..." : wallet?.balance.toLocaleString()}
-            </Text>
-            <Text className="text-xl font-bold text-[#bef445] mb-1">GEMS</Text>
-          </View>
-          <Text className="text-muted-foreground text-xs mt-4">
-            ≈ ${((wallet?.balance ?? 0) / 100).toFixed(2)} USD available for payout
-          </Text>
-        </Glass>
-
-        {/* Payout Form */}
-        <View>
-          <Text variant="h3" className="mb-4">
-            Initiate Payout
-          </Text>
-
-          <Text className="text-xs font-bold uppercase text-muted-foreground mb-2 ml-1">
-            Payout Provider
-          </Text>
-          <View className="flex-row gap-2 mb-6">
-            {PROVIDERS.map((p) => (
-              <Pressable
-                key={p.id}
-                onPress={() => setProvider(p.id)}
-                className={`flex-1 py-3 px-2 rounded-xl border items-center justify-center ${provider === p.id ? "bg-[#bef445]/10 border-[#bef445]" : "bg-white/5 border-white/10"}`}>
-                <Text
-                  className={`text-[10px] font-bold text-center ${provider === p.id ? "text-[#bef445]" : "text-white"}`}>
-                  {p.name}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          <Text className="text-xs font-bold uppercase text-muted-foreground mb-2 ml-1">
-            Amount to Payout
-          </Text>
-          <Glass className="mb-6 h-14 justify-center px-4">
-            <View className="flex-row items-center gap-3">
-              <Icon as={DiamondIcon} className="text-[#bef445]" size={18} />
-              <TextInput
-                value={amount}
-                onChangeText={setAmount}
-                placeholder="0"
-                placeholderTextColor="rgba(255,255,255,0.3)"
-                keyboardType="numeric"
-                returnKeyType="next"
-                onSubmitEditing={() => phoneRef.current?.focus()}
-                className="flex-1 text-white font-bold text-lg"
-              />
-            </View>
-          </Glass>
-
-          <Text className="text-xs font-bold uppercase text-muted-foreground mb-2 ml-1">
-            Phone Number (Mobile Money)
-          </Text>
-          <Glass className="mb-8 h-14 justify-center px-4">
-            <View className="flex-row items-center gap-3">
-              <Icon as={PhoneIcon} className="text-muted-foreground" size={18} />
-              <TextInput
-                ref={phoneRef}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                placeholder="+254..."
-                placeholderTextColor="rgba(255,255,255,0.3)"
-                keyboardType="phone-pad"
-                returnKeyType="done"
-                onSubmitEditing={handlePayout}
-                className="flex-1 text-white font-bold text-lg"
-              />
-            </View>
-          </Glass>
-
-          <Button
-            onPress={handlePayout}
-            isLoading={isPending}
-            className="h-16 rounded-xl bg-[#bef445]">
-            <View className="flex-row items-center gap-2">
-              <Text className="text-black font-bold text-lg">Convert to Cash</Text>
-              <Icon as={LandmarkIcon} className="text-black" size={20} />
-            </View>
-          </Button>
-
-          <Text className="text-[10px] text-muted-foreground text-center mt-4 px-6">
-            By initiating a payout, you agree to our 2% processing fee. Funds are typically
-            available within 5 minutes.
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 24 }}
+        showsVerticalScrollIndicator={false}>
+        <View className="mt-4 mb-8">
+          <Text className="text-white text-3xl font-bold font-[Inter_700Bold]">My Treasure</Text>
+          <Text className="text-muted-foreground text-sm mt-1">
+            Live balance from your gem ledger.
           </Text>
         </View>
+
+        {/* Balance Card */}
+        <LinearGradient
+          colors={["#1A2A1A", "#1A1A2A", "#2A1A2A"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="rounded-[40px] p-8 items-center border border-white/5 overflow-hidden">
+          <View className="items-center">
+            <Icon as={ZapIcon} size={32} className="text-primary mb-2" />
+            <Text className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
+              Gem Balance
+            </Text>
+
+            <View className="my-2 items-center">
+              <Text className="text-white text-7xl font-bold shadow-xl shadow-primary/20">
+                {wallet?.balance ?? 52}
+              </Text>
+              <Text className="text-muted-foreground text-base font-medium mt-1">gems</Text>
+            </View>
+
+            <Glass radius={20} className="px-4 py-2 mt-4 border border-white/10">
+              <View className="flex-row items-center">
+                <Text className="text-xs mr-2">🇰🇪</Text>
+                <Text className="text-white text-xs font-bold">≈ KSh68</Text>
+              </View>
+            </Glass>
+          </View>
+        </LinearGradient>
+
+        {/* Actions */}
+        <View className="flex-row gap-4 mt-6">
+          <Glass radius={28} className="flex-1 overflow-hidden border border-white/5">
+            <View className="flex-row items-center justify-center h-16 gap-3 active:bg-white/5">
+              <Icon as={PlusCircleIcon} size={20} className="text-primary" />
+              <Text className="text-white font-bold text-sm">Buy gems</Text>
+            </View>
+          </Glass>
+          <Glass radius={28} className="flex-1 overflow-hidden border border-white/5">
+            <View className="flex-row items-center justify-center h-16 gap-3 active:bg-white/5">
+              <Icon as={DownloadIcon} size={20} className="text-accent" />
+              <Text className="text-white font-bold text-sm">Withdraw</Text>
+            </View>
+          </Glass>
+        </View>
+
+        {/* Activity Section */}
+        <View className="mt-10">
+          <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-6 ml-1">
+            Activity
+          </Text>
+
+          <View className="gap-3">
+            {MOCK_ACTIVITY.map((item) => (
+              <Glass
+                key={item.id}
+                radius={24}
+                className="p-4 flex-row items-center border border-white/5">
+                <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
+                  <Icon as={ArrowDownLeftIcon} size={20} className="text-primary" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-white font-bold text-sm">{item.label}</Text>
+                  <Text className="text-muted-foreground text-xs">{item.sublabel}</Text>
+                </View>
+                <Text className="text-primary font-bold text-base">{item.amount}</Text>
+              </Glass>
+            ))}
+          </View>
+        </View>
       </ScrollView>
-    </ErrorBoundary>
+    </View>
   );
 }
