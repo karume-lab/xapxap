@@ -11,7 +11,7 @@ interface WaveCardProps {
   post: {
     id: string;
     content: string | null;
-    createdAt: string;
+    createdAt: Date | string | null;
     author: {
       id: string;
       username: string;
@@ -31,9 +31,10 @@ interface WaveCardProps {
       anchor: boolean;
     };
   };
+  children?: React.ReactNode;
 }
 
-export function WaveCard({ post }: WaveCardProps) {
+export function WaveCard({ post, children }: WaveCardProps) {
   const colors = useColors();
   const { user } = useAuth();
   const [local, setLocal] = useState(post);
@@ -74,7 +75,7 @@ export function WaveCard({ post }: WaveCardProps) {
               {local.author.isPremium && <ZapIcon size={12} color={colors.primary} fill={colors.primary} />}
             </View>
             <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
-              {new Date(local.createdAt).toLocaleDateString()}
+              {local.createdAt ? new Date(local.createdAt).toLocaleDateString() : 'Just now'}
             </Text>
           </View>
           {!isOwn && (
@@ -90,6 +91,8 @@ export function WaveCard({ post }: WaveCardProps) {
             {local.content}
           </Text>
         )}
+
+        {children}
 
         <View className="flex-row items-center justify-between mt-4">
           <InteractionButton 

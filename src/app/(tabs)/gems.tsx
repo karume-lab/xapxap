@@ -1,1 +1,2 @@
-export { GemsScreen as default } from "@/features/gems/screens/GemsScreen";
+import GemsScreen from "@/features/gems/screens/GemsScreen";
+export default GemsScreen;

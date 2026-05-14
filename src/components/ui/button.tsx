@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Platform, Pressable } from 'react-native';
+import { ActivityIndicator, Platform, Pressable } from 'react-native';
 import { TextClassContext } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 
@@ -92,16 +92,28 @@ const buttonTextVariants = cva(
 
 type ButtonProps = React.ComponentProps<typeof Pressable> &
   React.RefAttributes<typeof Pressable> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    isLoading?: boolean;
+  };
 
-function Button({ className, variant, size, ...props }: ButtonProps) {
+function Button({ className, variant, size, isLoading, ...props }: ButtonProps) {
   return (
     <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
       <Pressable
-        className={cn(props.disabled && 'opacity-50', buttonVariants({ variant, size }), className)}
+        className={cn(
+          (props.disabled || isLoading) && 'opacity-50',
+          buttonVariants({ variant, size }),
+          className
+        )}
         role="button"
-        {...props}
-      />
+        disabled={props.disabled || isLoading}
+        {...props}>
+        {isLoading ? (
+          <ActivityIndicator size="small" color="currentColor" />
+        ) : (
+          props.children
+        )}
+      </Pressable>
     </TextClassContext.Provider>
   );
 }
