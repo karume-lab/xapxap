@@ -57,18 +57,21 @@ function FameItem({ item }: { item: FameBurstItem }) {
       {/* Overlays */}
       <View
         className="absolute inset-0 justify-between p-6"
-        style={{ paddingTop: insets.top + 10, paddingBottom: insets.bottom + 110 }}>
+        style={{ paddingTop: insets.top + 85, paddingBottom: insets.bottom + 110 }}>
         {/* Top: Fame Time Remaining */}
         <View className="flex-row justify-center">
-          <Glass
-            intensity={40}
-            radius={24}
-            className="px-5 py-2.5 flex-row items-center gap-2.5 border-[#bef445]/30">
+          <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-[#bef445]/30 bg-black/70">
             <View className="w-2.5 h-2.5 rounded-full bg-[#bef445] shadow-lg shadow-[#bef445]/50" />
-            <Text className="font-bold text-[#bef445] text-xs uppercase tracking-widest">
+            <Text
+              className="font-bold text-[#bef445] text-sm uppercase tracking-widest"
+              style={{
+                textShadowColor: "rgba(0,0,0,0.8)",
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: 3,
+              }}>
               Fame Pulse: {timeLeft}s
             </Text>
-          </Glass>
+          </View>
         </View>
 
         {/* Bottom: Post Info & Engagement */}
@@ -116,9 +119,12 @@ function FameItem({ item }: { item: FameBurstItem }) {
   );
 }
 
+import { XapXapHeader } from "@/components/ui/header";
+
 export function FameFeedScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst();
   const { isOnline } = useNetwork();
+  const insets = useSafeAreaInsets();
 
   const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -148,6 +154,10 @@ export function FameFeedScreen() {
   return (
     <ErrorBoundary>
       <View className="flex-1 bg-black">
+        <View style={{ position: "absolute", top: insets.top, left: 0, right: 0, zIndex: 50 }}>
+          <XapXapHeader />
+        </View>
+
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}

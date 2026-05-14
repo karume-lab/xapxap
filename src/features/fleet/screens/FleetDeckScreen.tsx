@@ -1,9 +1,9 @@
-import { ShieldCheckIcon, WifiOffIcon, ZapIcon } from "lucide-react-native";
-import { useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
+import { WifiOffIcon, ZapIcon } from "lucide-react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Button } from "@/components/ui/button";
+import { XapXapHeader } from "@/components/ui/header";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { WaveCard } from "@/components/ui/wave-card";
@@ -15,7 +15,6 @@ export function FleetDeckScreen() {
   const insets = useSafeAreaInsets();
   const { isOnline } = useNetwork();
   const { data: posts, isLoading, refetch } = useFleetThreads();
-  const [dataSaver, setDataSaver] = useState(true);
 
   if (isLoading) {
     return (
@@ -27,33 +26,14 @@ export function FleetDeckScreen() {
 
   return (
     <ErrorBoundary>
-      <View className="flex-1 bg-background">
-        {/* Header */}
-        <View
-          style={{ paddingTop: insets.top + 10 }}
-          className="px-6 pb-4 border-b border-border bg-background/80 backdrop-blur-lg">
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text variant="h2" className="text-[#bef445]">
-                Fleet Hub
-              </Text>
-              <Text className="text-xs text-muted-foreground">Community Decks • Standard 3G</Text>
-            </View>
+      <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+        <XapXapHeader />
 
-            <Pressable
-              onPress={() => setDataSaver(!dataSaver)}
-              className={`flex-row items-center gap-2 px-3 py-1.5 rounded-full border ${dataSaver ? "bg-[#bef445]/10 border-[#bef445]/30" : "bg-muted border-border"}`}>
-              <Icon
-                as={dataSaver ? ShieldCheckIcon : ZapIcon}
-                size={14}
-                className={dataSaver ? "text-[#bef445]" : "text-muted-foreground"}
-              />
-              <Text
-                className={`text-[10px] font-bold ${dataSaver ? "text-[#bef445]" : "text-muted-foreground"}`}>
-                {dataSaver ? "DATA SAVER ON" : "HIGH BANDWIDTH"}
-              </Text>
-            </Pressable>
-          </View>
+        <View className="px-6 py-2">
+          <Text variant="h2" className="text-[#bef445]">
+            Fleet Hub
+          </Text>
+          <Text className="text-xs text-muted-foreground">Community Decks • Active</Text>
         </View>
 
         {!isOnline && (

@@ -30,6 +30,8 @@ const TRENDING_WAVES = [
   },
 ];
 
+import { XapXapHeader } from "@/components/ui/header";
+
 export function SearchScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -48,10 +50,9 @@ export function SearchScreen() {
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
-      <View className="px-6 py-4">
-        <Text variant="h1" className="mb-4 text-white">
-          Hunt
-        </Text>
+      <XapXapHeader />
+
+      <View className="px-6 py-2">
         <View className="bg-white/10 rounded-full flex-row items-center px-5 h-14 border border-white/5">
           <Icon as={SearchIcon} size={20} className="text-muted-foreground mr-3" />
           <TextInput
