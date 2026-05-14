@@ -52,7 +52,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
             <StatusBar style={theme === "dark" ? "light" : "dark"} />
-            <Stack />
+            <Stack screenOptions={{ headerShown: false }} />
             <PortalHost />
           </ThemeProvider>
         </QueryClientProvider>
