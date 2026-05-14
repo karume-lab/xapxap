@@ -4,3 +4,5 @@ pre-commit:
     - name: biome
       glob: "*.{js,ts,jsx,tsx,json}"
       run: bun run clean {staged_files} && git add {staged_files}
+    - name: typecheck
+      run: bun run typecheck
