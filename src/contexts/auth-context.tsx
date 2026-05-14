@@ -1,8 +1,7 @@
 import type { Session } from "@supabase/supabase-js";
-import { type Href, useRouter, useSegments } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import type { Profile } from "@/lib/types";
 
 interface AuthContextValue {
@@ -19,6 +18,19 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+// Mock data
+const MOCK_PROFILE: Profile = {
+  id: "mock-user-id",
+  username: "wave_rider",
+  displayName: "Wave Rider",
+  avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
+  dateOfBirth: null,
+  isPremium: false,
+  bio: "Surfing the digital waves of XapXap.",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -26,49 +38,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const segments = useSegments();
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (error) {
-      console.warn("Failed to fetch profile", error.message);
-      return null;
-    }
-    return data as Profile;
-  }, []);
-
-  const refreshProfile = useCallback(async () => {
-    if (!session?.user) return;
-    const p = await fetchProfile(session.user.id);
-    setProfile(p);
-  }, [session, fetchProfile]);
-
+  // Initialize
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) {
-        fetchProfile(session.user.id).then(setProfile);
-      }
+    const timer = setTimeout(() => {
       setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, sess) => {
-      setSession(sess);
-      if (sess?.user) {
-        const p = await fetchProfile(sess.user.id);
-        setProfile(p);
-      } else {
-        setProfile(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [fetchProfile]);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Auth gate
   useEffect(() => {
@@ -80,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!session) {
       if (!inAuthGroup) {
-        router.replace("/(auth)/sign-in" as Href);
+        router.replace("/(auth)/sign-in");
       }
       return;
     }
@@ -96,38 +72,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [session, profile, loading, segments, router]);
 
-  const updateProfile = useCallback(
-    async (patch: Partial<Profile>) => {
-      if (!session?.user) throw new Error("Not signed in");
+  const refreshProfile = useCallback(async () => {
+    // No-op in mock
+  }, []);
 
-      // Map camelCase to snake_case for Supabase
-      const supabasePatch: Record<string, unknown> = { ...patch };
-      if ("dateOfBirth" in patch) {
-        supabasePatch.date_of_birth = patch.dateOfBirth;
-        delete supabasePatch.dateOfBirth;
-      }
-      if ("avatarUrl" in patch) {
-        supabasePatch.avatar_url = patch.avatarUrl;
-        delete supabasePatch.avatarUrl;
-      }
-      if ("displayName" in patch) {
-        supabasePatch.display_name = patch.displayName;
-        delete supabasePatch.displayName;
-      }
-      if ("isPremium" in patch) {
-        supabasePatch.is_premium = patch.isPremium;
-        delete supabasePatch.isPremium;
-      }
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({ ...supabasePatch, updated_at: new Date().toISOString() })
-        .eq("id", session.user.id);
-      if (error) throw error;
-      await refreshProfile();
-    },
-    [session, refreshProfile]
-  );
+  const updateProfile = useCallback(async (patch: Partial<Profile>) => {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setProfile((prev) => (prev ? { ...prev, ...patch } : null));
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -136,20 +88,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       profile,
       loading,
       refreshProfile,
-      signIn: async (email: string, password: string) => {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+      signIn: async (email: string, _password: string) => {
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+        setSession({
+          user: { id: MOCK_PROFILE.id, email },
+          access_token: "mock",
+          refresh_token: "mock",
+        } as Session);
+        setProfile(MOCK_PROFILE);
       },
-      signUp: async (email: string, password: string, username: string) => {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { username } },
-        });
-        if (error) throw error;
+      signUp: async (email: string, _password: string, username: string) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        setSession({
+          user: { id: MOCK_PROFILE.id, email },
+          access_token: "mock",
+          refresh_token: "mock",
+        } as Session);
+        setProfile({ ...MOCK_PROFILE, username });
       },
       signOut: async () => {
-        await supabase.auth.signOut();
+        setSession(null);
+        setProfile(null);
       },
       updateProfile,
     }),
