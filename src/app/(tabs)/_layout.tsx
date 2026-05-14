@@ -1,6 +1,14 @@
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { DiamondIcon, LayersIcon, PlusCircleIcon, VideoIcon, ZapIcon } from "lucide-react-native";
+import {
+  DiamondIcon,
+  LayersIcon,
+  PlusCircleIcon,
+  SearchIcon,
+  UserIcon,
+  VideoIcon,
+  ZapIcon,
+} from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { useColors } from "@/hooks/use-colors";
 
@@ -25,7 +33,7 @@ export default function TabLayout() {
         tabBarBackground: () => (
           <View style={StyleSheet.absoluteFill}>
             <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
-            <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(6,6,11,0.8)" }]} />
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(6,6,11,0.85)" }]} />
             <View
               style={{
                 position: "absolute",
@@ -45,7 +53,7 @@ export default function TabLayout() {
           title: "Fame",
           tabBarIcon: ({ color, focused }) => (
             <View className="items-center justify-center">
-              <ZapIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              <ZapIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
               {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
             </View>
           ),
@@ -57,7 +65,19 @@ export default function TabLayout() {
           title: "Fleet",
           tabBarIcon: ({ color, focused }) => (
             <View className="items-center justify-center">
-              <LayersIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              <LayersIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="hunt"
+        options={{
+          title: "Hunt",
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <SearchIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
               {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
             </View>
           ),
@@ -68,20 +88,8 @@ export default function TabLayout() {
         options={{
           title: "Drop",
           tabBarIcon: () => (
-            <View>
-              <PlusCircleIcon size={32} color="#bef445" strokeWidth={2} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="gems"
-        options={{
-          title: "Gems",
-          tabBarIcon: ({ color, focused }) => (
             <View className="items-center justify-center">
-              <DiamondIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
-              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+              <PlusCircleIcon size={32} color="#bef445" strokeWidth={2} />
             </View>
           ),
         }}
@@ -92,7 +100,31 @@ export default function TabLayout() {
           title: "Live",
           tabBarIcon: ({ color, focused }) => (
             <View className="items-center justify-center">
-              <VideoIcon size={24} color={color} strokeWidth={focused ? 2.5 : 2} />
+              <VideoIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="gems"
+        options={{
+          title: "Gems",
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <DiamondIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
+              {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="space"
+        options={{
+          title: "Space",
+          tabBarIcon: ({ color, focused }) => (
+            <View className="items-center justify-center">
+              <UserIcon size={20} color={color} strokeWidth={focused ? 2.5 : 2} />
               {focused && <View className="absolute -bottom-2 w-1 h-1 rounded-full bg-primary" />}
             </View>
           ),

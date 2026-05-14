@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useUniwind } from "uniwind";
 import { AuthProvider } from "@/contexts/auth-context";
+import { DataSaverProvider } from "@/contexts/data-saver-context";
 import { NAV_THEME } from "@/lib/theme";
 
 const queryClient = new QueryClient();
@@ -48,15 +49,17 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <KeyboardProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
-            <StatusBar style={theme === "dark" ? "light" : "dark"} />
-            <Stack screenOptions={{ headerShown: false }} />
-            <PortalHost />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </KeyboardProvider>
+      <DataSaverProvider>
+        <KeyboardProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+              <StatusBar style={theme === "dark" ? "light" : "dark"} />
+              <Stack screenOptions={{ headerShown: false }} />
+              <PortalHost />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </KeyboardProvider>
+      </DataSaverProvider>
     </AuthProvider>
   );
 }

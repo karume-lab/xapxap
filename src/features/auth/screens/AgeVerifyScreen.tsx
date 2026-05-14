@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { AlertCircleIcon, ArrowRightIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
+import { AlertCircleIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
 import { useMemo, useRef, useState } from "react";
 import { Alert, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -85,12 +85,23 @@ export function AgeVerifyScreen() {
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: 24,
-          paddingTop: insets.top + (compact ? 12 : 28),
+          paddingTop: height * 0.22 + insets.top,
           paddingBottom: insets.bottom + (compact ? 40 : 60),
         }}
         bottomOffset={20}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
+        <Pressable
+          style={{
+            position: "absolute",
+            top: insets.top + 10,
+            right: 20,
+            zIndex: 10,
+          }}
+          onPress={() => signOut()}>
+          <Icon as={LogOutIcon} className="text-muted-foreground" size={20} />
+        </Pressable>
+
         <View className="w-full max-w-[460px] self-center gap-6">
           <View>
             <Text className="text-foreground font-bold text-3xl tracking-tight font-[Inter_700Bold]">
@@ -117,8 +128,16 @@ export function AgeVerifyScreen() {
                   }}
                   placeholder="DD"
                   placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl text-center py-4"
+                  className="text-foreground font-semibold text-2xl py-4 px-0"
+                  style={{
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    width: "100%",
+                    paddingHorizontal: 0,
+                    includeFontPadding: false,
+                  }}
                   keyboardType="number-pad"
+                  selectionColor={colors.primary}
                   maxLength={2}
                   returnKeyType="next"
                   onSubmitEditing={() => monthRef.current?.focus()}
@@ -140,8 +159,16 @@ export function AgeVerifyScreen() {
                   }}
                   placeholder="MM"
                   placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl text-center py-4"
+                  className="text-foreground font-semibold text-2xl py-4 px-0"
+                  style={{
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    width: "100%",
+                    paddingHorizontal: 0,
+                    includeFontPadding: false,
+                  }}
                   keyboardType="number-pad"
+                  selectionColor={colors.primary}
                   maxLength={2}
                   returnKeyType="next"
                   onSubmitEditing={() => yearRef.current?.focus()}
@@ -159,8 +186,16 @@ export function AgeVerifyScreen() {
                   onChangeText={(t) => setYear(t.replace(/\D/g, "").slice(0, 4))}
                   placeholder="YYYY"
                   placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl text-center py-4"
+                  className="text-foreground font-semibold text-2xl py-4 px-0"
+                  style={{
+                    textAlign: "center",
+                    textAlignVertical: "center",
+                    width: "100%",
+                    paddingHorizontal: 0,
+                    includeFontPadding: false,
+                  }}
                   keyboardType="number-pad"
+                  selectionColor={colors.primary}
                   maxLength={4}
                   returnKeyType="done"
                   onSubmitEditing={submit}
@@ -201,18 +236,8 @@ export function AgeVerifyScreen() {
                 adjustsFontSizeToFit>
                 Continue
               </Text>
-              {!busy && <Icon as={ArrowRightIcon} className="text-primary-foreground" size={18} />}
             </View>
           </Button>
-
-          <Pressable
-            className="self-center py-2 px-4 flex-row items-center gap-2"
-            onPress={() => signOut()}>
-            <Icon as={LogOutIcon} className="text-muted-foreground" size={14} />
-            <Text className="text-muted-foreground font-medium text-sm font-[Inter_500Medium]">
-              Sign out
-            </Text>
-          </Pressable>
         </View>
       </KeyboardAwareScrollView>
     </View>

@@ -27,6 +27,7 @@ const MOCK_PROFILE: Profile = {
   dateOfBirth: null,
   isPremium: false,
   bio: "Surfing the digital waves of XapXap.",
+  role: "user",
   createdAt: new Date(),
   updatedAt: new Date(),
 };

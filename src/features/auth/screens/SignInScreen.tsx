@@ -67,7 +67,7 @@ export function SignInScreen() {
         contentContainerStyle={{
           flexGrow: 1,
           paddingHorizontal: 24,
-          paddingTop: insets.top + (compact ? 12 : 28),
+          paddingTop: height * 0.22 + insets.top,
           paddingBottom: insets.bottom + (compact ? 40 : 60),
         }}
         bottomOffset={20}
