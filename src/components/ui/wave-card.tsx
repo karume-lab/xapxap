@@ -1,11 +1,12 @@
 import * as Haptics from 'expo-haptics';
 import { BookmarkIcon, HeartIcon, RepeatIcon, SendIcon, ZapIcon, type LucideIcon } from 'lucide-react-native';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Platform, Pressable, Text, View } from 'react-native';
 import { Glass } from '@/components/ui/glass';
 import { Avatar } from '@/components/ui/avatar';
 import { useColors } from '@/hooks/use-colors';
 import { useAuth } from '@/contexts/auth-context';
+import { useToggleFleetInteraction } from '@/features/fleet/api/queries';
 
 interface WaveCardProps {
   post: {
@@ -37,45 +38,37 @@ interface WaveCardProps {
 export function WaveCard({ post, children }: WaveCardProps) {
   const colors = useColors();
   const { user } = useAuth();
-  const [local, setLocal] = useState(post);
+  const { mutate: toggleInteraction } = useToggleFleetInteraction();
 
   const toggle = useCallback((type: 'hug' | 'echo' | 'cast' | 'anchor') => {
-    // Mock toggle for UI demonstration
-    const isOn = local.myInteractions[type];
-    const key = type === 'hug' ? 'hugs' : type === 'echo' ? 'echoes' : type === 'cast' ? 'casts' : 'anchors';
-    
-    setLocal(prev => ({
-      ...prev,
-      myInteractions: { ...prev.myInteractions, [type]: !isOn },
-      counts: { ...prev.counts, [key]: prev.counts[key] + (isOn ? -1 : 1) }
-    }));
+    toggleInteraction({ postId: post.id, type });
 
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
-  }, [local]);
+  }, [post.id, toggleInteraction]);
 
-  const isOwn = local.author.id === user?.id;
+  const isOwn = post.author.id === user?.id;
 
   return (
     <Glass className="mx-4 mb-4 overflow-hidden">
       <View className="p-4">
         <View className="flex-row items-center gap-3">
           <Avatar 
-            url={local.author.avatarUrl} 
-            username={local.author.username} 
+            url={post.author.avatarUrl} 
+            username={post.author.username} 
             size={40} 
-            ring={local.author.isPremium} 
+            ring={post.author.isPremium} 
           />
           <View className="flex-1">
             <View className="flex-row items-center gap-1">
               <Text className="text-foreground font-semibold text-[15px] font-[Inter_600SemiBold]">
-                @{local.author.username}
+                @{post.author.username}
               </Text>
-              {local.author.isPremium && <ZapIcon size={12} color={colors.primary} fill={colors.primary} />}
+              {post.author.isPremium && <ZapIcon size={12} color={colors.primary} fill={colors.primary} />}
             </View>
             <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
-              {local.createdAt ? new Date(local.createdAt).toLocaleDateString() : 'Just now'}
+              {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Just now'}
             </Text>
           </View>
           {!isOwn && (
@@ -86,9 +79,9 @@ export function WaveCard({ post, children }: WaveCardProps) {
           )}
         </View>
 
-        {local.content && (
+        {post.content && (
           <Text className="text-foreground text-[15px] leading-6 mt-3 font-[Inter_400Regular]">
-            {local.content}
+            {post.content}
           </Text>
         )}
 
@@ -97,29 +90,29 @@ export function WaveCard({ post, children }: WaveCardProps) {
         <View className="flex-row items-center justify-between mt-4">
           <InteractionButton 
             icon={HeartIcon} 
-            count={local.counts.hugs} 
-            active={local.myInteractions.hug} 
+            count={post.counts.hugs} 
+            active={post.myInteractions.hug} 
             color="magenta" 
             onPress={() => toggle('hug')} 
           />
           <InteractionButton 
             icon={RepeatIcon} 
-            count={local.counts.echoes} 
-            active={local.myInteractions.echo} 
+            count={post.counts.echoes} 
+            active={post.myInteractions.echo} 
             color="cyan" 
             onPress={() => toggle('echo')} 
           />
           <InteractionButton 
             icon={SendIcon} 
-            count={local.counts.casts} 
-            active={local.myInteractions.cast} 
+            count={post.counts.casts} 
+            active={post.myInteractions.cast} 
             color="lime" 
             onPress={() => toggle('cast')} 
           />
           <InteractionButton 
             icon={BookmarkIcon} 
-            count={local.counts.anchors} 
-            active={local.myInteractions.anchor} 
+            count={post.counts.anchors} 
+            active={post.myInteractions.anchor} 
             color="amber" 
             onPress={() => toggle('anchor')} 
           />
@@ -128,6 +121,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
     </Glass>
   );
 }
+
 
 interface InteractionButtonProps {
   icon: LucideIcon;

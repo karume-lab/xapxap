@@ -1,21 +1,22 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { ArrowDownLeftIcon, DownloadIcon, PlusCircleIcon, ZapIcon } from "lucide-react-native";
+import {
+  ArrowDownLeftIcon,
+  ArrowUpRightIcon,
+  DownloadIcon,
+  PlusCircleIcon,
+  ZapIcon,
+} from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useWalletBalance } from "@/features/gems/api/queries";
-
-const MOCK_ACTIVITY = [
-  { id: "1", type: "received", label: "Received gems", sublabel: "Gift on a wave", amount: "+1" },
-  { id: "2", type: "received", label: "Received gems", sublabel: "Gift on a wave", amount: "+1" },
-  { id: "3", type: "received", label: "Received gems", sublabel: "Welcome gift", amount: "+50" },
-];
+import { useGemActivity, useWalletBalance } from "@/features/gems/api/queries";
 
 export function WalletScreen() {
   const insets = useSafeAreaInsets();
   const { data: wallet } = useWalletBalance();
+  const { data: activity } = useGemActivity();
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
@@ -44,7 +45,7 @@ export function WalletScreen() {
 
             <View className="my-2 items-center">
               <Text className="text-white text-7xl font-bold shadow-xl shadow-primary/20">
-                {wallet?.balance ?? 52}
+                {wallet?.balance ?? 1250}
               </Text>
               <Text className="text-muted-foreground text-base font-medium mt-1">gems</Text>
             </View>
@@ -52,7 +53,9 @@ export function WalletScreen() {
             <Glass radius={20} className="px-4 py-2 mt-4 border border-white/10">
               <View className="flex-row items-center">
                 <Text className="text-xs mr-2">🇰🇪</Text>
-                <Text className="text-white text-xs font-bold">≈ KSh68</Text>
+                <Text className="text-white text-xs font-bold">
+                  ≈ KSh{((wallet?.balance ?? 1250) * 1.3).toFixed(0)}
+                </Text>
               </View>
             </Glass>
           </View>
@@ -81,21 +84,35 @@ export function WalletScreen() {
           </Text>
 
           <View className="gap-3">
-            {MOCK_ACTIVITY.map((item) => (
-              <Glass
-                key={item.id}
-                radius={24}
-                className="p-4 flex-row items-center border border-white/5">
-                <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
-                  <Icon as={ArrowDownLeftIcon} size={20} className="text-primary" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-white font-bold text-sm">{item.label}</Text>
-                  <Text className="text-muted-foreground text-xs">{item.sublabel}</Text>
-                </View>
-                <Text className="text-primary font-bold text-base">{item.amount}</Text>
-              </Glass>
-            ))}
+            {(activity || []).map((item) => {
+              const isReceived = item.type === "received";
+              const iconColor = isReceived ? "text-primary" : "text-red-500";
+              const bgColor = isReceived ? "bg-primary/10" : "bg-red-500/10";
+
+              return (
+                <Glass
+                  key={item.id}
+                  radius={24}
+                  className="p-4 flex-row items-center border border-white/5">
+                  <View
+                    className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${bgColor}`}>
+                    <Icon
+                      as={isReceived ? ArrowDownLeftIcon : ArrowUpRightIcon}
+                      size={20}
+                      className={iconColor}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-white font-bold text-sm">{item.label}</Text>
+                    <Text className="text-muted-foreground text-xs">{item.sublabel}</Text>
+                  </View>
+                  <Text
+                    className={`font-bold text-base ${isReceived ? "text-primary" : "text-red-400"}`}>
+                    {item.amount}
+                  </Text>
+                </Glass>
+              );
+            })}
           </View>
         </View>
       </ScrollView>

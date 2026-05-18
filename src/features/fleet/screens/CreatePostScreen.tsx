@@ -9,12 +9,16 @@ import { Button } from "@/components/ui/button";
 import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
+import { useCreateFleetPost } from "@/features/fleet/api/queries";
 
 export function CreatePostScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  const { profile } = useAuth();
+  const { mutateAsync: createPost } = useCreateFleetPost();
 
   const submit = async () => {
     if (!text.trim()) {
@@ -23,7 +27,7 @@ export function CreatePostScreen() {
     }
     setBusy(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await createPost({ content: text, authorProfile: profile });
       if (Haptics.notificationAsync) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       }

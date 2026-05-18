@@ -17,3 +17,63 @@ export type TransactionType = "tip" | "deposit" | "withdrawal" | "stream_entry";
 export type TransactionStatus = "pending" | "completed" | "failed" | "fraud_flagged";
 export type FameStatus = "evaluating" | "fame_burst" | "trend_deck" | "rejected";
 export type StreamQuality = "drift_expo" | "aqua_premium";
+
+export type FleetPostWithAuthor = FleetPost & {
+  author: {
+    id: string;
+    username: string;
+    avatarUrl: string | null;
+    isPremium: boolean;
+  };
+  counts: {
+    hugs: number;
+    echoes: number;
+    casts: number;
+    anchors: number;
+  };
+  myInteractions: {
+    hug: boolean;
+    echo: boolean;
+    cast: boolean;
+    anchor: boolean;
+  };
+  pollId?: string | null;
+};
+
+export type PollWithDetails = Poll & {
+  options: (PollOption & { votes: number })[];
+  totalVotes: number;
+  userVotedId: string | null;
+};
+
+export type FameBurstItem = FleetPost & {
+  author: {
+    id: string;
+    username: string;
+    avatarUrl: string | null;
+    isPremium: boolean;
+  };
+  counts: {
+    hugs: number;
+    echoes: number;
+    casts: number;
+    anchors: number;
+  };
+  myInteractions: {
+    hug: boolean;
+    echo: boolean;
+    cast: boolean;
+    anchor: boolean;
+  };
+  fame_heuristics?: FameHeuristic;
+};
+
+export type LiveStreamWithAuthor = LiveStream & {
+  author: {
+    id: string;
+    username: string;
+    avatarUrl: string | null;
+    isPremium: boolean;
+  };
+  viewerCount: number;
+};

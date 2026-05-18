@@ -4,39 +4,24 @@ import { ActivityIndicator, FlatList, Pressable, ScrollView, TextInput, View } f
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar } from "@/components/ui/avatar";
 import { Glass } from "@/components/ui/glass";
+import { XapXapHeader } from "@/components/ui/header";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+
+import {
+  incrementBuzz,
+  mockPopularTags,
+  mockTrendingWaves,
+} from "@/features/search/mock-data/search";
 import { useColors } from "@/hooks/use-colors";
-
-// Mock data to match design
-const TRENDING_WAVES = [
-  {
-    id: "1",
-    author: "anax",
-    content: "Hello guys, this is my first post on XapXap",
-    buzz: 4,
-  },
-  {
-    id: "2",
-    author: "anax",
-    content: "A great recommendation",
-    buzz: 3,
-  },
-  {
-    id: "3",
-    author: "drift_queen",
-    content: "Hello from the other side of the ocean!",
-    buzz: 3,
-  },
-];
-
-import { XapXapHeader } from "@/components/ui/header";
 
 export function SearchScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [trendingWaves, setTrendingWaves] = useState(mockTrendingWaves);
+  const [popularTags] = useState(mockPopularTags);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -46,6 +31,11 @@ export function SearchScreen() {
         setIsSearching(false);
       }, 800);
     }
+  };
+
+  const handlePressWave = (id: string) => {
+    incrementBuzz(id);
+    setTrendingWaves([...mockTrendingWaves]);
   };
 
   return (
@@ -78,13 +68,27 @@ export function SearchScreen() {
         {/* Popular Tags Section */}
         <View className="mt-6">
           <View className="px-6 mb-6">
-            <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-12">
+            <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">
               Popular Tags
             </Text>
-            <View className="items-center py-10">
-              <Text className="text-muted-foreground text-center text-sm px-10">
-                No tags yet. Drop a wave with a #tag to start a trend.
-              </Text>
+            <View className="flex-row flex-wrap gap-2.5">
+              {popularTags.map((tag) => (
+                <Pressable
+                  key={tag.id}
+                  onPress={() => {
+                    setQuery(tag.tag);
+                    setIsSearching(true);
+                    setTimeout(() => setIsSearching(false), 600);
+                  }}
+                  className="bg-white/5 border border-white/10 px-4 py-2.5 rounded-full active:bg-white/10">
+                  <View className="flex-row items-center gap-1.5">
+                    <Text className="text-white text-sm font-semibold">{tag.tag}</Text>
+                    <Text className="text-muted-foreground text-[10px] font-medium">
+                      • {tag.count} drops
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
             </View>
           </View>
         </View>
@@ -104,26 +108,30 @@ export function SearchScreen() {
           ) : (
             <FlatList
               horizontal
-              data={TRENDING_WAVES}
+              data={trendingWaves}
               keyExtractor={(item) => item.id}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 20 }}
               renderItem={({ item }) => (
-                <Glass radius={24} className="w-64 h-48 p-5 mr-4 border border-white/5 bg-white/5">
-                  <View className="flex-row items-center mb-4">
-                    <Avatar username={item.author} size={32} />
-                    <Text className="ml-3 font-bold text-white text-sm">@{item.author}</Text>
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-white/80 text-sm leading-5" numberOfLines={3}>
-                      {item.content}
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center mt-2">
-                    <Icon as={TrendingUpIcon} size={14} className="text-primary mr-1.5" />
-                    <Text className="text-primary font-bold text-xs">{item.buzz} buzz</Text>
-                  </View>
-                </Glass>
+                <Pressable onPress={() => handlePressWave(item.id)}>
+                  <Glass
+                    radius={24}
+                    className="w-64 h-48 p-5 mr-4 border border-white/5 bg-white/5">
+                    <View className="flex-row items-center mb-4">
+                      <Avatar username={item.author} size={32} />
+                      <Text className="ml-3 font-bold text-white text-sm">@{item.author}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-white/80 text-sm leading-5" numberOfLines={3}>
+                        {item.content}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center mt-2">
+                      <Icon as={TrendingUpIcon} size={14} className="text-primary mr-1.5" />
+                      <Text className="text-primary font-bold text-xs">{item.buzz} buzz</Text>
+                    </View>
+                  </Glass>
+                </Pressable>
               )}
             />
           )}

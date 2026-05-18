@@ -1,58 +1,85 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import type { FameHeuristic, FleetPost } from "@/lib/types";
+import {
+  type InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import type { FameBurstItem } from "@/lib/types";
 
-export type FameBurstItem = FleetPost & {
-  author: {
-    username: string;
-    avatarUrl: string | null;
-  };
-  fame_heuristics?: FameHeuristic;
-};
+export type { FameBurstItem };
+
+import { mockFameBursts, toggleFameInteraction } from "@/features/fame/mock-data/fame";
 
 export function useFameBurst() {
   return useInfiniteQuery({
     queryKey: ["fame-burst"],
     queryFn: async ({ pageParam = 0 }) => {
-      // Mocking Supabase fame_heuristics and fleet_posts join
-      const mockData: FameBurstItem[] = Array.from({ length: 5 }).map((_, i) => ({
-        id: `fame-${pageParam}-${i}`,
-        content: `Epic Fame Burst content #${pageParam * 5 + i}`,
-        mediaUrl: `https://picsum.photos/seed/${pageParam * 5 + i}/1080/1920`,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        authorId: `user-${i}`,
-        author: {
-          username: `wave_surfer_${i}`,
-          avatarUrl: `https://i.pravatar.cc/150?u=${i}`,
-        },
-        fame_heuristics: {
-          postId: `fame-${pageParam}-${i}`,
-          status: "fame_burst",
-          burstStartedAt: new Date(),
-          burstEndedAt: new Date(Date.now() + 60000), // 60 seconds from now
-          checksumVerified: true,
-          resolutionMeetsFloor: true,
-          sentimentScore: "0.9",
-          tagCorrelationScore: "0.8",
-          viewsCount: 100,
-          completionRate: "0.9",
-          latencyOfInterestMs: 50,
-          followConversionRate: "0.1",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        } as FameHeuristic,
-        mediaType: "video",
-        parentId: null,
-        checksum: null,
-        resolution: 1080,
-      }));
+      // Simulate pagination of in-memory fame items
+      const pageSize = 5;
+      const start = pageParam * pageSize;
+      const end = start + pageSize;
+
+      // If we run out of predefined items, we loop them or return empty
+      let pageItems = mockFameBursts.slice(start, end);
+      if (pageItems.length === 0 && start === 0) {
+        pageItems = [...mockFameBursts];
+      }
+
+      // Ensure every item has appropriate dates so the countdown works correctly
+      const data = pageItems.map((item, index) => {
+        const timeOffset = index * 30000;
+        return {
+          ...item,
+          fame_heuristics: item.fame_heuristics
+            ? {
+                ...item.fame_heuristics,
+                burstEndedAt: new Date(Date.now() + 60000 - timeOffset),
+              }
+            : undefined,
+        };
+      });
 
       return {
-        data: mockData,
-        nextPage: pageParam + 1,
+        data,
+        nextPage: pageItems.length === pageSize ? pageParam + 1 : undefined,
       };
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
+  });
+}
+
+export function useToggleFameInteraction() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      postId,
+      type,
+    }: {
+      postId: string;
+      type: "hug" | "echo" | "cast" | "anchor";
+    }) => {
+      return toggleFameInteraction(postId, type);
+    },
+    onSuccess: (updatedPost) => {
+      if (updatedPost) {
+        // Update the infinite query cache locally
+        queryClient.setQueryData<
+          InfiniteData<{ data: FameBurstItem[]; nextPage: number | undefined }>
+        >(["fame-burst"], (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              data: page.data.map((item: FameBurstItem) =>
+                item.id === updatedPost.id ? { ...item, ...updatedPost } : item
+              ),
+            })),
+          };
+        });
+      }
+    },
   });
 }

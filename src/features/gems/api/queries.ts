@@ -1,17 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PayoutRequest, Wallet } from "@/lib/types";
+import {
+  addTransaction,
+  mockActivity,
+  mockWallet,
+  updateWalletBalance,
+} from "@/features/gems/mock-data/gems";
+import type { PayoutRequest } from "@/lib/types";
 
 export function useWalletBalance() {
   return useQuery({
     queryKey: ["wallet-balance"],
     queryFn: async () => {
-      // Mocking Supabase wallets fetch
-      const mockWallet: Wallet = {
-        userId: "curr-user",
-        balance: 1250,
-        updatedAt: new Date(),
-      };
-      return mockWallet;
+      return { ...mockWallet };
+    },
+  });
+}
+
+export function useGemActivity() {
+  return useQuery({
+    queryKey: ["gem-activity"],
+    queryFn: async () => {
+      return [...mockActivity];
     },
   });
 }
@@ -21,19 +30,23 @@ export function usePayoutMutation() {
 
   return useMutation({
     mutationFn: async (request: Partial<PayoutRequest>) => {
-      // Mocking Supabase payout_requests insert
       console.log("Processing payout:", request);
       await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const gemAmt = request.gemAmount || 0;
+      updateWalletBalance(-gemAmt);
+      addTransaction(
+        "Withdrew gems",
+        `To mobile money (${request.provider})`,
+        `-${gemAmt}`,
+        "withdrawal"
+      );
+
       return { success: true, ...request };
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(["wallet-balance"], (old: Wallet | undefined) => {
-        if (!old) return old;
-        return {
-          ...old,
-          balance: old.balance - (data.gemAmount || 0),
-        };
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
     },
   });
 }
@@ -43,18 +56,14 @@ export function useTipMutation() {
 
   return useMutation({
     mutationFn: async ({ creatorId, amount }: { creatorId: string; amount: number }) => {
-      // Mocking tipping logic
       console.log(`Tipping ${amount} gems to ${creatorId}`);
+      updateWalletBalance(-amount);
+      addTransaction("Tipped gems", `Gifted to @${creatorId}`, `-${amount}`, "sent");
       return { success: true };
     },
-    onSuccess: (_, variables) => {
-      queryClient.setQueryData(["wallet-balance"], (old: Wallet | undefined) => {
-        if (!old) return old;
-        return {
-          ...old,
-          balance: old.balance - variables.amount,
-        };
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
     },
   });
 }

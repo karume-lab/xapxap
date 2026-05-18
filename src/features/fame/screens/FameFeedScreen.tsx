@@ -17,7 +17,11 @@ import { Avatar } from "@/components/ui/avatar";
 import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { type FameBurstItem, useFameBurst } from "@/features/fame/api/queries";
+import {
+  type FameBurstItem,
+  useFameBurst,
+  useToggleFameInteraction,
+} from "@/features/fame/api/queries";
 import { useNetwork } from "@/hooks/use-network";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -25,6 +29,7 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
   const insets = useSafeAreaInsets();
   const [timeLeft, setTimeLeft] = useState(60);
+  const { mutate: toggleInteraction } = useToggleFameInteraction();
 
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
@@ -94,10 +99,22 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
           {/* Engagement Buttons */}
           <View className="gap-5 items-center">
             <View className="items-center">
-              <Pressable className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
-                <Icon as={HeartIcon} className="text-white" size={26} />
+              <Pressable
+                onPress={() => toggleInteraction({ postId: item.id, type: "hug" })}
+                className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20"
+                style={
+                  item.myInteractions?.hug
+                    ? { backgroundColor: "rgba(255, 95, 168, 0.2)", borderColor: "#FF5FA8" }
+                    : {}
+                }>
+                <Icon
+                  as={HeartIcon}
+                  color={item.myInteractions?.hug ? "#FF5FA8" : "#FFFFFF"}
+                  fill={item.myInteractions?.hug ? "#FF5FA8" : "transparent"}
+                  size={26}
+                />
               </Pressable>
-              <Text className="text-white text-xs mt-1.5 font-bold">1.2k</Text>
+              <Text className="text-white text-xs mt-1.5 font-bold">{item.counts?.hugs ?? 0}</Text>
             </View>
 
             <View className="items-center">
@@ -109,7 +126,9 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                 className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
                 <Icon as={MessageCircleIcon} className="text-white" size={26} />
               </Pressable>
-              <Text className="text-white text-xs mt-1.5 font-bold">45</Text>
+              <Text className="text-white text-xs mt-1.5 font-bold">
+                {item.counts?.echoes ?? 0}
+              </Text>
             </View>
 
             <Pressable

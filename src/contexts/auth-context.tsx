@@ -18,19 +18,7 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// Mock data
-const MOCK_PROFILE: Profile = {
-  id: "mock-user-id",
-  username: "wave_rider",
-  displayName: "Wave Rider",
-  avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
-  dateOfBirth: null,
-  isPremium: false,
-  bio: "Surfing the digital waves of XapXap.",
-  role: "user",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+import { mockProfile, updateMockProfile } from "@/features/auth/mock-data/auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -79,7 +67,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfile = useCallback(async (patch: Partial<Profile>) => {
     await new Promise((resolve) => setTimeout(resolve, 800));
-    setProfile((prev) => (prev ? { ...prev, ...patch } : null));
+    const updated = updateMockProfile(patch);
+    setProfile(updated);
   }, []);
 
   const value = useMemo(
@@ -92,20 +81,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn: async (email: string, _password: string) => {
         await new Promise((resolve) => setTimeout(resolve, 1200));
         setSession({
-          user: { id: MOCK_PROFILE.id, email },
+          user: { id: mockProfile.id, email },
           access_token: "mock",
           refresh_token: "mock",
         } as Session);
-        setProfile(MOCK_PROFILE);
+        setProfile({ ...mockProfile });
       },
       signUp: async (email: string, _password: string, username: string) => {
         await new Promise((resolve) => setTimeout(resolve, 1500));
+        const updated = updateMockProfile({ username });
         setSession({
-          user: { id: MOCK_PROFILE.id, email },
+          user: { id: mockProfile.id, email },
           access_token: "mock",
           refresh_token: "mock",
         } as Session);
-        setProfile({ ...MOCK_PROFILE, username });
+        setProfile(updated);
       },
       signOut: async () => {
         setSession(null);
