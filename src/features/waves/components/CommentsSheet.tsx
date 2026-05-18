@@ -16,6 +16,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useAddComment, useComments, useToggleCommentLike } from "@/features/waves/api/comments";
+import { useColors } from "@/hooks/use-colors";
 import type { FleetPostWithAuthor } from "@/lib/types";
 
 interface CommentsSheetProps {
@@ -48,6 +49,7 @@ function CommentItem({
 }) {
   const liked = comment.myInteractions?.hug ?? false;
   const likesCount = comment.counts?.hugs ?? 0;
+  const colors = useColors();
 
   return (
     <View
@@ -58,8 +60,8 @@ function CommentItem({
           <View className="flex-row items-center gap-2">
             <Text className="text-white font-bold text-sm">@{comment.author.username}</Text>
             {comment.author.isPremium && (
-              <View className="px-1.5 py-0.5 rounded bg-[#bef445]/20">
-                <Text className="text-[#bef445] text-[8px] font-bold uppercase font-[Inter_700Bold]">
+              <View className="px-1.5 py-0.5 rounded bg-primary/20">
+                <Text className="text-primary text-[8px] font-bold uppercase font-[Inter_700Bold]">
                   PRO
                 </Text>
               </View>
@@ -76,12 +78,12 @@ function CommentItem({
             <Icon
               as={HeartIcon}
               size={14}
-              color={liked ? "#FF5FA8" : "rgba(255,255,255,0.4)"}
-              fill={liked ? "#FF5FA8" : "transparent"}
+              color={liked ? colors.destructive : "rgba(255,255,255,0.4)"}
+              fill={liked ? colors.destructive : "transparent"}
             />
             {likesCount > 0 && (
               <Text
-                className={`text-xs font-semibold ${liked ? "text-[#FF5FA8]" : "text-white/40"}`}>
+                className={`text-xs font-semibold ${liked ? "text-destructive" : "text-white/40"}`}>
                 {likesCount}
               </Text>
             )}
@@ -94,7 +96,7 @@ function CommentItem({
 
         {!isReply && (
           <Pressable onPress={onReply} className="mt-1 active:opacity-75 self-start">
-            <Text className="text-[#bef445] font-bold text-xs font-[Inter_600SemiBold]">Reply</Text>
+            <Text className="text-primary font-bold text-xs font-[Inter_600SemiBold]">Reply</Text>
           </Pressable>
         )}
       </View>
@@ -142,8 +144,10 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const topLevelComments = comments.filter((c) => c.parentId === postId);
   const replies = comments.filter((c) => c.parentId !== postId);
 
+  const colors = useColors();
+
   return (
-    <View className="flex-1 bg-[#0A0A0F] rounded-t-[40px] overflow-hidden border-t border-white/10">
+    <View className="flex-1 bg-background rounded-t-[40px] overflow-hidden border-t border-white/10">
       {/* Drag Handle */}
       <View className="items-center pt-3 pb-1">
         <View className="w-10 h-1 rounded-full bg-white/20" />
@@ -164,7 +168,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
       <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
         {isLoading ? (
           <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator color="#bef445" size="small" />
+            <ActivityIndicator color={colors.primary} size="small" />
           </View>
         ) : topLevelComments.length === 0 ? (
           <View className="flex-1 items-center justify-center p-12">
@@ -220,7 +224,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
           <View className="bg-white/5 border-t border-white/5 px-6 py-2 flex-row justify-between items-center">
             <Text className="text-white/60 text-xs font-[Inter_400Regular]">
               Replying to{" "}
-              <Text className="text-[#bef445] font-semibold">@{replyTo.author.username}</Text>
+              <Text className="text-primary font-semibold">@{replyTo.author.username}</Text>
             </Text>
             <Pressable onPress={() => setReplyTo(null)} className="p-1 active:opacity-75">
               <Icon as={XIcon} size={14} className="text-white/60" />
@@ -263,7 +267,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
             </Pressable>
             <Pressable
               onPress={handleSend}
-              className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-[#bef445]" : "bg-white/5"}`}>
+              className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-primary" : "bg-white/5"}`}>
               <Icon
                 as={SendIcon}
                 size={20}

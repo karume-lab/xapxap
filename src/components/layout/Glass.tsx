@@ -46,13 +46,14 @@ export function Glass({
       {Platform.OS === "ios" ? (
         <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
       ) : null}
+      {/* Background Overlay */}
       <View
+        style={StyleSheet.absoluteFill}
         className={
           Platform.OS === "ios" ? "bg-[rgba(255,255,255,0.03)]" : "bg-[rgba(20,20,30,0.55)]"
         }
-        style={{ flex: 1 }}>
-        {children}
-      </View>
+      />
+      {children}
     </View>
   );
 }

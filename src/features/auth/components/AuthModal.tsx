@@ -2,7 +2,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { LockIcon, MailIcon, UserIcon, XIcon } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Pressable, View } from "react-native";
-import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
@@ -63,12 +62,10 @@ export function AuthModal() {
         className="flex-1 bg-black/75 items-center justify-center p-6">
         {/* Prevent clicks from propagating to the overlay */}
         <Pressable className="w-full max-w-[400px]">
-          <Glass
-            intensity={90}
-            className="w-full p-6 border border-zinc-800 rounded-3xl relative overflow-hidden">
+          <View className="w-full p-6 bg-background border border-zinc-800 rounded-3xl relative overflow-hidden">
             {/* Top Premium Color Accent Glow */}
             <LinearGradient
-              colors={["#bef445", "transparent"]}
+              colors={[colors.primary, "transparent"]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
               className="absolute top-0 left-0 right-0 h-[60px] opacity-10"
@@ -79,9 +76,7 @@ export function AuthModal() {
               <View>
                 <View className="flex-row">
                   <Text className="text-white text-2xl font-bold font-[Inter_700Bold]">Xap</Text>
-                  <Text className="text-[#bef445] text-2xl font-bold font-[Inter_700Bold]">
-                    Xap
-                  </Text>
+                  <Text className="text-primary text-2xl font-bold font-[Inter_700Bold]">Xap</Text>
                 </View>
                 <Text className="text-muted-foreground mt-1 text-sm font-[Inter_400Regular]">
                   {isSignUp ? "Create an account to continue" : "Sign in to continue"}
@@ -147,7 +142,7 @@ export function AuthModal() {
               <Button
                 onPress={onSubmit}
                 size="lg"
-                className="mt-2 h-14 rounded-[26px] bg-[#bef445]"
+                className="mt-2 h-14 rounded-[26px] bg-primary"
                 isLoading={busy}>
                 <Text className="font-bold text-lg text-black font-[Inter_700Bold]">
                   {isSignUp ? "Create Account" : "Enter the Wave"}
@@ -159,17 +154,17 @@ export function AuthModal() {
                 <Text className="text-sm font-semibold font-[Inter_600SemiBold]">
                   {isSignUp ? (
                     <Text className="text-white/60">
-                      Already have an account? <Text className="text-[#bef445]">Sign In</Text>
+                      Already have an account? <Text className="text-primary">Sign in</Text>
                     </Text>
                   ) : (
                     <Text className="text-white/60">
-                      Don't have an account? <Text className="text-[#bef445]">Create one</Text>
+                      Don't have an account? <Text className="text-primary">Create one</Text>
                     </Text>
                   )}
                 </Text>
               </Pressable>
             </View>
-          </Glass>
+          </View>
         </Pressable>
       </Pressable>
     </Modal>

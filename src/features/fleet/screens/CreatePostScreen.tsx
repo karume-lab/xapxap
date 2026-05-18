@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { FileTextIcon, ImageIcon, SendIcon } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -19,11 +19,30 @@ export function CreatePostScreen() {
   const { profile, session, showAuthModal } = useAuth();
   const { mutateAsync: createPost } = useCreateFleetPost();
 
-  useEffect(() => {
-    if (!session) {
-      showAuthModal();
-    }
-  }, [session, showAuthModal]);
+  if (!session) {
+    return (
+      <View
+        className="flex-1 bg-background items-center justify-center p-6"
+        style={{ paddingTop: insets.top }}>
+        <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
+          <Icon as={SendIcon} size={32} className="text-primary mr-1 mt-0.5" />
+        </View>
+        <Text className="text-white font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
+          Drop a Wave
+        </Text>
+        <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
+          Sign in to share your thoughts, images, videos, and PDFs with the XapXap community.
+        </Text>
+        <Button
+          onPress={showAuthModal}
+          className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
+          <Text className="text-black font-bold text-lg font-[Inter_700Bold]">
+            Sign in to XapXap
+          </Text>
+        </Button>
+      </View>
+    );
+  }
 
   const submit = async () => {
     if (!text.trim()) {
@@ -97,7 +116,7 @@ export function CreatePostScreen() {
             onPress={submit}
             isLoading={busy}
             disabled={!text.trim()}
-            className="h-20 rounded-[32px] bg-[#8ba42f]">
+            className="h-20 rounded-[32px] bg-primary">
             <View className="flex-row items-center gap-3">
               <Icon as={SendIcon} className="text-black/60" size={20} />
               <Text className="text-black/80 font-bold text-xl">Drop the wave</Text>

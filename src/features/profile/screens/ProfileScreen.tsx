@@ -10,7 +10,7 @@ import {
   WifiOffIcon,
   ZapIcon,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, Pressable, ScrollView, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -40,11 +40,31 @@ export function ProfileScreen() {
   const [currency, setCurrency] = useState("KES");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (!session) {
-      showAuthModal();
-    }
-  }, [session, showAuthModal]);
+  if (!session) {
+    return (
+      <View
+        className="flex-1 bg-background items-center justify-center p-6"
+        style={{ paddingTop: insets.top }}>
+        <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
+          <Icon as={AnchorIcon} size={36} className="text-primary" />
+        </View>
+        <Text className="text-white font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
+          Your Space
+        </Text>
+        <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
+          Sign in to customize your profile, collect gems, track your waves, and manage your
+          account.
+        </Text>
+        <Button
+          onPress={showAuthModal}
+          className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
+          <Text className="text-black font-bold text-lg font-[Inter_700Bold]">
+            Sign in to XapXap
+          </Text>
+        </Button>
+      </View>
+    );
+  }
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -209,15 +229,15 @@ export function ProfileScreen() {
         {isCaptain && (
           <View className="px-6">
             <View className="flex-row items-center mb-4 gap-2">
-              <Icon as={AnchorIcon} size={16} className="text-[#FF5FA8]" />
+              <Icon as={AnchorIcon} size={16} className="text-destructive" />
               <Text className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                 Admin Portal
               </Text>
             </View>
-            <Glass className="p-4 border border-[#FF5FA8]/20" radius={24}>
+            <Glass className="p-4 border border-destructive/20" radius={24}>
               <Pressable className="flex-row items-center py-3">
-                <View className="w-10 h-10 rounded-xl bg-[#FF5FA8]/10 items-center justify-center mr-4">
-                  <Icon as={AlertTriangleIcon} size={20} className="text-[#FF5FA8]" />
+                <View className="w-10 h-10 rounded-xl bg-destructive/10 items-center justify-center mr-4">
+                  <Icon as={AlertTriangleIcon} size={20} className="text-destructive" />
                 </View>
                 <View className="flex-1">
                   <Text className="text-white font-bold">Mod Panel</Text>

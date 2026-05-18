@@ -10,8 +10,11 @@ import { useState } from "react";
 import { FlatList, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
+import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
 
 interface NotificationItem {
@@ -93,6 +96,8 @@ type FilterType = "all" | "gems" | "comments" | "likes";
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const colors = useColors();
+  const { session, showAuthModal } = useAuth();
   const [filter, setFilter] = useState<FilterType>("all");
 
   const filteredNotifications = MOCK_NOTIFICATIONS.filter((item) => {
@@ -136,21 +141,21 @@ export default function NotificationsScreen() {
 
           <View className="flex-row items-center gap-2 mt-1">
             {item.type === "gift" && (
-              <View className="flex-row items-center gap-1 bg-[#bef445]/10 px-2 py-0.5 rounded-full border border-[#bef445]/20">
-                <SparklesIcon size={10} color="#bef445" />
-                <Text className="text-[#bef445] text-[10px] font-bold">+{item.amount} Gems</Text>
+              <View className="flex-row items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                <SparklesIcon size={10} color={colors.primary} />
+                <Text className="text-primary text-[10px] font-bold">+{item.amount} Gems</Text>
               </View>
             )}
             {item.type === "comment" && (
-              <View className="flex-row items-center gap-1 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
-                <MessageCircleIcon size={10} color="#06b6d4" />
-                <Text className="text-cyan-400 text-[10px] font-bold">Reply</Text>
+              <View className="flex-row items-center gap-1 bg-accent/10 px-2 py-0.5 rounded-full border border-accent/20">
+                <MessageCircleIcon size={10} color={colors.accent} />
+                <Text className="text-accent text-[10px] font-bold">Reply</Text>
               </View>
             )}
             {item.type === "like" && (
-              <View className="flex-row items-center gap-1 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
-                <HeartIcon size={10} color="#f43f5e" />
-                <Text className="text-rose-400 text-[10px] font-bold">Love</Text>
+              <View className="flex-row items-center gap-1 bg-destructive/10 px-2 py-0.5 rounded-full border border-destructive/20">
+                <HeartIcon size={10} color={colors.destructive} />
+                <Text className="text-destructive text-[10px] font-bold">Love</Text>
               </View>
             )}
             <Text className="text-white/40 text-xs font-mono">{item.time}</Text>
@@ -160,8 +165,47 @@ export default function NotificationsScreen() {
     );
   };
 
+  if (!session) {
+    return (
+      <View className="flex-1 bg-background" style={{ paddingTop: Math.max(insets.top, 16) }}>
+        {/* Header */}
+        <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
+          <View className="flex-row items-center gap-3">
+            <Pressable
+              onPress={() => router.back()}
+              className="w-10 h-10 rounded-full bg-white/5 items-center justify-center border border-white/10 active:scale-95">
+              <Icon as={ArrowLeftIcon} size={18} className="text-white" />
+            </Pressable>
+            <Text className="text-white font-bold text-xl font-[Inter_700Bold]">Notifications</Text>
+          </View>
+        </View>
+
+        {/* CTA Container */}
+        <View className="flex-1 items-center justify-center p-6 pb-24">
+          <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
+            <Icon as={BellIcon} size={36} className="text-primary" />
+          </View>
+          <Text className="text-white font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
+            Your Notifications
+          </Text>
+          <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
+            Sign in to track likes, gems tipped by fans, comments on your waves, and account
+            updates!
+          </Text>
+          <Button
+            onPress={showAuthModal}
+            className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
+            <Text className="text-black font-bold text-lg font-[Inter_700Bold]">
+              Sign in to XapXap
+            </Text>
+          </Button>
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View className="flex-1 bg-[#0A0A0F]" style={{ paddingTop: Math.max(insets.top, 16) }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: Math.max(insets.top, 16) }}>
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
         <View className="flex-row items-center gap-3">
