@@ -160,6 +160,7 @@ export function FameFeedScreen() {
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
   const [showComments, setShowComments] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -197,7 +198,13 @@ export function FameFeedScreen() {
           data={posts}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <FameItem item={item} onShowComments={() => setShowComments(true)} />
+            <FameItem
+              item={item}
+              onShowComments={() => {
+                setSelectedPostId(item.id);
+                setShowComments(true);
+              }}
+            />
           )}
           pagingEnabled
           showsVerticalScrollIndicator={false}
@@ -218,10 +225,19 @@ export function FameFeedScreen() {
           visible={showComments}
           animationType="slide"
           transparent={true}
-          onRequestClose={() => setShowComments(false)}>
+          onRequestClose={() => {
+            setShowComments(false);
+            setSelectedPostId(null);
+          }}>
           <View className="flex-1 justify-end bg-black/40">
             <View style={{ height: "80%" }}>
-              <CommentsSheet onClose={() => setShowComments(false)} />
+              <CommentsSheet
+                postId={selectedPostId}
+                onClose={() => {
+                  setShowComments(false);
+                  setSelectedPostId(null);
+                }}
+              />
             </View>
           </View>
         </Modal>
