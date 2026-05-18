@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addTransaction,
   mockActivity,
@@ -7,22 +7,26 @@ import {
 } from "@/features/gems/mock-data/gems";
 import type { PayoutRequest } from "@/lib/types";
 
+export const walletBalanceOptions = queryOptions({
+  queryKey: ["wallet-balance"],
+  queryFn: async () => {
+    return { ...mockWallet };
+  },
+});
+
 export function useWalletBalance() {
-  return useQuery({
-    queryKey: ["wallet-balance"],
-    queryFn: async () => {
-      return { ...mockWallet };
-    },
-  });
+  return useQuery(walletBalanceOptions);
 }
 
+export const gemActivityOptions = queryOptions({
+  queryKey: ["gem-activity"],
+  queryFn: async () => {
+    return [...mockActivity];
+  },
+});
+
 export function useGemActivity() {
-  return useQuery({
-    queryKey: ["gem-activity"],
-    queryFn: async () => {
-      return [...mockActivity];
-    },
-  });
+  return useQuery(gemActivityOptions);
 }
 
 export function usePayoutMutation() {
@@ -45,8 +49,8 @@ export function usePayoutMutation() {
       return { success: true, ...request };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
+      queryClient.invalidateQueries({ queryKey: walletBalanceOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: gemActivityOptions.queryKey });
     },
   });
 }
@@ -62,8 +66,8 @@ export function useTipMutation() {
       return { success: true };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
+      queryClient.invalidateQueries({ queryKey: walletBalanceOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: gemActivityOptions.queryKey });
     },
   });
 }

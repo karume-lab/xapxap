@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { type User, UserSchema } from "@/lib/schemas";
 
-export function useUser(id: string) {
-  return useQuery({
+export const userOptions = (id: string) =>
+  queryOptions({
     queryKey: ["user", id],
     queryFn: async (): Promise<User> => {
       // Example fetch
@@ -17,4 +17,7 @@ export function useUser(id: string) {
       });
     },
   });
+
+export function useUser(id: string) {
+  return useQuery(userOptions(id));
 }

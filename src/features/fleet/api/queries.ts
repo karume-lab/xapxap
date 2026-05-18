@@ -1,8 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@/lib/types";
 
 export type { FleetPostWithAuthor, PollWithDetails };
 
+import { fameBurstOptions } from "@/features/fame/api/queries";
 import {
   createFleetPost,
   mockFleetPosts,
@@ -11,24 +12,29 @@ import {
   voteInPoll,
 } from "@/features/fleet/mock-data/fleet";
 
+export const fleetThreadsOptions = queryOptions({
+  queryKey: ["fleet-threads"],
+  queryFn: async () => {
+    return [...mockFleetPosts];
+  },
+});
+
 export function useFleetThreads() {
-  return useQuery({
-    queryKey: ["fleet-threads"],
-    queryFn: async () => {
-      return [...mockFleetPosts];
-    },
-  });
+  return useQuery(fleetThreadsOptions);
 }
 
-export function usePoll(pollId: string) {
-  const queryClient = useQueryClient();
-
-  const query = useQuery({
+export const pollOptions = (pollId: string) =>
+  queryOptions({
     queryKey: ["poll", pollId],
     queryFn: async () => {
       return mockPolls[pollId] || null;
     },
   });
+
+export function usePoll(pollId: string) {
+  const queryClient = useQueryClient();
+
+  const query = useQuery(pollOptions(pollId));
 
   const voteMutation = useMutation({
     mutationFn: async (optionId: string) => {
@@ -36,8 +42,8 @@ export function usePoll(pollId: string) {
     },
     onSuccess: (updatedPoll) => {
       if (updatedPoll) {
-        queryClient.setQueryData(["poll", pollId], updatedPoll);
-        queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
+        queryClient.setQueryData(pollOptions(pollId).queryKey, updatedPoll);
+        queryClient.invalidateQueries({ queryKey: fleetThreadsOptions.queryKey });
       }
     },
   });
@@ -60,11 +66,14 @@ export function useToggleFleetInteraction() {
     },
     onSuccess: (updatedPost) => {
       if (updatedPost) {
-        queryClient.setQueryData(["fleet-threads"], (old: FleetPostWithAuthor[] | undefined) => {
-          if (!old) return old;
-          return old.map((p) => (p.id === updatedPost.id ? { ...p, ...updatedPost } : p));
-        });
-        queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+        queryClient.setQueryData(
+          fleetThreadsOptions.queryKey,
+          (old: FleetPostWithAuthor[] | undefined) => {
+            if (!old) return old;
+            return old.map((p) => (p.id === updatedPost.id ? { ...p, ...updatedPost } : p));
+          }
+        );
+        queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey });
       }
     },
   });
@@ -84,8 +93,8 @@ export function useCreateFleetPost() {
       return createFleetPost(content, authorProfile);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+      queryClient.invalidateQueries({ queryKey: fleetThreadsOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey });
     },
   });
 }

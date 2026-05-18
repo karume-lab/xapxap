@@ -1,21 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { LiveStreamWithAuthor, Profile } from "@/lib/types";
 
 export type { LiveStreamWithAuthor };
 
+import { gemActivityOptions, walletBalanceOptions } from "@/features/gems/api/queries";
 import {
   mockLiveStreams,
   purchaseTicket,
   startLiveStream,
 } from "@/features/streaming/mock-data/streaming";
 
+export const liveStreamsOptions = queryOptions({
+  queryKey: ["live-streams"],
+  queryFn: async () => {
+    return [...mockLiveStreams];
+  },
+});
+
 export function useLiveStreams() {
-  return useQuery({
-    queryKey: ["live-streams"],
-    queryFn: async () => {
-      return [...mockLiveStreams];
-    },
-  });
+  return useQuery(liveStreamsOptions);
 }
 
 export function useJoinStreamMutation() {
@@ -28,9 +31,9 @@ export function useJoinStreamMutation() {
       return purchaseTicket(streamId, fee);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["live-streams"] });
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
+      queryClient.invalidateQueries({ queryKey: liveStreamsOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: walletBalanceOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: gemActivityOptions.queryKey });
     },
   });
 }
@@ -57,7 +60,7 @@ export function useStartStreamMutation() {
       return startLiveStream(title, quality, isGated, entryFeeGems, broadcaster);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["live-streams"] });
+      queryClient.invalidateQueries({ queryKey: liveStreamsOptions.queryKey });
     },
   });
 }

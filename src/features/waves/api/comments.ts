@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fameBurstOptions } from "@/features/fame/api/queries";
 import { mockFameBursts } from "@/features/fame/mock-data/fame";
 import type { FleetPostWithAuthor } from "@/lib/types";
 
@@ -193,8 +194,8 @@ export const mockComments: FleetPostWithAuthor[] = [
   },
 ];
 
-export function useComments(postId: string | null) {
-  return useQuery({
+export const commentsOptions = (postId: string | null) =>
+  queryOptions({
     queryKey: ["comments", postId],
     queryFn: async () => {
       if (!postId) return [];
@@ -217,6 +218,9 @@ export function useComments(postId: string | null) {
     },
     enabled: !!postId,
   });
+
+export function useComments(postId: string | null) {
+  return useQuery(commentsOptions(postId));
 }
 
 export function useAddComment() {
@@ -259,8 +263,8 @@ export function useAddComment() {
       return { newComment, postId };
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", res.postId] });
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] }); // Invalidate feed to update echoes counts
+      queryClient.invalidateQueries({ queryKey: commentsOptions(res.postId).queryKey });
+      queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey }); // Invalidate feed to update echoes counts
     },
   });
 }
@@ -277,7 +281,7 @@ export function useToggleCommentLike() {
       return { comment, postId };
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", res.postId] });
+      queryClient.invalidateQueries({ queryKey: commentsOptions(res.postId).queryKey });
     },
   });
 }
