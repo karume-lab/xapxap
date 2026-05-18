@@ -235,22 +235,32 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
           style={{ paddingBottom: insets.bottom + 10 }}>
           <View className="flex-row items-center gap-3">
             <Avatar username={profile?.username || "me"} url={profile?.avatarUrl} size={36} />
-            <Glass
-              radius={20}
-              className="flex-1 h-12 justify-center px-4 border border-white/10 bg-white/5">
-              <TextInput
-                ref={inputRef}
-                value={commentText}
-                onChangeText={setCommentText}
-                placeholder={
-                  replyTo ? `Reply to @${replyTo.author.username}...` : "Add a comment..."
+            <Pressable
+              onPress={() => {
+                if (!session) {
+                  showAuthModal();
                 }
-                placeholderTextColor="rgba(255,255,255,0.3)"
-                className="text-white text-sm font-medium font-[Inter_400Regular]"
-                onSubmitEditing={handleSend}
-                returnKeyType="send"
-              />
-            </Glass>
+              }}
+              className="flex-1">
+              <Glass
+                radius={20}
+                className="h-12 justify-center px-4 border border-white/10 bg-white/5">
+                <TextInput
+                  ref={inputRef}
+                  value={commentText}
+                  onChangeText={setCommentText}
+                  editable={!!session}
+                  pointerEvents={session ? "auto" : "none"}
+                  placeholder={
+                    replyTo ? `Reply to @${replyTo.author.username}...` : "Add a comment..."
+                  }
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  className="text-white text-sm font-medium font-[Inter_400Regular]"
+                  onSubmitEditing={handleSend}
+                  returnKeyType="send"
+                />
+              </Glass>
+            </Pressable>
             <Pressable
               onPress={handleSend}
               className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-[#bef445]" : "bg-white/5"}`}>

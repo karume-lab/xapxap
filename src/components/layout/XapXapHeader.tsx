@@ -38,7 +38,9 @@ export function XapXapHeader() {
         </Pressable>
 
         {/* Notification Bell */}
-        <Pressable className="w-10 h-10 rounded-full bg-black/40 items-center justify-center border border-white/20">
+        <Pressable
+          onPress={() => router.push("/notifications")}
+          className="w-10 h-10 rounded-full bg-black/40 items-center justify-center border border-white/20 active:scale-95">
           <Icon as={BellIcon} size={18} className="text-white" />
         </Pressable>
 

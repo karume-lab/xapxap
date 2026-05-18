@@ -119,10 +119,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 
             <View className="items-center">
               <Pressable
-                onPress={() => {
-                  console.log("Opening comments sheet...");
-                  onShowComments();
-                }}
+                onPress={onShowComments}
                 className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
                 <Icon as={MessageCircleIcon} className="text-white" size={26} />
               </Pressable>

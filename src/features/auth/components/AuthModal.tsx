@@ -1,35 +1,52 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { LockIcon, MailIcon, XIcon } from "lucide-react-native";
+import { LockIcon, MailIcon, UserIcon, XIcon } from "lucide-react-native";
 import { useState } from "react";
-import { Modal, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Modal, Pressable, View } from "react-native";
+import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
 
 export function AuthModal() {
-  const { isAuthModalVisible, hideAuthModal, signIn } = useAuth();
+  const { isAuthModalVisible, hideAuthModal, signIn, signUp } = useAuth();
   const colors = useColors();
 
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async () => {
+    if (isSignUp && !username) return setError("Please enter a username");
     if (!email || !password) return setError("Please enter email and password");
+
     setBusy(true);
     setError(null);
     try {
-      await signIn(email.trim(), password);
+      if (isSignUp) {
+        await signUp(email.trim(), password, username.trim());
+      } else {
+        await signIn(email.trim(), password);
+      }
       hideAuthModal();
+      setUsername("");
       setEmail("");
       setPassword("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not sign in");
+      setError(e instanceof Error ? e.message : "Authentication failed");
     } finally {
       setBusy(false);
     }
+  };
+
+  const toggleAuthMode = () => {
+    setIsSignUp(!isSignUp);
+    setError(null);
   };
 
   if (!isAuthModalVisible) return null;
@@ -40,102 +57,121 @@ export function AuthModal() {
       transparent
       animationType="fade"
       onRequestClose={hideAuthModal}>
-      <TouchableWithoutFeedback onPress={hideAuthModal}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
-            <View
-              style={[
-                styles.card,
-                { backgroundColor: colors.background, borderColor: colors.border },
-              ]}>
-              <LinearGradient
-                colors={["#1A0A2E", "transparent"]}
-                className="absolute top-0 left-0 right-0 h-[100px] opacity-30 rounded-t-3xl"
-              />
+      {/* Semi-transparent Overlay */}
+      <Pressable
+        onPress={hideAuthModal}
+        className="flex-1 bg-black/75 items-center justify-center p-6">
+        {/* Prevent clicks from propagating to the overlay */}
+        <Pressable className="w-full max-w-[400px]">
+          <Glass
+            intensity={90}
+            className="w-full p-6 border border-zinc-800 rounded-3xl relative overflow-hidden">
+            {/* Top Premium Color Accent Glow */}
+            <LinearGradient
+              colors={["#bef445", "transparent"]}
+              start={{ x: 0.5, y: 0 }}
+              end={{ x: 0.5, y: 1 }}
+              className="absolute top-0 left-0 right-0 h-[60px] opacity-10"
+            />
 
-              <View className="flex-row justify-between items-center mb-6">
-                <View>
-                  <Text className="text-foreground font-bold text-2xl font-[Inter_700Bold]">
-                    Xap<Text className="text-primary">Xap</Text>
+            {/* Modal Header */}
+            <View className="flex-row justify-between items-center mb-6">
+              <View>
+                <View className="flex-row">
+                  <Text className="text-white text-2xl font-bold font-[Inter_700Bold]">Xap</Text>
+                  <Text className="text-[#bef445] text-2xl font-bold font-[Inter_700Bold]">
+                    Xap
                   </Text>
-                  <Text className="text-muted-foreground mt-1 text-sm font-[Inter_400Regular]">
-                    Sign in to continue
-                  </Text>
                 </View>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onPress={hideAuthModal}
-                  className="h-8 w-8 rounded-full">
-                  <XIcon size={20} color={colors.foreground} />
-                </Button>
+                <Text className="text-muted-foreground mt-1 text-sm font-[Inter_400Regular]">
+                  {isSignUp ? "Create an account to continue" : "Sign in to continue"}
+                </Text>
               </View>
-
-              <View className="gap-4">
-                <View className="gap-1">
-                  <Input
-                    value={email}
-                    onChangeText={(t) => {
-                      setEmail(t);
-                      setError(null);
-                    }}
-                    placeholder="Email"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                    icon={<MailIcon size={18} color={colors.mutedForeground} />}
-                  />
-                </View>
-
-                <View className="gap-1">
-                  <Input
-                    value={password}
-                    onChangeText={(t) => {
-                      setPassword(t);
-                      setError(null);
-                    }}
-                    placeholder="Password"
-                    secureTextEntry
-                    icon={<LockIcon size={18} color={colors.mutedForeground} />}
-                  />
-                </View>
-
-                {error && <Text className="text-destructive text-xs ml-2">{error}</Text>}
-
-                <Button
-                  onPress={onSubmit}
-                  size="lg"
-                  className="mt-2 h-14 rounded-[26px]"
-                  isLoading={busy}>
-                  <Text className="font-bold text-lg text-primary-foreground">Enter the wave</Text>
-                </Button>
-              </View>
+              <Pressable
+                onPress={hideAuthModal}
+                className="w-8 h-8 rounded-full bg-white/5 items-center justify-center border border-white/10 active:scale-90">
+                <Icon as={XIcon} size={16} className="text-white" />
+              </Pressable>
             </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
+
+            {/* Form Fields */}
+            <View className="gap-4">
+              {isSignUp && (
+                <View className="gap-1">
+                  <Input
+                    value={username}
+                    onChangeText={(t) => {
+                      setUsername(t);
+                      setError(null);
+                    }}
+                    placeholder="Username"
+                    autoCapitalize="none"
+                    icon={<UserIcon size={18} color={colors.mutedForeground} />}
+                  />
+                </View>
+              )}
+
+              <View className="gap-1">
+                <Input
+                  value={email}
+                  onChangeText={(t) => {
+                    setEmail(t);
+                    setError(null);
+                  }}
+                  placeholder="Email"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  icon={<MailIcon size={18} color={colors.mutedForeground} />}
+                />
+              </View>
+
+              <View className="gap-1">
+                <Input
+                  value={password}
+                  onChangeText={(t) => {
+                    setPassword(t);
+                    setError(null);
+                  }}
+                  placeholder="Password"
+                  secureTextEntry
+                  icon={<LockIcon size={18} color={colors.mutedForeground} />}
+                />
+              </View>
+
+              {error && (
+                <Text className="text-rose-500 text-xs font-semibold ml-2 font-[Inter_500Medium]">
+                  {error}
+                </Text>
+              )}
+
+              <Button
+                onPress={onSubmit}
+                size="lg"
+                className="mt-2 h-14 rounded-[26px] bg-[#bef445]"
+                isLoading={busy}>
+                <Text className="font-bold text-lg text-black font-[Inter_700Bold]">
+                  {isSignUp ? "Create Account" : "Enter the Wave"}
+                </Text>
+              </Button>
+
+              {/* Mode Toggle Footer */}
+              <Pressable onPress={toggleAuthMode} className="items-center mt-3 active:opacity-70">
+                <Text className="text-sm font-semibold font-[Inter_600SemiBold]">
+                  {isSignUp ? (
+                    <Text className="text-white/60">
+                      Already have an account? <Text className="text-[#bef445]">Sign In</Text>
+                    </Text>
+                  ) : (
+                    <Text className="text-white/60">
+                      Don't have an account? <Text className="text-[#bef445]">Create one</Text>
+                    </Text>
+                  )}
+                </Text>
+              </Pressable>
+            </View>
+          </Glass>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  card: {
-    width: "100%",
-    maxWidth: 400,
-    borderRadius: 24,
-    padding: 24,
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
-    overflow: "hidden",
-  },
-});
