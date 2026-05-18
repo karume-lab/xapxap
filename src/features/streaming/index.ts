@@ -1,1 +1,1 @@
-export * from "./screens/StreamingHubScreen";
+export * from "@/features/streaming/screens/StreamingHubScreen";

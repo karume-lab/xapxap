@@ -1,1 +1,1 @@
-export * from "./screens/FameFeedScreen";
+export * from "@/features/fame/screens/FameFeedScreen";

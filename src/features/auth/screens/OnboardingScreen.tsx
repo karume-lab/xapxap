@@ -15,11 +15,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
+import { Slide1Visual } from "@/features/auth/components/Slide1Visual";
+import { Slide2Visual } from "@/features/auth/components/Slide2Visual";
+import { Slide3Visual } from "@/features/auth/components/Slide3Visual";
+import { TagSelectionSlide } from "@/features/auth/components/TagSelectionSlide";
 import { useColors } from "@/hooks/use-colors";
-import { Slide1Visual } from "../components/Slide1Visual";
-import { Slide2Visual } from "../components/Slide2Visual";
-import { Slide3Visual } from "../components/Slide3Visual";
-import { TagSelectionSlide } from "../components/TagSelectionSlide";
 
 const SLIDES = [
   {

@@ -1,1 +1,1 @@
-export * from "./screens/WalletScreen";
+export * from "@/features/gems/screens/WalletScreen";

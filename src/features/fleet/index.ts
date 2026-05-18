@@ -1,1 +1,1 @@
-export * from "./screens/FleetDeckScreen";
+export * from "@/features/fleet/screens/FleetDeckScreen";
