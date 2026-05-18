@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { AlertCircleIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
 import { useMemo, useRef, useState } from "react";
-import { Alert, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { Alert, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 const MIN_AGE = 18;
 
@@ -77,7 +78,7 @@ export function AgeVerifyScreen() {
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <LinearGradient
-        colors={["#2A0A2A", "transparent"]}
+        colors={[colors.muted, "transparent"]}
         className="absolute top-0 left-0 right-0 h-[360px] opacity-70"
       />
       <KeyboardAwareScrollView
@@ -90,16 +91,18 @@ export function AgeVerifyScreen() {
         bottomOffset={20}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
-        <Pressable
+        <Button
+          variant="ghost"
           style={{
             position: "absolute",
             top: insets.top + 10,
             right: 20,
             zIndex: 10,
           }}
-          onPress={() => signOut()}>
+          onPress={() => signOut()}
+          className="p-0 min-w-0 min-h-0 bg-transparent active:bg-transparent">
           <Icon as={LogOutIcon} className="text-muted-foreground" size={20} />
-        </Pressable>
+        </Button>
 
         <View className="w-full max-w-[460px] self-center gap-6">
           <View>
@@ -205,13 +208,13 @@ export function AgeVerifyScreen() {
 
           {age !== null ? (
             <View
-              className="flex-row items-center gap-3 p-4 border border-border rounded-2xl"
-              style={{
-                backgroundColor: tooYoung ? "rgba(255,95,168,0.10)" : "rgba(108,231,255,0.08)",
-              }}>
+              className={cn(
+                "flex-row items-center gap-3 p-4 border border-border rounded-2xl",
+                tooYoung ? "bg-magenta/10" : "bg-cyan/10"
+              )}>
               <Icon
                 as={tooYoung ? AlertCircleIcon : CheckCircleIcon}
-                className={tooYoung ? "text-magenta" : "text-accent"}
+                className={tooYoung ? "text-magenta" : "text-cyan"}
                 size={18}
               />
               <Text className="flex-1 text-foreground font-normal text-sm leading-5 font-[Inter_400Regular]">

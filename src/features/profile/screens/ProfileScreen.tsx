@@ -11,7 +11,7 @@ import {
   ZapIcon,
 } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, Switch, TextInput, View } from "react-native";
+import { Alert, ScrollView, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useDataSaver } from "@/contexts/data-saver-context";
 import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 const CURRENCIES = [
   { code: "USD", flag: "🇺🇸" },
@@ -48,7 +49,7 @@ export function ProfileScreen() {
         <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
           <Icon as={AnchorIcon} size={36} className="text-primary" />
         </View>
-        <Text className="text-white font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
+        <Text className="text-foreground font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
           Your Space
         </Text>
         <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
@@ -58,7 +59,7 @@ export function ProfileScreen() {
         <Button
           onPress={showAuthModal}
           className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
-          <Text className="text-black font-bold text-lg font-[Inter_700Bold]">
+          <Text className="text-primary-foreground font-bold text-lg font-[Inter_700Bold]">
             Sign in to XapXap
           </Text>
         </Button>
@@ -103,19 +104,19 @@ export function ProfileScreen() {
           </Text>
 
           <View className="gap-4">
-            <Glass radius={24} className="p-5 border border-white/5">
+            <Glass radius={24} className="p-5 border border-border">
               <Text className="text-muted-foreground text-[10px] font-bold uppercase mb-2 ml-1">
                 Username
               </Text>
               <TextInput
                 value={username}
                 onChangeText={setUsername}
-                className="text-white text-lg font-bold"
+                className="text-foreground text-lg font-bold"
                 placeholder="Username"
               />
             </Glass>
 
-            <Glass radius={24} className="p-5 border border-white/5 min-h-[120px]">
+            <Glass radius={24} className="p-5 border border-border min-h-[120px]">
               <Text className="text-muted-foreground text-[10px] font-bold uppercase mb-2 ml-1">
                 Bio
               </Text>
@@ -123,9 +124,9 @@ export function ProfileScreen() {
                 value={bio}
                 onChangeText={setBio}
                 multiline
-                className="text-white text-base leading-6"
+                className="text-foreground text-base leading-6"
                 placeholder="Tell people what you're about..."
-                placeholderTextColor="rgba(255,255,255,0.3)"
+                placeholderTextColor={colors.mutedForeground}
               />
             </Glass>
 
@@ -134,8 +135,8 @@ export function ProfileScreen() {
               isLoading={isSaving}
               className="h-16 rounded-[28px] bg-primary">
               <View className="flex-row items-center gap-2">
-                <Icon as={ShieldCheckIcon} size={18} className="text-black" />
-                <Text className="text-black font-bold text-lg">Save changes</Text>
+                <Icon as={ShieldCheckIcon} size={18} className="text-primary-foreground" />
+                <Text className="text-primary-foreground font-bold text-lg">Save changes</Text>
               </View>
             </Button>
           </View>
@@ -148,12 +149,12 @@ export function ProfileScreen() {
           </Text>
 
           <View className="gap-3">
-            <Glass radius={24} className="p-5 border border-white/5 flex-row items-center">
+            <Glass radius={24} className="p-5 border border-border flex-row items-center">
               <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center mr-4">
                 <Icon as={dataSaver ? WifiOffIcon : WifiIcon} size={24} className="text-primary" />
               </View>
               <View className="flex-1">
-                <Text className="text-white font-bold text-base">Data Saver Mode</Text>
+                <Text className="text-foreground font-bold text-base">Data Saver Mode</Text>
                 <Text className="text-muted-foreground text-xs">
                   Compress images and pause video autoplay.
                 </Text>
@@ -161,18 +162,18 @@ export function ProfileScreen() {
               <Switch
                 value={dataSaver}
                 onValueChange={toggleDataSaver}
-                trackColor={{ true: colors.primary, false: "rgba(255,255,255,0.1)" }}
-                thumbColor="#fff"
+                trackColor={{ true: colors.primary, false: colors.muted }}
+                thumbColor={colors.foreground}
               />
             </Glass>
 
-            <Glass radius={24} className="p-5 border border-white/5">
+            <Glass radius={24} className="p-5 border border-border">
               <View className="flex-row items-center mb-4">
                 <View className="w-12 h-12 rounded-2xl bg-accent/10 items-center justify-center mr-4">
                   <Icon as={GlobeIcon} size={24} className="text-accent" />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-white font-bold text-base">Currency</Text>
+                  <Text className="text-foreground font-bold text-base">Currency</Text>
                   <Text className="text-muted-foreground text-xs">
                     Display gem value in your local currency. 🇰🇪 Kenyan Shilling
                   </Text>
@@ -180,26 +181,37 @@ export function ProfileScreen() {
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                 {CURRENCIES.map((c) => (
-                  <Pressable
+                  <Button
                     key={c.code}
+                    variant="ghost"
                     onPress={() => setCurrency(c.code)}
-                    className={`flex-row items-center px-4 py-2 rounded-full mr-2 border ${currency === c.code ? "bg-primary/20 border-primary" : "bg-white/5 border-white/10"}`}>
-                    <Text className="mr-2">{c.flag}</Text>
-                    <Text
-                      className={`font-bold text-xs ${currency === c.code ? "text-primary" : "text-white"}`}>
-                      {c.code}
-                    </Text>
-                  </Pressable>
+                    className={cn(
+                      "flex-row items-center rounded-full mr-2 border active:bg-transparent bg-transparent p-0 min-w-0 min-h-0 h-auto w-auto",
+                      currency === c.code
+                        ? "bg-primary/20 border-primary"
+                        : "bg-muted border-border"
+                    )}>
+                    <View className="flex-row items-center px-4 py-2">
+                      <Text className="mr-2">{c.flag}</Text>
+                      <Text
+                        className={cn(
+                          "font-bold text-xs",
+                          currency === c.code ? "text-primary" : "text-foreground"
+                        )}>
+                        {c.code}
+                      </Text>
+                    </View>
+                  </Button>
                 ))}
               </ScrollView>
             </Glass>
 
-            <Glass radius={24} className="p-5 border border-white/5 flex-row items-center">
+            <Glass radius={24} className="p-5 border border-border flex-row items-center">
               <View className="w-12 h-12 rounded-2xl bg-accent/10 items-center justify-center mr-4">
                 <Icon as={CalendarIcon} size={24} className="text-accent" />
               </View>
               <View className="flex-1">
-                <Text className="text-white font-bold text-base">Date of birth</Text>
+                <Text className="text-foreground font-bold text-base">Date of birth</Text>
                 <Text className="text-muted-foreground text-xs">
                   {profile?.dateOfBirth
                     ? new Date(profile.dateOfBirth).toLocaleDateString()
@@ -215,13 +227,16 @@ export function ProfileScreen() {
           <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
             Account
           </Text>
-          <Glass radius={24} className="overflow-hidden border border-white/5">
-            <Pressable
+          <Glass radius={24} className="overflow-hidden border border-border">
+            <Button
+              variant="ghost"
               onPress={signOut}
-              className="h-16 flex-row items-center justify-center gap-3 active:bg-white/5">
-              <Icon as={LogOutIcon} size={20} className="text-white" />
-              <Text className="text-white font-bold text-base">Sign out</Text>
-            </Pressable>
+              className="h-16 flex-row items-center justify-center gap-3 p-0 min-w-0 min-h-0 w-full bg-transparent active:bg-transparent">
+              <View className="flex-row items-center justify-center gap-3">
+                <Icon as={LogOutIcon} size={20} className="text-foreground" />
+                <Text className="text-foreground font-bold text-base">Sign out</Text>
+              </View>
+            </Button>
           </Glass>
         </View>
 
@@ -235,16 +250,22 @@ export function ProfileScreen() {
               </Text>
             </View>
             <Glass className="p-4 border border-destructive/20" radius={24}>
-              <Pressable className="flex-row items-center py-3">
-                <View className="w-10 h-10 rounded-xl bg-destructive/10 items-center justify-center mr-4">
-                  <Icon as={AlertTriangleIcon} size={20} className="text-destructive" />
+              <Button
+                variant="ghost"
+                className="flex-row items-center py-3 p-0 min-w-0 min-h-0 h-auto w-full bg-transparent active:bg-transparent">
+                <View className="flex-row items-center w-full">
+                  <View className="w-10 h-10 rounded-xl bg-destructive/10 items-center justify-center mr-4">
+                    <Icon as={AlertTriangleIcon} size={20} className="text-destructive" />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-foreground font-bold text-left">Mod Panel</Text>
+                    <Text className="text-muted-foreground text-xs text-left">
+                      Manage reported waves
+                    </Text>
+                  </View>
+                  <Icon as={ChevronRightIcon} size={20} className="text-muted-foreground" />
                 </View>
-                <View className="flex-1">
-                  <Text className="text-white font-bold">Mod Panel</Text>
-                  <Text className="text-muted-foreground text-xs">Manage reported waves</Text>
-                </View>
-                <Icon as={ChevronRightIcon} size={20} className="text-muted-foreground" />
-              </Pressable>
+              </Button>
             </Glass>
           </View>
         )}

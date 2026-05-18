@@ -34,11 +34,11 @@ export function Glass({
     <View
       className={cn(
         "overflow-hidden",
-        Platform.OS === "ios" ? "bg-transparent" : "bg-[rgba(255,255,255,0.05)]",
+        Platform.OS === "ios" ? "bg-transparent" : "bg-muted",
         bordered ? "border-[0.5px] border-border" : "border-0",
-        glow === "lime" && "shadow-primary shadow-[0_0_20px_0_rgba(190,244,69,0.25)]",
-        glow === "cyan" && "shadow-accent shadow-[0_0_20px_0_rgba(0,255,255,0.25)]",
-        glow === "magenta" && "shadow-[#FF5FA8] shadow-[0_0_20px_0_rgba(255,95,168,0.25)]",
+        glow === "lime" && "shadow-primary/25 shadow-lg",
+        glow === "cyan" && "shadow-accent/25 shadow-lg",
+        glow === "magenta" && "shadow-magenta/25 shadow-lg",
         className
       )}
       style={[{ borderRadius: r }, style]}
@@ -49,9 +49,7 @@ export function Glass({
       {/* Background Overlay */}
       <View
         style={StyleSheet.absoluteFill}
-        className={
-          Platform.OS === "ios" ? "bg-[rgba(255,255,255,0.03)]" : "bg-[rgba(20,20,30,0.55)]"
-        }
+        className={Platform.OS === "ios" ? "bg-muted/50" : "bg-background/55"}
       />
       {children}
     </View>

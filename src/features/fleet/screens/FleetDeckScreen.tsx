@@ -10,6 +10,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useFleetThreads } from "@/features/fleet/api/queries";
 import { PollUI } from "@/features/fleet/components/PollUI";
 import { WaveCard } from "@/features/waves/components/WaveCard";
+import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 
 export function FleetDeckScreen() {
@@ -17,11 +18,12 @@ export function FleetDeckScreen() {
   const { isOnline } = useNetwork();
   const { session, showAuthModal } = useAuth();
   const { data: posts, isLoading, refetch } = useFleetThreads();
+  const colors = useColors();
 
   if (isLoading) {
     return (
       <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator color="#bef445" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -32,16 +34,16 @@ export function FleetDeckScreen() {
         <XapXapHeader />
 
         <View className="px-6 py-2">
-          <Text variant="h2" className="text-[#bef445]">
+          <Text variant="h2" className="text-primary">
             Fleet Hub
           </Text>
           <Text className="text-xs text-muted-foreground">Community Decks • Active</Text>
         </View>
 
         {!isOnline && (
-          <View className="bg-amber-500/10 p-2 flex-row items-center justify-center gap-2">
-            <Icon as={WifiOffIcon} size={14} className="text-amber-500" />
-            <Text className="text-[10px] text-amber-500 font-bold uppercase">
+          <View className="bg-amber/10 p-2 flex-row items-center justify-center gap-2">
+            <Icon as={WifiOffIcon} size={14} className="text-amber" />
+            <Text className="text-[10px] text-amber font-bold uppercase">
               Offline Mode: Syncing via Mesh
             </Text>
           </View>
@@ -56,8 +58,8 @@ export function FleetDeckScreen() {
               {item.pollId && <PollUI pollId={item.pollId} />}
 
               {/* Nested Threading Indicator (Visual only for now) */}
-              <View className="mt-4 pt-4 border-t border-white/5 flex-row items-center gap-2">
-                <View className="w-1 h-4 bg-[#bef445]/40 rounded-full" />
+              <View className="mt-4 pt-4 border-t border-border flex-row items-center gap-2">
+                <View className="w-1 h-4 bg-primary/40 rounded-full" />
                 <Text className="text-[10px] text-muted-foreground font-medium">
                   3 nested replies in this thread
                 </Text>
@@ -80,8 +82,8 @@ export function FleetDeckScreen() {
             onPress={() => {
               if (!session) return showAuthModal();
             }}
-            className="rounded-full h-14 w-14 bg-[#bef445] shadow-lg shadow-[#bef445]/40">
-            <Icon as={ZapIcon} className="text-black" size={24} />
+            className="rounded-full h-14 w-14 bg-primary shadow-lg shadow-primary/40">
+            <Icon as={ZapIcon} className="text-primary-foreground" size={24} />
           </Button>
         </View>
       </View>

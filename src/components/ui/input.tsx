@@ -1,6 +1,7 @@
-import { Pressable, TextInput, type TextInputProps, View } from 'react-native';
+import { TextInput, type TextInputProps, View } from 'react-native';
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
 import { Glass } from '@/components/layout/Glass';
+import { Button } from '@/components/ui/button';
 import { useColors } from '@/hooks/use-colors';
 import React, { useState } from 'react';
 
@@ -27,17 +28,18 @@ export const Input = React.forwardRef<TextInput, InputProps>(
             secureTextEntry={isPassword && !showPassword}
           />
           {isPassword && (
-            <Pressable 
+            <Button 
+              variant="ghost"
               onPress={() => setShowPassword(!showPassword)}
               hitSlop={10}
-              className="p-1"
+              className="p-1 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent"
             >
               {showPassword ? (
                 <EyeOffIcon size={20} color={colors.mutedForeground} />
               ) : (
                 <EyeIcon size={20} color={colors.mutedForeground} />
               )}
-            </Pressable>
+            </Button>
           )}
         </View>
       </Glass>

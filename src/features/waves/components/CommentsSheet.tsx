@@ -7,11 +7,12 @@ import BottomSheet, {
 import { useRouter } from "expo-router";
 import { HeartIcon, MessageCircleIcon, SendIcon, XIcon } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Dimensions, Pressable, View } from "react-native";
+import { ActivityIndicator, Dimensions, View } from "react-native";
 import type { TextInput } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -63,15 +64,21 @@ function CommentItem({
 
   return (
     <View
-      className={`flex-row gap-3 py-3 ${isReply ? "pl-11 mt-1" : "border-b border-white/5 px-6"}`}>
-      <Pressable onPress={handleProfilePress}>
+      className={`flex-row gap-3 py-3 ${isReply ? "pl-11 mt-1" : "border-b border-border px-6"}`}>
+      <Button
+        variant="ghost"
+        onPress={handleProfilePress}
+        className="p-0 h-auto w-auto active:opacity-75 bg-transparent active:bg-transparent min-w-0 min-h-0">
         <Avatar username={comment.author.username} url={comment.author.avatarUrl} size={32} />
-      </Pressable>
+      </Button>
       <View className="flex-1 gap-1">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Pressable onPress={handleProfilePress} className="flex-row items-center gap-2">
-              <Text className="text-white font-bold text-sm">@{comment.author.username}</Text>
+            <Button
+              variant="ghost"
+              onPress={handleProfilePress}
+              className="flex-row items-center gap-2 p-0 h-auto w-auto active:opacity-75 bg-transparent active:bg-transparent min-w-0 min-h-0">
+              <Text className="text-foreground font-bold text-sm">@{comment.author.username}</Text>
               {comment.author.isPremium && (
                 <View className="px-1.5 py-0.5 rounded bg-primary/20">
                   <Text className="text-primary text-[8px] font-bold uppercase font-[Inter_700Bold]">
@@ -79,39 +86,43 @@ function CommentItem({
                   </Text>
                 </View>
               )}
-            </Pressable>
-            <Text className="text-white/40 text-xs font-[Inter_400Regular]">
+            </Button>
+            <Text className="text-muted-foreground text-xs font-[Inter_400Regular]">
               {formatTimeAgo(comment.createdAt ?? new Date())}
             </Text>
           </View>
 
           {/* Like Button */}
-          <Pressable
+          <Button
+            variant="ghost"
             onPress={onLike}
-            className="flex-row items-center gap-1.5 active:scale-90 pr-2">
+            className="flex-row items-center gap-1.5 active:scale-90 pr-2 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
             <Icon
               as={HeartIcon}
               size={14}
-              color={liked ? colors.destructive : "rgba(255,255,255,0.4)"}
+              color={liked ? colors.destructive : colors.mutedForeground}
               fill={liked ? colors.destructive : "transparent"}
             />
             {likesCount > 0 && (
               <Text
-                className={`text-xs font-semibold ${liked ? "text-destructive" : "text-white/40"}`}>
+                className={`text-xs font-semibold ${liked ? "text-destructive" : "text-muted-foreground"}`}>
                 {likesCount}
               </Text>
             )}
-          </Pressable>
+          </Button>
         </View>
 
-        <Text className="text-white/90 text-sm leading-5 font-[Inter_400Regular]">
+        <Text className="text-foreground text-sm leading-5 font-[Inter_400Regular]">
           {comment.content}
         </Text>
 
         {!isReply && (
-          <Pressable onPress={onReply} className="mt-1 active:opacity-75 self-start">
+          <Button
+            variant="ghost"
+            onPress={onReply}
+            className="mt-1 active:opacity-75 self-start p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
             <Text className="text-primary font-bold text-xs font-[Inter_600SemiBold]">Reply</Text>
-          </Pressable>
+          </Button>
         )}
       </View>
     </View>
@@ -190,21 +201,22 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.1)",
+        borderColor: colors.border,
       }}
-      handleIndicatorStyle={{ backgroundColor: "rgba(255,255,255,0.2)", width: 40 }}
+      handleIndicatorStyle={{ backgroundColor: colors.secondary, width: 40 }}
       handleStyle={{ paddingTop: 12, paddingBottom: 4 }}>
       <View className="flex-1">
         {/* Header */}
-        <View className="px-6 py-4 flex-row justify-between items-center border-b border-white/5">
-          <Text className="text-white font-bold text-lg font-[Inter_700Bold]">
+        <View className="px-6 py-4 flex-row justify-between items-center border-b border-border">
+          <Text className="text-foreground font-bold text-lg font-[Inter_700Bold]">
             Comments ({comments.length})
           </Text>
-          <Pressable
+          <Button
+            variant="ghost"
             onPress={() => sheetRef.current?.close()}
-            className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-            <Icon as={XIcon} size={18} className="text-white" />
-          </Pressable>
+            className="w-8 h-8 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
+            <Icon as={XIcon} size={18} className="text-foreground" />
+          </Button>
         </View>
 
         <BottomSheetScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
@@ -214,8 +226,8 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
             </View>
           ) : topLevelComments.length === 0 ? (
             <View className="flex-1 items-center justify-center p-12">
-              <View className="w-20 h-20 rounded-full bg-white/5 items-center justify-center mb-6">
-                <Icon as={MessageCircleIcon} size={40} className="text-white/20" />
+              <View className="w-20 h-20 rounded-full bg-muted items-center justify-center mb-6">
+                <Icon as={MessageCircleIcon} size={40} className="text-muted-foreground" />
               </View>
               <Text className="text-muted-foreground text-center text-sm leading-6 font-[Inter_400Regular]">
                 No comments yet. Be the first to start the conversation.
@@ -261,34 +273,38 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
         <View>
           {/* Reply Indicator */}
           {replyTo && (
-            <View className="bg-white/5 border-t border-white/5 px-6 py-2 flex-row justify-between items-center">
-              <Text className="text-white/60 text-xs font-[Inter_400Regular]">
+            <View className="bg-muted border-t border-border px-6 py-2 flex-row justify-between items-center">
+              <Text className="text-muted-foreground text-xs font-[Inter_400Regular]">
                 Replying to{" "}
                 <Text className="text-primary font-semibold">@{replyTo.author.username}</Text>
               </Text>
-              <Pressable onPress={() => setReplyTo(null)} className="p-1 active:opacity-75">
-                <Icon as={XIcon} size={14} className="text-white/60" />
-              </Pressable>
+              <Button
+                variant="ghost"
+                onPress={() => setReplyTo(null)}
+                className="p-1 active:opacity-75 bg-transparent active:bg-transparent min-w-0 min-h-0 h-auto w-auto">
+                <Icon as={XIcon} size={14} className="text-muted-foreground" />
+              </Button>
             </View>
           )}
 
           <Glass
             radius={0}
             intensity={60}
-            className="border-t border-white/10 px-6 py-4"
+            className="border-t border-border px-6 py-4"
             style={{ paddingBottom: insets.bottom + 10 }}>
             <View className="flex-row items-center gap-3">
               <Avatar username={profile?.username || "me"} url={profile?.avatarUrl} size={36} />
-              <Pressable
+              <Button
+                variant="ghost"
                 onPress={() => {
                   if (!session) {
                     showAuthModal();
                   }
                 }}
-                className="flex-1">
+                className="flex-1 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
                 <Glass
                   radius={20}
-                  className="h-12 justify-center px-4 border border-white/10 bg-white/5">
+                  className="h-12 justify-center px-4 border border-border bg-muted">
                   <BottomSheetTextInput
                     ref={inputRef}
                     value={commentText}
@@ -298,22 +314,25 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
                     placeholder={
                       replyTo ? `Reply to @${replyTo.author.username}...` : "Add a comment..."
                     }
-                    placeholderTextColor="rgba(255,255,255,0.3)"
-                    className="text-white text-sm font-medium font-[Inter_400Regular] flex-1"
+                    placeholderTextColor={colors.mutedForeground}
+                    className="text-foreground text-sm font-medium font-[Inter_400Regular] flex-1"
                     onSubmitEditing={handleSend}
                     returnKeyType="send"
                   />
                 </Glass>
-              </Pressable>
-              <Pressable
+              </Button>
+              <Button
+                variant="ghost"
                 onPress={handleSend}
-                className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-primary" : "bg-white/5"}`}>
+                className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 p-0 min-w-0 min-h-0 ${commentText.trim() ? "bg-primary" : "bg-muted"}`}>
                 <Icon
                   as={SendIcon}
                   size={20}
-                  className={commentText.trim() ? "text-black" : "text-muted-foreground"}
+                  className={
+                    commentText.trim() ? "text-primary-foreground" : "text-muted-foreground"
+                  }
                 />
-              </Pressable>
+              </Button>
             </View>
           </Glass>
         </View>

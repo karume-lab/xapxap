@@ -1,20 +1,13 @@
 import { useRouter } from "expo-router";
 import { SearchIcon, TrendingUpIcon, XIcon } from "lucide-react-native";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Modal,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Modal, ScrollView, TextInput, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -61,20 +54,23 @@ export function SearchScreen() {
       <XapXapHeader />
 
       <View className="px-6 py-2">
-        <View className="bg-white/10 rounded-full flex-row items-center px-5 h-14 border border-white/5">
+        <View className="bg-muted rounded-full flex-row items-center px-5 h-14 border border-border">
           <Icon as={SearchIcon} size={20} className="text-muted-foreground mr-3" />
           <TextInput
             value={query}
             onChangeText={handleSearch}
             placeholder="Search waves, people, #tags..."
-            placeholderTextColor="rgba(255,255,255,0.4)"
-            className="flex-1 h-full text-white font-medium text-base"
+            placeholderTextColor={colors.mutedForeground}
+            className="flex-1 h-full text-foreground font-medium text-base"
             autoCapitalize="none"
           />
           {query.length > 0 && (
-            <Pressable onPress={() => handleSearch("")}>
+            <Button
+              variant="ghost"
+              onPress={() => handleSearch("")}
+              className="p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
               <Icon as={XIcon} size={20} className="text-muted-foreground" />
-            </Pressable>
+            </Button>
           )}
         </View>
       </View>
@@ -91,21 +87,22 @@ export function SearchScreen() {
             </Text>
             <View className="flex-row flex-wrap gap-2.5">
               {popularTags.map((tag) => (
-                <Pressable
+                <Button
                   key={tag.id}
+                  variant="ghost"
                   onPress={() => {
                     setQuery(tag.tag);
                     setIsSearching(true);
                     setTimeout(() => setIsSearching(false), 600);
                   }}
-                  className="bg-white/5 border border-white/10 px-4 py-2.5 rounded-full active:bg-white/10">
-                  <View className="flex-row items-center gap-1.5">
-                    <Text className="text-white text-sm font-semibold">{tag.tag}</Text>
+                  className="bg-muted border border-border rounded-full active:bg-secondary p-0 min-w-0 min-h-0 h-auto w-auto">
+                  <View className="flex-row items-center gap-1.5 px-4 py-2.5">
+                    <Text className="text-foreground text-sm font-semibold">{tag.tag}</Text>
                     <Text className="text-muted-foreground text-[10px] font-medium">
                       • {tag.count} drops
                     </Text>
                   </View>
-                </Pressable>
+                </Button>
               ))}
             </View>
           </View>
@@ -131,11 +128,13 @@ export function SearchScreen() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 20 }}
               renderItem={({ item }) => (
-                <Pressable onPress={() => handlePressWave(item.id)}>
-                  <Glass
-                    radius={24}
-                    className="w-64 h-48 p-5 mr-4 border border-white/5 bg-white/5">
-                    <Pressable
+                <Button
+                  variant="ghost"
+                  onPress={() => handlePressWave(item.id)}
+                  className="p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
+                  <Glass radius={24} className="w-64 h-48 p-5 mr-4 border border-border bg-muted">
+                    <Button
+                      variant="ghost"
                       onPress={(e) => {
                         e.stopPropagation();
                         router.push({
@@ -143,12 +142,12 @@ export function SearchScreen() {
                           params: { id: item.author, username: item.author },
                         });
                       }}
-                      className="flex-row items-center mb-4">
+                      className="flex-row items-center mb-4 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
                       <Avatar username={item.author} size={32} />
-                      <Text className="ml-3 font-bold text-white text-sm">@{item.author}</Text>
-                    </Pressable>
+                      <Text className="ml-3 font-bold text-foreground text-sm">@{item.author}</Text>
+                    </Button>
                     <View className="flex-1">
-                      <Text className="text-white/80 text-sm leading-5" numberOfLines={3}>
+                      <Text className="text-foreground/80 text-sm leading-5" numberOfLines={3}>
                         {item.content}
                       </Text>
                     </View>
@@ -157,7 +156,7 @@ export function SearchScreen() {
                       <Text className="text-primary font-bold text-xs">{item.buzz} buzz</Text>
                     </View>
                   </Glass>
-                </Pressable>
+                </Button>
               )}
             />
           )}

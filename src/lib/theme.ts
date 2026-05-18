@@ -21,6 +21,10 @@ export const THEME = {
     input: "rgba(255, 255, 255, 0.06)",
     ring: "#C4FF3D",
     radius: 20,
+    cyan: "#6CE7FF",
+    magenta: "#FF5FA8",
+    amber: "#FFC23D",
+    success: "#4CE0B3",
   },
   dark: {
     background: "#06060B",
@@ -42,6 +46,10 @@ export const THEME = {
     input: "rgba(255, 255, 255, 0.06)",
     ring: "#C4FF3D",
     radius: 20,
+    cyan: "#6CE7FF",
+    magenta: "#FF5FA8",
+    amber: "#FFC23D",
+    success: "#4CE0B3",
   },
 };
 

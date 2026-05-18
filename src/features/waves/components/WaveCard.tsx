@@ -9,9 +9,10 @@ import {
   ZapIcon,
 } from "lucide-react-native";
 import { useCallback } from "react";
-import { Platform, Pressable, Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { useToggleFleetInteraction } from "@/features/fleet/api/queries";
 import { useColors } from "@/hooks/use-colors";
@@ -67,14 +68,15 @@ export function WaveCard({ post, children }: WaveCardProps) {
     <Glass className="mx-4 mb-4 overflow-hidden">
       <View className="p-4">
         <View className="flex-row items-center gap-3">
-          <Pressable
+          <Button
+            variant="ghost"
             onPress={() =>
               router.push({
                 pathname: "/profile/[id]",
                 params: { id: post.author.id, username: post.author.username },
               })
             }
-            className="flex-row items-center gap-3 flex-1">
+            className="flex-row items-center gap-3 flex-1 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
             <Avatar
               url={post.author.avatarUrl}
               username={post.author.username}
@@ -94,19 +96,20 @@ export function WaveCard({ post, children }: WaveCardProps) {
                 {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now"}
               </Text>
             </View>
-          </Pressable>
+          </Button>
           {!isOwn && (
-            <Pressable
+            <Button
+              variant="ghost"
               onPress={() => {
                 if (!session) return showAuthModal();
                 // Gift logic would go here
               }}
-              className="bg-primary/10 border border-primary/30 flex-row items-center gap-1 py-1.5 px-3 rounded-full">
+              className="bg-primary/10 border border-primary/30 flex-row items-center gap-1 py-1.5 px-3 rounded-full h-auto min-h-0 min-w-0">
               <ZapIcon size={12} color={colors.primary} />
               <Text className="text-primary font-semibold text-xs font-[Inter_600SemiBold]">
                 Gift
               </Text>
-            </Pressable>
+            </Button>
           )}
         </View>
 
@@ -168,15 +171,16 @@ function InteractionButton({ icon: Icon, count, active, color, onPress }: Intera
     color === "lime"
       ? colors.primary
       : color === "cyan"
-        ? colors.accent
+        ? colors.cyan
         : color === "magenta"
-          ? "#FF5FA8"
-          : "#FFC23D";
+          ? colors.magenta
+          : colors.amber;
 
   return (
-    <Pressable
+    <Button
+      variant="ghost"
       onPress={onPress}
-      className="flex-row items-center gap-1.5 py-1.5 px-2 rounded-full"
+      className="flex-row items-center gap-1.5 py-1.5 px-2 rounded-full h-auto min-h-0 min-w-0 bg-transparent active:bg-transparent"
       style={{ backgroundColor: active ? `${tint}22` : "transparent" }}>
       <Icon
         size={18}
@@ -188,6 +192,6 @@ function InteractionButton({ icon: Icon, count, active, color, onPress }: Intera
         style={{ color: active ? tint : colors.mutedForeground, fontFamily: "Inter_500Medium" }}>
         {count || ""}
       </Text>
-    </Pressable>
+    </Button>
   );
 }

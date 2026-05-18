@@ -18,7 +18,7 @@ export function Avatar({ url, username, size = 40, ring = false }: AvatarProps) 
     height: size,
     borderRadius: size / 2,
     overflow: 'hidden' as const,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: colors.muted,
     alignItems: 'center' as const,
     justifyContent: 'center' as const,
     borderWidth: ring ? 1.5 : StyleSheet.hairlineWidth,

@@ -60,7 +60,7 @@ export function SignInScreen() {
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <LinearGradient
-        colors={["#1A0A2E", "transparent"]}
+        colors={[colors.muted, "transparent"]}
         className="absolute top-0 left-0 right-0 h-[360px] opacity-70"
       />
       <KeyboardAwareScrollView

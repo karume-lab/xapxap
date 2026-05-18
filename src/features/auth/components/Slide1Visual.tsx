@@ -35,22 +35,22 @@ export function Slide1Visual() {
   }));
 
   return (
-    <Glass className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800">
+    <Glass className="h-64 w-full items-center justify-center relative overflow-hidden border border-border">
       {/* Decorative Rotating Radar */}
       <Animated.View
         style={rotatingStyle}
-        className="w-[180px] h-[180px] rounded-full border border-dashed border-[rgba(196,255,61,0.2)] absolute"
+        className="w-[180px] h-[180px] rounded-full border border-dashed border-primary/20 absolute"
       />
-      <View className="w-32 h-32 rounded-full border border-zinc-800 items-center justify-center bg-zinc-900/80 backdrop-blur-md relative z-10">
+      <View className="w-32 h-32 rounded-full border border-border items-center justify-center bg-muted/80 backdrop-blur-md relative z-10">
         <Animated.View
           style={animatedStyle}
           className="p-5 rounded-full border bg-primary/10 border-primary/30">
           <FlameIcon size={44} color={colors.primary} />
         </Animated.View>
       </View>
-      <View className="absolute bottom-4 flex-row items-center gap-1.5 px-3 py-1 bg-zinc-900/60 rounded-full border border-zinc-800">
-        <View className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-        <Text className="text-xs text-zinc-400 font-mono">0:59 / 60s LIMIT</Text>
+      <View className="absolute bottom-4 flex-row items-center gap-1.5 px-3 py-1 bg-muted/60 rounded-full border border-border">
+        <View className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+        <Text className="text-xs text-muted-foreground font-mono">0:59 / 60s LIMIT</Text>
       </View>
     </Glass>
   );

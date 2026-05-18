@@ -6,23 +6,24 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/use-colors";
 
 function TabBarBackground() {
+  const colors = useColors();
   return (
     <View style={StyleSheet.absoluteFill}>
       <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
-      <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(10,10,15,0.95)" }]} />
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.background }]} />
     </View>
   );
 }
 
 export default function TabLayout() {
-  const _colors = useColors();
+  const colors = useColors();
   const insets = useSafeAreaInsets();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#bef445",
-        tabBarInactiveTintColor: "rgba(255,255,255,0.4)",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.mutedForeground,
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -61,7 +62,7 @@ export default function TabLayout() {
                 width: 68,
                 height: 68,
                 borderRadius: 34,
-                backgroundColor: "#bef445", // Back to primary lime
+                backgroundColor: colors.primary, // Back to primary lime
                 alignItems: "center",
                 justifyContent: "center",
                 shadowOffset: { width: 0, height: 8 },
@@ -69,9 +70,9 @@ export default function TabLayout() {
                 shadowRadius: 12,
                 elevation: 10,
                 borderWidth: 6,
-                borderColor: "#0A0A0F",
+                borderColor: colors.background,
               }}>
-              <PlusIcon size={32} color="black" strokeWidth={3} />
+              <PlusIcon size={32} color={colors.primaryForeground} strokeWidth={3} />
             </View>
           ),
         }}

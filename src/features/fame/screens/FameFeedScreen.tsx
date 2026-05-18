@@ -8,7 +8,6 @@ import {
   Dimensions,
   FlatList,
   Modal,
-  Pressable,
   Share,
   StyleSheet,
   View,
@@ -20,6 +19,7 @@ import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -29,13 +29,16 @@ import {
   useToggleFameInteraction,
 } from "@/features/fame/api/queries";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
+import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
+import { cn } from "@/lib/utils";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const colors = useColors();
   const [timeLeft, setTimeLeft] = useState(60);
   const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction();
@@ -54,7 +57,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
   }, [item.fame_heuristics?.burstEndedAt]);
 
   return (
-    <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-black">
+    <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-background">
       {/* Background Media */}
       <Image
         source={{ uri: item.mediaUrl || undefined }}
@@ -64,7 +67,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 
       {/* Dark Overlay for legibility */}
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.85)"]}
+        colors={["transparent", colors.background]}
         style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 350 }}
       />
 
@@ -74,12 +77,12 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         style={{ paddingTop: insets.top + 85, paddingBottom: insets.bottom + 110 }}>
         {/* Top: Fame Time Remaining */}
         <View className="flex-row justify-center">
-          <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-[#bef445]/30 bg-black/70">
-            <View className="w-2.5 h-2.5 rounded-full bg-[#bef445] shadow-lg shadow-[#bef445]/50" />
+          <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-primary/30 bg-background/70">
+            <View className="w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
             <Text
-              className="font-bold text-[#bef445] text-sm uppercase tracking-widest"
+              className="font-bold text-primary text-sm uppercase tracking-widest"
               style={{
-                textShadowColor: "rgba(0,0,0,0.8)",
+                textShadowColor: colors.background,
                 textShadowOffset: { width: 0, height: 1 },
                 textShadowRadius: 3,
               }}>
@@ -91,23 +94,31 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         {/* Bottom: Post Info & Engagement */}
         <View className="flex-row items-end justify-between gap-6">
           <View className="flex-1">
-            <Pressable
+            <Button
+              variant="ghost"
               onPress={() =>
                 router.push({
                   pathname: "/profile/[id]",
                   params: { id: item.author.id, username: item.author.username },
                 })
               }
-              className="flex-row items-center gap-3 mb-3">
-              <Avatar url={item.author.avatarUrl} username={item.author.username} size={48} ring />
-              <View>
-                <Text className="font-bold text-white text-lg">@{item.author.username}</Text>
-                <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
-                  Rising Star
-                </Text>
+              className="justify-start items-center flex-row gap-3 mb-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+              <View className="flex-row items-center gap-3">
+                <Avatar
+                  url={item.author.avatarUrl}
+                  username={item.author.username}
+                  size={48}
+                  ring
+                />
+                <View>
+                  <Text className="font-bold text-foreground text-lg">@{item.author.username}</Text>
+                  <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                    Rising Star
+                  </Text>
+                </View>
               </View>
-            </Pressable>
-            <Text className="text-white/95 text-base leading-6 font-medium" numberOfLines={3}>
+            </Button>
+            <Text className="text-foreground/95 text-base leading-6 font-medium" numberOfLines={3}>
               {item.content}
             </Text>
           </View>
@@ -115,39 +126,42 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
           {/* Engagement Buttons */}
           <View className="gap-5 items-center">
             <View className="items-center">
-              <Pressable
+              <Button
+                variant="ghost"
                 onPress={() => {
                   if (!session) return showAuthModal();
                   toggleInteraction({ postId: item.id, type: "hug" });
                 }}
-                className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20"
-                style={
-                  item.myInteractions?.hug
-                    ? { backgroundColor: "rgba(255, 95, 168, 0.2)", borderColor: "#FF5FA8" }
-                    : {}
-                }>
+                className={cn(
+                  "w-14 h-14 rounded-full items-center justify-center border backdrop-blur-xl p-0 min-w-0 min-h-0 bg-muted/30 border-border active:bg-muted/50",
+                  item.myInteractions?.hug && "bg-magenta/20 border-magenta"
+                )}>
                 <Icon
                   as={HeartIcon}
-                  color={item.myInteractions?.hug ? "#FF5FA8" : "#FFFFFF"}
-                  fill={item.myInteractions?.hug ? "#FF5FA8" : "transparent"}
+                  color={item.myInteractions?.hug ? colors.magenta : colors.foreground}
+                  fill={item.myInteractions?.hug ? colors.magenta : "transparent"}
                   size={26}
                 />
-              </Pressable>
-              <Text className="text-white text-xs mt-1.5 font-bold">{item.counts?.hugs ?? 0}</Text>
+              </Button>
+              <Text className="text-foreground text-xs mt-1.5 font-bold">
+                {item.counts?.hugs ?? 0}
+              </Text>
             </View>
 
             <View className="items-center">
-              <Pressable
+              <Button
+                variant="ghost"
                 onPress={onShowComments}
-                className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
-                <Icon as={MessageCircleIcon} className="text-white" size={26} />
-              </Pressable>
-              <Text className="text-white text-xs mt-1.5 font-bold">
+                className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
+                <Icon as={MessageCircleIcon} className="text-foreground" size={26} />
+              </Button>
+              <Text className="text-foreground text-xs mt-1.5 font-bold">
                 {item.counts?.echoes ?? 0}
               </Text>
             </View>
 
-            <Pressable
+            <Button
+              variant="ghost"
               onPress={async () => {
                 try {
                   await Share.share({
@@ -157,9 +171,9 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                   console.error("Sharing failed", error);
                 }
               }}
-              className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20">
-              <Icon as={Share2Icon} className="text-white" size={26} />
-            </Pressable>
+              className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
+              <Icon as={Share2Icon} className="text-foreground" size={26} />
+            </Button>
           </View>
         </View>
       </View>
@@ -171,6 +185,7 @@ export function FameFeedScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst();
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
+  const colors = useColors();
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
@@ -193,15 +208,15 @@ export function FameFeedScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <ActivityIndicator color="#bef445" size="large" />
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator color={colors.primary} size="large" />
       </View>
     );
   }
 
   return (
     <ErrorBoundary>
-      <View className="flex-1 bg-black">
+      <View className="flex-1 bg-background">
         <View style={{ position: "absolute", top: insets.top, left: 0, right: 0, zIndex: 50 }}>
           <XapXapHeader />
         </View>
@@ -226,7 +241,7 @@ export function FameFeedScreen() {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View className="py-10">
-                <ActivityIndicator color="#bef445" />
+                <ActivityIndicator color={colors.primary} />
               </View>
             ) : null
           }

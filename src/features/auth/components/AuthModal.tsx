@@ -59,10 +59,10 @@ export function AuthModal() {
       {/* Semi-transparent Overlay */}
       <Pressable
         onPress={hideAuthModal}
-        className="flex-1 bg-black/75 items-center justify-center p-6">
+        className="flex-1 bg-background/75 items-center justify-center p-6">
         {/* Prevent clicks from propagating to the overlay */}
         <Pressable className="w-full max-w-[400px]">
-          <View className="w-full p-6 bg-background border border-zinc-800 rounded-3xl relative overflow-hidden">
+          <View className="w-full p-6 bg-background border border-border rounded-3xl relative overflow-hidden">
             {/* Top Premium Color Accent Glow */}
             <LinearGradient
               colors={[colors.primary, "transparent"]}
@@ -75,18 +75,21 @@ export function AuthModal() {
             <View className="flex-row justify-between items-center mb-6">
               <View>
                 <View className="flex-row">
-                  <Text className="text-white text-2xl font-bold font-[Inter_700Bold]">Xap</Text>
+                  <Text className="text-foreground text-2xl font-bold font-[Inter_700Bold]">
+                    Xap
+                  </Text>
                   <Text className="text-primary text-2xl font-bold font-[Inter_700Bold]">Xap</Text>
                 </View>
                 <Text className="text-muted-foreground mt-1 text-sm font-[Inter_400Regular]">
                   {isSignUp ? "Create an account to continue" : "Sign in to continue"}
                 </Text>
               </View>
-              <Pressable
+              <Button
+                variant="ghost"
                 onPress={hideAuthModal}
-                className="w-8 h-8 rounded-full bg-white/5 items-center justify-center border border-white/10 active:scale-90">
-                <Icon as={XIcon} size={16} className="text-white" />
-              </Pressable>
+                className="w-8 h-8 rounded-full bg-muted items-center justify-center border border-border p-0 min-w-0 min-h-0 active:bg-transparent">
+                <Icon as={XIcon} size={16} className="text-foreground" />
+              </Button>
             </View>
 
             {/* Form Fields */}
@@ -144,25 +147,28 @@ export function AuthModal() {
                 size="lg"
                 className="mt-2 h-14 rounded-[26px] bg-primary"
                 isLoading={busy}>
-                <Text className="font-bold text-lg text-black font-[Inter_700Bold]">
+                <Text className="font-bold text-lg text-primary-foreground font-[Inter_700Bold]">
                   {isSignUp ? "Create Account" : "Enter the Wave"}
                 </Text>
               </Button>
 
               {/* Mode Toggle Footer */}
-              <Pressable onPress={toggleAuthMode} className="items-center mt-3 active:opacity-70">
+              <Button
+                variant="ghost"
+                onPress={toggleAuthMode}
+                className="items-center mt-3 active:opacity-70 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
                 <Text className="text-sm font-semibold font-[Inter_600SemiBold]">
                   {isSignUp ? (
-                    <Text className="text-white/60">
+                    <Text className="text-foreground/60">
                       Already have an account? <Text className="text-primary">Sign in</Text>
                     </Text>
                   ) : (
-                    <Text className="text-white/60">
+                    <Text className="text-foreground/60">
                       Don't have an account? <Text className="text-primary">Create one</Text>
                     </Text>
                   )}
                 </Text>
-              </Pressable>
+              </Button>
             </View>
           </View>
         </Pressable>

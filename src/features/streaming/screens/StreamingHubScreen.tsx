@@ -10,16 +10,7 @@ import {
   XIcon,
 } from "lucide-react-native";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Modal,
-  Pressable,
-  Switch,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Modal, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
@@ -30,6 +21,7 @@ import { Text } from "@/components/ui/text";
 import { type LiveStreamWithAuthor, useLiveStreams } from "@/features/streaming/api/queries";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
+import { cn } from "@/lib/utils";
 
 function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
   const isPremium = item.quality === "aqua_premium";
@@ -53,7 +45,7 @@ function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
   };
 
   return (
-    <Glass intensity={20} className="mb-4 overflow-hidden border border-white/10" radius={24}>
+    <Glass intensity={20} className="mb-4 overflow-hidden border border-border" radius={24}>
       <View className="relative h-[200px] w-full">
         <Image
           source={{ uri: item.playbackUrl || undefined }}
@@ -62,15 +54,14 @@ function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
         />
 
         {/* Status Badge */}
-        <View className="absolute top-3 left-3 bg-red-600 px-2 py-1 rounded-md flex-row items-center gap-1">
-          <View className="w-1.5 h-1.5 rounded-full bg-white" />
-          <Text className="text-[10px] font-bold text-white">LIVE</Text>
+        <View className="absolute top-3 left-3 bg-destructive px-2 py-1 rounded-md flex-row items-center gap-1">
+          <View className="w-1.5 h-1.5 rounded-full bg-destructive-foreground" />
+          <Text className="text-[10px] font-bold text-destructive-foreground">LIVE</Text>
         </View>
 
         {/* Quality Badge */}
-        <View className="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded-md border border-white/20">
-          <Text
-            className={`text-[10px] font-bold ${isPremium ? "text-cyan-400" : "text-[#bef445]"}`}>
+        <View className="absolute top-3 right-3 bg-background/60 px-2 py-1 rounded-md border border-border">
+          <Text className={cn("text-[10px] font-bold", isPremium ? "text-cyan" : "text-primary")}>
             {isPremium ? "AQUA HD" : "DRIFT"}
           </Text>
         </View>
@@ -78,17 +69,19 @@ function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
         {/* Gated Overlay */}
         {!isUnlocked && (
           <Glass intensity={90} className="absolute inset-0 items-center justify-center p-6">
-            <Icon as={ShieldAlertIcon} size={32} className="text-cyan-400 mb-2" />
+            <Icon as={ShieldAlertIcon} size={32} className="text-cyan mb-2" />
             <Text variant="h3" className="text-center mb-1">
               Aqua Premium
             </Text>
             <Text className="text-xs text-muted-foreground text-center mb-4">
               HD Streaming • Gated Access
             </Text>
-            <Button onPress={handleUnlock} className="bg-cyan-500 rounded-full px-6">
+            <Button onPress={handleUnlock} className="bg-cyan rounded-full px-6">
               <View className="flex-row items-center gap-2">
-                <Text className="font-bold">Unlock for {item.entryFeeGems}</Text>
-                <Icon as={DiamondIcon} size={14} className="text-white" />
+                <Text className="font-bold text-primary-foreground">
+                  Unlock for {item.entryFeeGems}
+                </Text>
+                <Icon as={DiamondIcon} size={14} className="text-primary-foreground" />
               </View>
             </Button>
           </Glass>
@@ -96,9 +89,11 @@ function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
 
         {isUnlocked && (
           <View className="absolute inset-0 items-center justify-center">
-            <Pressable className="bg-[#bef445] h-14 w-14 rounded-full items-center justify-center shadow-lg">
-              <Icon as={PlayIcon} className="text-black ml-1" size={28} />
-            </Pressable>
+            <Button
+              variant="ghost"
+              className="bg-primary h-14 w-14 rounded-full items-center justify-center shadow-lg p-0 min-w-0 min-h-0 active:bg-primary/80">
+              <Icon as={PlayIcon} className="text-primary-foreground ml-1" size={28} />
+            </Button>
           </View>
         )}
       </View>
@@ -111,7 +106,7 @@ function StreamCard({ item }: { item: LiveStreamWithAuthor }) {
           ring={isPremium}
         />
         <View className="flex-1">
-          <Text className="font-bold text-white" numberOfLines={1}>
+          <Text className="font-bold text-foreground" numberOfLines={1}>
             {item.title}
           </Text>
           <Text className="text-[10px] text-muted-foreground">
@@ -168,21 +163,22 @@ export function StreamingHubScreen() {
           style={{ paddingTop: insets.top + 10 }}
           className="px-6 pb-4 flex-row items-center justify-between">
           <View>
-            <Text variant="h2" className="text-[#bef445]">
+            <Text variant="h2" className="text-primary">
               Stream Hub
             </Text>
             <Text className="text-xs text-muted-foreground">Drift & Aqua HD Channels</Text>
           </View>
-          <Pressable
+          <Button
+            variant="ghost"
             onPress={() => setCreateVisible(true)}
-            className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center border border-primary/20">
-            <Icon as={VideoIcon} className="text-[#bef445]" size={24} />
-          </Pressable>
+            className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center border border-primary/20 p-0 min-w-0 min-h-0 active:bg-transparent">
+            <Icon as={VideoIcon} className="text-primary" size={24} />
+          </Button>
         </View>
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator color="#bef445" />
+            <ActivityIndicator color={colors.primary} />
           </View>
         ) : (
           <FlatList
@@ -208,25 +204,26 @@ export function StreamingHubScreen() {
           transparent
           animationType="slide"
           onRequestClose={() => setCreateVisible(false)}>
-          <View className="flex-1 justify-end bg-black/60">
+          <View className="flex-1 justify-end bg-background/60">
             <Glass
               intensity={95}
-              className="rounded-t-[40px] p-8 border-t border-white/20"
+              className="rounded-t-[40px] p-8 border-t border-border"
               style={{ paddingBottom: insets.bottom + 40 }}>
               <View className="flex-row justify-between items-center mb-8">
                 <View>
-                  <Text variant="h2" className="text-white">
+                  <Text variant="h2" className="text-foreground">
                     Go Live
                   </Text>
                   <Text className="text-muted-foreground text-sm">
                     Broadcast to the global tide
                   </Text>
                 </View>
-                <Pressable
+                <Button
+                  variant="ghost"
                   onPress={() => setCreateVisible(false)}
-                  className="w-10 h-10 rounded-full bg-white/10 items-center justify-center">
-                  <Icon as={XIcon} className="text-white" size={20} />
-                </Pressable>
+                  className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
+                  <Icon as={XIcon} className="text-foreground" size={20} />
+                </Button>
               </View>
 
               <View className="gap-6">
@@ -238,8 +235,8 @@ export function StreamingHubScreen() {
                     value={streamTitle}
                     onChangeText={setStreamTitle}
                     placeholder="What's happening?"
-                    placeholderTextColor="rgba(255,255,255,0.3)"
-                    className="h-14 bg-white/5 border border-white/10 rounded-2xl px-4 text-white font-medium"
+                    placeholderTextColor={colors.mutedForeground}
+                    className="h-14 bg-muted border border-border rounded-2xl px-4 text-foreground font-medium"
                     maxLength={80}
                   />
                 </View>
@@ -249,36 +246,54 @@ export function StreamingHubScreen() {
                     Select Quality
                   </Text>
                   <View className="flex-row gap-3">
-                    <Pressable
+                    <Button
+                      variant="ghost"
                       onPress={() => setStreamKind("drift")}
-                      className={`flex-1 p-4 rounded-2xl border flex-row items-center gap-2 ${streamKind === "drift" ? "bg-[#bef445]/20 border-[#bef445]" : "bg-white/5 border-white/10"}`}>
-                      <Icon
-                        as={GlobeIcon}
-                        size={16}
-                        className={
-                          streamKind === "drift" ? "text-[#bef445]" : "text-muted-foreground"
-                        }
-                      />
-                      <Text
-                        className={`font-bold ${streamKind === "drift" ? "text-[#bef445]" : "text-muted-foreground"}`}>
-                        Drift (Free)
-                      </Text>
-                    </Pressable>
-                    <Pressable
+                      className={cn(
+                        "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
+                        streamKind === "drift"
+                          ? "bg-primary/20 border-primary"
+                          : "bg-muted border-border"
+                      )}>
+                      <View className="flex-row items-center gap-2 p-4">
+                        <Icon
+                          as={GlobeIcon}
+                          size={16}
+                          className={
+                            streamKind === "drift" ? "text-primary" : "text-muted-foreground"
+                          }
+                        />
+                        <Text
+                          className={cn(
+                            "font-bold",
+                            streamKind === "drift" ? "text-primary" : "text-muted-foreground"
+                          )}>
+                          Drift (Free)
+                        </Text>
+                      </View>
+                    </Button>
+                    <Button
+                      variant="ghost"
                       onPress={() => setStreamKind("aqua")}
-                      className={`flex-1 p-4 rounded-2xl border flex-row items-center gap-2 ${streamKind === "aqua" ? "bg-cyan-500/20 border-cyan-500" : "bg-white/5 border-white/10"}`}>
-                      <Icon
-                        as={LockIcon}
-                        size={16}
-                        className={
-                          streamKind === "aqua" ? "text-cyan-400" : "text-muted-foreground"
-                        }
-                      />
-                      <Text
-                        className={`font-bold ${streamKind === "aqua" ? "text-cyan-400" : "text-muted-foreground"}`}>
-                        Aqua HD
-                      </Text>
-                    </Pressable>
+                      className={cn(
+                        "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
+                        streamKind === "aqua" ? "bg-cyan/20 border-cyan" : "bg-muted border-border"
+                      )}>
+                      <View className="flex-row items-center gap-2 p-4">
+                        <Icon
+                          as={LockIcon}
+                          size={16}
+                          className={streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"}
+                        />
+                        <Text
+                          className={cn(
+                            "font-bold",
+                            streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"
+                          )}>
+                          Aqua HD
+                        </Text>
+                      </View>
+                    </Button>
                   </View>
                 </View>
 
@@ -291,8 +306,8 @@ export function StreamingHubScreen() {
                       value={tokenCost}
                       onChangeText={setTokenCost}
                       placeholder="e.g. 50"
-                      placeholderTextColor="rgba(255,255,255,0.3)"
-                      className="h-14 bg-white/5 border border-white/10 rounded-2xl px-4 text-white font-medium"
+                      placeholderTextColor={colors.mutedForeground}
+                      className="h-14 bg-muted border border-border rounded-2xl px-4 text-foreground font-medium"
                       keyboardType="numeric"
                     />
                   </View>
@@ -301,13 +316,13 @@ export function StreamingHubScreen() {
                 <View className="flex-row items-center justify-between py-2">
                   <View className="flex-row items-center gap-3">
                     <Icon as={UsersIcon} size={18} className="text-muted-foreground" />
-                    <Text className="text-white font-bold">Invite Only</Text>
+                    <Text className="text-foreground font-bold">Invite Only</Text>
                   </View>
                   <Switch
                     value={inviteOnly}
                     onValueChange={setInviteOnly}
-                    trackColor={{ true: colors.primary, false: "rgba(255,255,255,0.1)" }}
-                    thumbColor="#fff"
+                    trackColor={{ true: colors.primary, false: colors.muted }}
+                    thumbColor={colors.foreground}
                   />
                 </View>
 
@@ -315,10 +330,12 @@ export function StreamingHubScreen() {
                   onPress={handleStartStream}
                   isLoading={isStarting}
                   disabled={!streamTitle.trim()}
-                  className="h-16 rounded-2xl bg-red-600 mt-2">
+                  className="h-16 rounded-2xl bg-destructive mt-2">
                   <View className="flex-row items-center gap-2">
-                    <Icon as={VideoIcon} size={20} className="text-white" />
-                    <Text className="text-white font-bold text-lg">Start Broadcast</Text>
+                    <Icon as={VideoIcon} size={20} className="text-destructive-foreground" />
+                    <Text className="text-destructive-foreground font-bold text-lg">
+                      Start Broadcast
+                    </Text>
                   </View>
                 </Button>
               </View>

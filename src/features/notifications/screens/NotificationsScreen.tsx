@@ -7,7 +7,7 @@ import {
   SparklesIcon,
 } from "lucide-react-native";
 import { useState } from "react";
-import { FlatList, Pressable, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -112,7 +112,7 @@ export default function NotificationsScreen() {
     return (
       <View
         className={cn(
-          "flex-row gap-4 p-5 border-b border-white/5 items-start",
+          "flex-row gap-4 p-5 border-b border-border items-start",
           item.unread && "bg-primary/5"
         )}>
         {item.type === "system" ? (
@@ -130,11 +130,11 @@ export default function NotificationsScreen() {
 
         <View className="flex-1 gap-1">
           <View className="flex-row items-center justify-between">
-            <Text className="text-white text-sm font-semibold leading-5 flex-1 pr-2">
+            <Text className="text-foreground text-sm font-semibold leading-5 flex-1 pr-2">
               {item.type !== "system" && (
-                <Text className="font-bold text-white">@{item.user?.username} </Text>
+                <Text className="font-bold text-foreground">@{item.user?.username} </Text>
               )}
-              <Text className="text-white/80 font-normal">{item.content}</Text>
+              <Text className="text-foreground/80 font-normal">{item.content}</Text>
             </Text>
             {item.unread && <View className="w-2 h-2 rounded-full bg-primary" />}
           </View>
@@ -158,7 +158,7 @@ export default function NotificationsScreen() {
                 <Text className="text-destructive text-[10px] font-bold">Love</Text>
               </View>
             )}
-            <Text className="text-white/40 text-xs font-mono">{item.time}</Text>
+            <Text className="text-muted-foreground text-xs font-mono">{item.time}</Text>
           </View>
         </View>
       </View>
@@ -169,14 +169,17 @@ export default function NotificationsScreen() {
     return (
       <View className="flex-1 bg-background" style={{ paddingTop: Math.max(insets.top, 16) }}>
         {/* Header */}
-        <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
+        <View className="flex-row items-center justify-between px-6 py-4 border-b border-border">
           <View className="flex-row items-center gap-3">
-            <Pressable
+            <Button
+              variant="ghost"
               onPress={() => router.back()}
-              className="w-10 h-10 rounded-full bg-white/5 items-center justify-center border border-white/10 active:scale-95">
-              <Icon as={ArrowLeftIcon} size={18} className="text-white" />
-            </Pressable>
-            <Text className="text-white font-bold text-xl font-[Inter_700Bold]">Notifications</Text>
+              className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
+              <Icon as={ArrowLeftIcon} size={18} className="text-foreground" />
+            </Button>
+            <Text className="text-foreground font-bold text-xl font-[Inter_700Bold]">
+              Notifications
+            </Text>
           </View>
         </View>
 
@@ -185,7 +188,7 @@ export default function NotificationsScreen() {
           <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
             <Icon as={BellIcon} size={36} className="text-primary" />
           </View>
-          <Text className="text-white font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
+          <Text className="text-foreground font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
             Your Notifications
           </Text>
           <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
@@ -195,7 +198,7 @@ export default function NotificationsScreen() {
           <Button
             onPress={showAuthModal}
             className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
-            <Text className="text-black font-bold text-lg font-[Inter_700Bold]">
+            <Text className="text-primary-foreground font-bold text-lg font-[Inter_700Bold]">
               Sign in to XapXap
             </Text>
           </Button>
@@ -207,35 +210,41 @@ export default function NotificationsScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: Math.max(insets.top, 16) }}>
       {/* Header */}
-      <View className="flex-row items-center justify-between px-6 py-4 border-b border-white/5">
+      <View className="flex-row items-center justify-between px-6 py-4 border-b border-border">
         <View className="flex-row items-center gap-3">
-          <Pressable
+          <Button
+            variant="ghost"
             onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-white/5 items-center justify-center border border-white/10 active:scale-95">
-            <Icon as={ArrowLeftIcon} size={18} className="text-white" />
-          </Pressable>
-          <Text className="text-white font-bold text-xl font-[Inter_700Bold]">Notifications</Text>
+            className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
+            <Icon as={ArrowLeftIcon} size={18} className="text-foreground" />
+          </Button>
+          <Text className="text-foreground font-bold text-xl font-[Inter_700Bold]">
+            Notifications
+          </Text>
         </View>
       </View>
 
       {/* Filters */}
       <View className="flex-row gap-2 px-6 py-4">
         {(["all", "gems", "comments", "likes"] as FilterType[]).map((tab) => (
-          <Pressable
+          <Button
             key={tab}
+            variant="ghost"
             onPress={() => setFilter(tab)}
             className={cn(
-              "px-4 py-2 rounded-full border active:scale-95",
-              filter === tab ? "bg-primary border-primary" : "bg-white/5 border-white/10"
+              "px-4 py-2 rounded-full border active:scale-95 h-auto min-h-0 min-w-0 p-0 active:bg-transparent bg-transparent",
+              filter === tab ? "bg-primary border-primary" : "bg-muted border-border"
             )}>
-            <Text
-              className={cn(
-                "text-xs font-bold uppercase tracking-wider",
-                filter === tab ? "text-black" : "text-white/60"
-              )}>
-              {tab}
-            </Text>
-          </Pressable>
+            <View className="px-4 py-2">
+              <Text
+                className={cn(
+                  "text-xs font-bold uppercase tracking-wider",
+                  filter === tab ? "text-primary-foreground" : "text-muted-foreground"
+                )}>
+                {tab}
+              </Text>
+            </View>
+          </Button>
         ))}
       </View>
 
@@ -247,8 +256,8 @@ export default function NotificationsScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center p-12 py-32">
-            <View className="w-16 h-16 rounded-full bg-white/5 items-center justify-center mb-4">
-              <Icon as={BellIcon} size={28} className="text-white/20" />
+            <View className="w-16 h-16 rounded-full bg-muted items-center justify-center mb-4">
+              <Icon as={BellIcon} size={28} className="text-muted-foreground" />
             </View>
             <Text className="text-muted-foreground text-center text-sm leading-6">
               No notifications yet in this category.
