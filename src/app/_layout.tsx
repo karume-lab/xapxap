@@ -6,13 +6,14 @@ import {
   Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useUniwind } from "uniwind";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
@@ -35,23 +36,38 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
   const router = useRouter();
   const segments = useSegments();
 
-  useEffect(() => {
-    // Only hide the splash screen when fonts are loaded and the initial auth check has finished
-    if (fontsLoaded && !loading) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, loading]);
+  const [onboardingLoaded, setOnboardingLoaded] = useState(false);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
 
   useEffect(() => {
-    if (loading || !fontsLoaded) return;
+    AsyncStorage.getItem("has_seen_onboarding").then((val) => {
+      setHasSeenOnboarding(val === "true");
+      setOnboardingLoaded(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    // Only hide the splash screen when fonts are loaded and the initial auth check has finished
+    if (fontsLoaded && !loading && onboardingLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, loading, onboardingLoaded]);
+
+  useEffect(() => {
+    if (loading || !fontsLoaded || !onboardingLoaded) return;
 
     const segs = segments as string[];
     const inAuthGroup = segs[0] === "(auth)";
     const inAgeVerify = segs[1] === "age-verify";
+    const inOnboarding = segs[1] === "onboarding";
 
     if (!session) {
-      if (!inAuthGroup) {
-        router.replace("/(auth)/sign-in");
+      if (!inAuthGroup && segs[0] !== "(tabs)") {
+        if (!hasSeenOnboarding) {
+          router.replace("/(auth)/onboarding");
+        } else {
+          router.replace("/(tabs)");
+        }
       }
       return;
     }
@@ -62,13 +78,22 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
       return;
     }
 
-    if (!needsAge && inAuthGroup) {
+    if (!needsAge && inAuthGroup && !inOnboarding) {
       router.replace("/(tabs)");
     }
-  }, [session, profile, loading, fontsLoaded, segments, router]);
+  }, [
+    session,
+    profile,
+    loading,
+    fontsLoaded,
+    onboardingLoaded,
+    hasSeenOnboarding,
+    segments,
+    router,
+  ]);
 
   // Keep the native splash screen showing until fonts are loaded and auth check completes
-  if (!fontsLoaded || loading) {
+  if (!fontsLoaded || loading || !onboardingLoaded) {
     return null;
   }
 
