@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -165,14 +166,14 @@ export function SearchScreen() {
 
       <Modal
         visible={showComments}
-        animationType="slide"
+        animationType="none"
         transparent={true}
         onRequestClose={() => {
           setShowComments(false);
           setSelectedPostId(null);
         }}>
-        <View className="flex-1 justify-end bg-black/40">
-          <View style={{ height: "80%" }}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <View className="flex-1 bg-transparent">
             <CommentsSheet
               postId={selectedPostId ? `fame-${selectedPostId}` : null}
               onClose={() => {
@@ -181,7 +182,7 @@ export function SearchScreen() {
               }}
             />
           </View>
-        </View>
+        </GestureHandlerRootView>
       </Modal>
     </View>
   );

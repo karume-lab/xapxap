@@ -13,6 +13,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
@@ -239,15 +240,17 @@ export function FameFeedScreen() {
             setShowComments(false);
             setSelectedPostId(null);
           }}>
-          <View className="flex-1 bg-transparent">
-            <CommentsSheet
-              postId={selectedPostId}
-              onClose={() => {
-                setShowComments(false);
-                setSelectedPostId(null);
-              }}
-            />
-          </View>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <View className="flex-1 bg-transparent">
+              <CommentsSheet
+                postId={selectedPostId}
+                onClose={() => {
+                  setShowComments(false);
+                  setSelectedPostId(null);
+                }}
+              />
+            </View>
+          </GestureHandlerRootView>
         </Modal>
       </View>
     </ErrorBoundary>

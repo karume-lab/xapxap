@@ -3,12 +3,11 @@ import BottomSheet, {
   type BottomSheetBackdropProps,
   BottomSheetScrollView,
   BottomSheetTextInput,
-  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { HeartIcon, MessageCircleIcon, SendIcon, XIcon } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, View } from "react-native";
+import { ActivityIndicator, Dimensions, Pressable, View } from "react-native";
 import type { TextInput } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -19,6 +18,8 @@ import { useAuth } from "@/contexts/auth-context";
 import { useAddComment, useComments, useToggleCommentLike } from "@/features/waves/api/comments";
 import { useColors } from "@/hooks/use-colors";
 import type { FleetPostWithAuthor } from "@/lib/types";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 interface CommentsSheetProps {
   postId: string | null;
@@ -159,7 +160,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const replies = comments.filter((c) => c.parentId !== postId);
 
   const colors = useColors();
-  const snapPoints = useMemo(() => ["80%"], []);
+  const snapPoints = useMemo(() => [SCREEN_HEIGHT * 0.5, SCREEN_HEIGHT * 0.75, SCREEN_HEIGHT], []);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -178,6 +179,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
     <BottomSheet
       ref={sheetRef}
       snapPoints={snapPoints}
+      index={0}
       enablePanDownToClose
       onClose={onClose}
       backdropComponent={renderBackdrop}
@@ -192,7 +194,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
       }}
       handleIndicatorStyle={{ backgroundColor: "rgba(255,255,255,0.2)", width: 40 }}
       handleStyle={{ paddingTop: 12, paddingBottom: 4 }}>
-      <BottomSheetView className="flex-1">
+      <View className="flex-1">
         {/* Header */}
         <View className="px-6 py-4 flex-row justify-between items-center border-b border-white/5">
           <Text className="text-white font-bold text-lg font-[Inter_700Bold]">
@@ -315,7 +317,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
             </View>
           </Glass>
         </View>
-      </BottomSheetView>
+      </View>
     </BottomSheet>
   );
 }
