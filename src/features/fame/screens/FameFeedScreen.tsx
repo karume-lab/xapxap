@@ -7,14 +7,17 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Modal,
   Pressable,
   Share,
   StyleSheet,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
+import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
@@ -24,6 +27,7 @@ import {
   useFameBurst,
   useToggleFameInteraction,
 } from "@/features/fame/api/queries";
+import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useNetwork } from "@/hooks/use-network";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -162,10 +166,6 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
   );
 }
 
-import { Modal } from "react-native";
-import { XapXapHeader } from "@/components/layout/XapXapHeader";
-import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
-
 export function FameFeedScreen() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst();
   const { isOnline } = useNetwork();
@@ -204,7 +204,6 @@ export function FameFeedScreen() {
         <View style={{ position: "absolute", top: insets.top, left: 0, right: 0, zIndex: 50 }}>
           <XapXapHeader />
         </View>
-
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}
@@ -234,22 +233,20 @@ export function FameFeedScreen() {
 
         <Modal
           visible={showComments}
-          animationType="slide"
+          animationType="none"
           transparent={true}
           onRequestClose={() => {
             setShowComments(false);
             setSelectedPostId(null);
           }}>
-          <View className="flex-1 justify-end bg-black/40">
-            <View style={{ height: "80%" }}>
-              <CommentsSheet
-                postId={selectedPostId}
-                onClose={() => {
-                  setShowComments(false);
-                  setSelectedPostId(null);
-                }}
-              />
-            </View>
+          <View className="flex-1 bg-transparent">
+            <CommentsSheet
+              postId={selectedPostId}
+              onClose={() => {
+                setShowComments(false);
+                setSelectedPostId(null);
+              }}
+            />
           </View>
         </Modal>
       </View>

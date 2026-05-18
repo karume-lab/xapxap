@@ -1,15 +1,15 @@
+import BottomSheet, {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
 import { HeartIcon, MessageCircleIcon, SendIcon, XIcon } from "lucide-react-native";
-import { useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  TextInput,
-  View,
-} from "react-native";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { ActivityIndicator, Pressable, View } from "react-native";
+import type { TextInput } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
@@ -123,6 +123,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState<FleetPostWithAuthor | null>(null);
   const inputRef = useRef<TextInput>(null);
+  const sheetRef = useRef<BottomSheet>(null);
 
   const { data: comments = [], isLoading } = useComments(postId);
   const { mutate: addComment } = useAddComment();
@@ -158,138 +159,163 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const replies = comments.filter((c) => c.parentId !== postId);
 
   const colors = useColors();
+  const snapPoints = useMemo(() => ["80%"], []);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.4}
+        enableTouchThrough={false}
+      />
+    ),
+    []
+  );
 
   return (
-    <View className="flex-1 bg-background rounded-t-[40px] overflow-hidden border-t border-white/10">
-      {/* Drag Handle */}
-      <View className="items-center pt-3 pb-1">
-        <View className="w-10 h-1 rounded-full bg-white/20" />
-      </View>
+    <BottomSheet
+      ref={sheetRef}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+      onClose={onClose}
+      backdropComponent={renderBackdrop}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      backgroundStyle={{
+        backgroundColor: colors.background,
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.1)",
+      }}
+      handleIndicatorStyle={{ backgroundColor: "rgba(255,255,255,0.2)", width: 40 }}
+      handleStyle={{ paddingTop: 12, paddingBottom: 4 }}>
+      <BottomSheetView className="flex-1">
+        {/* Header */}
+        <View className="px-6 py-4 flex-row justify-between items-center border-b border-white/5">
+          <Text className="text-white font-bold text-lg font-[Inter_700Bold]">
+            Comments ({comments.length})
+          </Text>
+          <Pressable
+            onPress={() => sheetRef.current?.close()}
+            className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
+            <Icon as={XIcon} size={18} className="text-white" />
+          </Pressable>
+        </View>
 
-      {/* Header */}
-      <View className="px-6 py-4 flex-row justify-between items-center border-b border-white/5">
-        <Text className="text-white font-bold text-lg font-[Inter_700Bold]">
-          Comments ({comments.length})
-        </Text>
-        <Pressable
-          onPress={onClose}
-          className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-          <Icon as={XIcon} size={18} className="text-white" />
-        </Pressable>
-      </View>
-
-      <ScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
-        {isLoading ? (
-          <View className="flex-1 items-center justify-center py-20">
-            <ActivityIndicator color={colors.primary} size="small" />
-          </View>
-        ) : topLevelComments.length === 0 ? (
-          <View className="flex-1 items-center justify-center p-12">
-            <View className="w-20 h-20 rounded-full bg-white/5 items-center justify-center mb-6">
-              <Icon as={MessageCircleIcon} size={40} className="text-white/20" />
+        <BottomSheetScrollView className="flex-1" contentContainerStyle={{ flexGrow: 1 }}>
+          {isLoading ? (
+            <View className="flex-1 items-center justify-center py-20">
+              <ActivityIndicator color={colors.primary} size="small" />
             </View>
-            <Text className="text-muted-foreground text-center text-sm leading-6 font-[Inter_400Regular]">
-              No comments yet. Be the first to start the conversation.
-            </Text>
-          </View>
-        ) : (
-          <View className="py-2">
-            {topLevelComments.map((topComment) => {
-              const commentReplies = replies.filter((r) => r.parentId === topComment.id);
-              return (
-                <View key={topComment.id}>
-                  {/* Top Level Comment */}
-                  <CommentItem
-                    comment={topComment}
-                    onReply={() => handleReplyPress(topComment)}
-                    onLike={() => {
-                      if (!session) return showAuthModal();
-                      toggleLike({ commentId: topComment.id, postId: postId ?? "" });
-                    }}
-                  />
-
-                  {/* Indented Replies */}
-                  {commentReplies.map((reply) => (
+          ) : topLevelComments.length === 0 ? (
+            <View className="flex-1 items-center justify-center p-12">
+              <View className="w-20 h-20 rounded-full bg-white/5 items-center justify-center mb-6">
+                <Icon as={MessageCircleIcon} size={40} className="text-white/20" />
+              </View>
+              <Text className="text-muted-foreground text-center text-sm leading-6 font-[Inter_400Regular]">
+                No comments yet. Be the first to start the conversation.
+              </Text>
+            </View>
+          ) : (
+            <View className="flex-1">
+              {topLevelComments.map((topComment) => {
+                const commentReplies = replies.filter((r) => r.parentId === topComment.id);
+                return (
+                  <View key={topComment.id}>
+                    {/* Top Level Comment */}
                     <CommentItem
-                      key={reply.id}
-                      comment={reply}
-                      isReply
-                      onReply={() => {}}
+                      comment={topComment}
+                      onReply={() => handleReplyPress(topComment)}
                       onLike={() => {
                         if (!session) return showAuthModal();
-                        toggleLike({ commentId: reply.id, postId: postId ?? "" });
+                        toggleLike({ commentId: topComment.id, postId: postId ?? "" });
                       }}
                     />
-                  ))}
-                </View>
-              );
-            })}
-          </View>
-        )}
-      </ScrollView>
 
-      {/* Bottom Bar */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}>
-        {/* Reply Indicator */}
-        {replyTo && (
-          <View className="bg-white/5 border-t border-white/5 px-6 py-2 flex-row justify-between items-center">
-            <Text className="text-white/60 text-xs font-[Inter_400Regular]">
-              Replying to{" "}
-              <Text className="text-primary font-semibold">@{replyTo.author.username}</Text>
-            </Text>
-            <Pressable onPress={() => setReplyTo(null)} className="p-1 active:opacity-75">
-              <Icon as={XIcon} size={14} className="text-white/60" />
-            </Pressable>
-          </View>
-        )}
+                    {/* Indented Replies */}
+                    {commentReplies.map((reply) => (
+                      <CommentItem
+                        key={reply.id}
+                        comment={reply}
+                        isReply
+                        onReply={() => {}}
+                        onLike={() => {
+                          if (!session) return showAuthModal();
+                          toggleLike({ commentId: reply.id, postId: postId ?? "" });
+                        }}
+                      />
+                    ))}
+                  </View>
+                );
+              })}
+            </View>
+          )}
+        </BottomSheetScrollView>
 
-        <Glass
-          radius={0}
-          intensity={60}
-          className="border-t border-white/10 px-6 py-4"
-          style={{ paddingBottom: insets.bottom + 10 }}>
-          <View className="flex-row items-center gap-3">
-            <Avatar username={profile?.username || "me"} url={profile?.avatarUrl} size={36} />
-            <Pressable
-              onPress={() => {
-                if (!session) {
-                  showAuthModal();
-                }
-              }}
-              className="flex-1">
-              <Glass
-                radius={20}
-                className="h-12 justify-center px-4 border border-white/10 bg-white/5">
-                <TextInput
-                  ref={inputRef}
-                  value={commentText}
-                  onChangeText={setCommentText}
-                  editable={!!session}
-                  pointerEvents={session ? "auto" : "none"}
-                  placeholder={
-                    replyTo ? `Reply to @${replyTo.author.username}...` : "Add a comment..."
+        {/* Bottom Bar */}
+        <View>
+          {/* Reply Indicator */}
+          {replyTo && (
+            <View className="bg-white/5 border-t border-white/5 px-6 py-2 flex-row justify-between items-center">
+              <Text className="text-white/60 text-xs font-[Inter_400Regular]">
+                Replying to{" "}
+                <Text className="text-primary font-semibold">@{replyTo.author.username}</Text>
+              </Text>
+              <Pressable onPress={() => setReplyTo(null)} className="p-1 active:opacity-75">
+                <Icon as={XIcon} size={14} className="text-white/60" />
+              </Pressable>
+            </View>
+          )}
+
+          <Glass
+            radius={0}
+            intensity={60}
+            className="border-t border-white/10 px-6 py-4"
+            style={{ paddingBottom: insets.bottom + 10 }}>
+            <View className="flex-row items-center gap-3">
+              <Avatar username={profile?.username || "me"} url={profile?.avatarUrl} size={36} />
+              <Pressable
+                onPress={() => {
+                  if (!session) {
+                    showAuthModal();
                   }
-                  placeholderTextColor="rgba(255,255,255,0.3)"
-                  className="text-white text-sm font-medium font-[Inter_400Regular]"
-                  onSubmitEditing={handleSend}
-                  returnKeyType="send"
+                }}
+                className="flex-1">
+                <Glass
+                  radius={20}
+                  className="h-12 justify-center px-4 border border-white/10 bg-white/5">
+                  <BottomSheetTextInput
+                    ref={inputRef}
+                    value={commentText}
+                    onChangeText={setCommentText}
+                    editable={!!session}
+                    pointerEvents={session ? "auto" : "none"}
+                    placeholder={
+                      replyTo ? `Reply to @${replyTo.author.username}...` : "Add a comment..."
+                    }
+                    placeholderTextColor="rgba(255,255,255,0.3)"
+                    className="text-white text-sm font-medium font-[Inter_400Regular] flex-1"
+                    onSubmitEditing={handleSend}
+                    returnKeyType="send"
+                  />
+                </Glass>
+              </Pressable>
+              <Pressable
+                onPress={handleSend}
+                className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-primary" : "bg-white/5"}`}>
+                <Icon
+                  as={SendIcon}
+                  size={20}
+                  className={commentText.trim() ? "text-black" : "text-muted-foreground"}
                 />
-              </Glass>
-            </Pressable>
-            <Pressable
-              onPress={handleSend}
-              className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 ${commentText.trim() ? "bg-primary" : "bg-white/5"}`}>
-              <Icon
-                as={SendIcon}
-                size={20}
-                className={commentText.trim() ? "text-black" : "text-muted-foreground"}
-              />
-            </Pressable>
-          </View>
-        </Glass>
-      </KeyboardAvoidingView>
-    </View>
+              </Pressable>
+            </View>
+          </Glass>
+        </View>
+      </BottomSheetView>
+    </BottomSheet>
   );
 }

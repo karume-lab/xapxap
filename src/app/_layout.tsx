@@ -1,3 +1,4 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "@/global.css";
 
 import {
@@ -64,15 +65,17 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
   }
 
   return (
-    <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
-      <StatusBar style={theme === "dark" ? "light" : "dark"} />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-      </Stack>
-      <AuthModal />
-      <PortalHost />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
+        <StatusBar style={theme === "dark" ? "light" : "dark"} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+        <AuthModal />
+        <PortalHost />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
 
