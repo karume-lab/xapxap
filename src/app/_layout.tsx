@@ -32,7 +32,7 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
-  const { session, loading, profile, hasSeenOnboarding } = useAuth();
+  const { loading } = useAuth();
   const { theme } = useUniwind();
   const router = useRouter();
   const segments = useSegments();
@@ -52,26 +52,11 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
 
     const segs = segments as string[];
     const inAuthGroup = segs[0] === "(auth)";
-    const inAgeVerify = segs[1] === "age-verify";
-    const inOnboarding = segs[1] === "onboarding";
 
-    if (!session) {
-      if (!hasSeenOnboarding && !inOnboarding) {
-        router.replace("/(auth)/onboarding");
-      }
-      return;
-    }
-
-    const needsAge = !profile?.dateOfBirth;
-    if (needsAge && !inAgeVerify) {
-      router.replace("/(auth)/age-verify");
-      return;
-    }
-
-    if (!needsAge && inAuthGroup && !inOnboarding) {
+    if (inAuthGroup) {
       router.replace("/(tabs)");
     }
-  }, [session, profile, loading, fontsLoaded, hasSeenOnboarding, segments, router]);
+  }, [loading, fontsLoaded, segments, router]);
 
   // Keep the native splash screen showing until fonts are loaded and auth check completes
   if (!fontsLoaded || loading) {
