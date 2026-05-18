@@ -1,5 +1,4 @@
 import type { Session } from "@supabase/supabase-js";
-import { useRouter, useSegments } from "expo-router";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Profile } from "@/lib/types";
@@ -24,9 +23,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const segments = useSegments();
-
   // Initialize
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,32 +30,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
-
-  // Auth gate
-  useEffect(() => {
-    if (loading) return;
-
-    const segs = segments as string[];
-    const inAuthGroup = segs[0] === "(auth)";
-    const inAgeVerify = segs[1] === "age-verify";
-
-    if (!session) {
-      if (!inAuthGroup) {
-        router.replace("/(auth)/sign-in");
-      }
-      return;
-    }
-
-    const needsAge = !profile?.dateOfBirth;
-    if (needsAge && !inAgeVerify) {
-      router.replace("/(auth)/age-verify");
-      return;
-    }
-
-    if (!needsAge && inAuthGroup) {
-      router.replace("/(tabs)");
-    }
-  }, [session, profile, loading, segments, router]);
 
   const refreshProfile = useCallback(async () => {
     // No-op in mock
