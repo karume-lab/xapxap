@@ -17,6 +17,7 @@ import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import {
   type FameBurstItem,
   useFameBurst,
@@ -29,6 +30,7 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
   const insets = useSafeAreaInsets();
   const [timeLeft, setTimeLeft] = useState(60);
+  const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction();
 
   useEffect(() => {
@@ -100,7 +102,10 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
           <View className="gap-5 items-center">
             <View className="items-center">
               <Pressable
-                onPress={() => toggleInteraction({ postId: item.id, type: "hug" })}
+                onPress={() => {
+                  if (!session) return showAuthModal();
+                  toggleInteraction({ postId: item.id, type: "hug" });
+                }}
                 className="bg-white/10 w-14 h-14 rounded-full items-center justify-center border border-white/10 backdrop-blur-xl active:bg-white/20"
                 style={
                   item.myInteractions?.hug
