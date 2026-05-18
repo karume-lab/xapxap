@@ -14,16 +14,27 @@ import { mockFameBursts, toggleFameInteraction } from "@/features/fame/mock-data
 export const fameBurstOptions = infiniteQueryOptions({
   queryKey: ["fame-burst"],
   queryFn: async ({ pageParam = 0 }) => {
-    // Simulate pagination of in-memory fame items
+    // Simulate pagination of in-memory fame items looping infinitely
     const pageSize = 5;
     const start = pageParam * pageSize;
-    const end = start + pageSize;
+    const totalCount = mockFameBursts.length;
 
-    // If we run out of predefined items, we loop them or return empty
-    let pageItems = mockFameBursts.slice(start, end);
-    if (pageItems.length === 0 && start === 0) {
-      pageItems = [...mockFameBursts];
+    if (totalCount === 0) {
+      return {
+        data: [],
+        nextPage: undefined,
+      };
     }
+
+    const pageItems = Array.from({ length: pageSize }, (_, i) => {
+      const idx = (start + i) % totalCount;
+      const originalItem = mockFameBursts[idx];
+      return {
+        ...originalItem,
+        // Make the ID unique for the page to prevent duplicate key issues in the FlatList
+        id: `${originalItem.id}-p${pageParam}-${i}`,
+      };
+    });
 
     // Ensure every item has appropriate dates so the countdown works correctly
     const data = pageItems.map((item, index) => {
@@ -41,7 +52,7 @@ export const fameBurstOptions = infiniteQueryOptions({
 
     return {
       data,
-      nextPage: pageItems.length === pageSize ? pageParam + 1 : undefined,
+      nextPage: pageParam + 1,
     };
   },
   initialPageParam: 0,
@@ -63,7 +74,8 @@ export function useToggleFameInteraction() {
       postId: string;
       type: "hug" | "echo" | "cast" | "anchor";
     }) => {
-      return toggleFameInteraction(postId, type);
+      const realPostId = postId.split("-p")[0];
+      return toggleFameInteraction(realPostId, type);
     },
     onSuccess: (updatedPost) => {
       if (updatedPost) {
@@ -76,9 +88,13 @@ export function useToggleFameInteraction() {
             ...old,
             pages: old.pages.map((page) => ({
               ...page,
-              data: page.data.map((item: FameBurstItem) =>
-                item.id === updatedPost.id ? { ...item, ...updatedPost } : item
-              ),
+              data: page.data.map((item: FameBurstItem) => {
+                const originalId = item.id.split("-p")[0];
+                if (originalId === updatedPost.id) {
+                  return { ...item, ...updatedPost, id: item.id };
+                }
+                return item;
+              }),
             })),
           };
         });

@@ -194,14 +194,15 @@ export const mockComments: FleetPostWithAuthor[] = [
   },
 ];
 
-export const commentsOptions = (postId: string | null) =>
-  queryOptions({
-    queryKey: ["comments", postId],
+export const commentsOptions = (postId: string | null) => {
+  const realPostId = postId ? postId.split("-p")[0] : null;
+  return queryOptions({
+    queryKey: ["comments", realPostId],
     queryFn: async () => {
-      if (!postId) return [];
+      if (!realPostId) return [];
 
-      // Find top-level comments (where parentId matches the postId)
-      const topLevel = mockComments.filter((c) => c.parentId === postId);
+      // Find top-level comments (where parentId matches the realPostId)
+      const topLevel = mockComments.filter((c) => c.parentId === realPostId);
       const topLevelIds = new Set(topLevel.map((c) => c.id));
 
       // Find replies (where parentId is one of the topLevelIds)
@@ -216,8 +217,9 @@ export const commentsOptions = (postId: string | null) =>
         return timeA - timeB;
       });
     },
-    enabled: !!postId,
+    enabled: !!realPostId,
   });
+};
 
 export function useComments(postId: string | null) {
   return useQuery(commentsOptions(postId));
@@ -237,10 +239,12 @@ export function useAddComment() {
       content: string;
       author: { id: string; username: string; avatarUrl: string | null; isPremium: boolean };
     }) => {
+      const realPostId = postId.split("-p")[0];
+      const realParentId = parentId.split("-p")[0];
       const newComment: FleetPostWithAuthor = {
         id: `c-${Math.random().toString(36).substring(2, 11)}`,
         authorId: author.id,
-        parentId,
+        parentId: realParentId,
         content,
         mediaUrl: null,
         mediaType: null,
@@ -255,7 +259,7 @@ export function useAddComment() {
       mockComments.push(newComment);
 
       // Increment comments (echoes) count of the target fame post
-      const post = mockFameBursts.find((p) => p.id === postId);
+      const post = mockFameBursts.find((p) => p.id === realPostId);
       if (post) {
         post.counts.echoes += 1;
       }
@@ -273,12 +277,13 @@ export function useToggleCommentLike() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ commentId, postId }: { commentId: string; postId: string }) => {
+      const realPostId = postId.split("-p")[0];
       const comment = mockComments.find((c) => c.id === commentId);
       if (!comment) throw new Error("Comment not found");
       const isOn = comment.myInteractions.hug;
       comment.myInteractions.hug = !isOn;
       comment.counts.hugs += isOn ? -1 : 1;
-      return { comment, postId };
+      return { comment, postId: realPostId };
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: commentsOptions(res.postId).queryKey });
