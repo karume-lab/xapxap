@@ -33,13 +33,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
 
-  // Initialize and load session from Secure Store
+  // Initialize and load session from Secure Store and onboarding state
   useEffect(() => {
-    async function loadStoredSession() {
+    async function initializeAuth() {
       try {
-        const stored = await SecureStore.getItemAsync(AUTH_SESSION_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored) as Session;
+        const [storedSession, storedOnboarding] = await Promise.all([
+          SecureStore.getItemAsync(AUTH_SESSION_KEY).catch((err) => {
+            console.warn("SecureStore failed to load auth session:", err);
+            return null;
+          }),
+          AsyncStorage.getItem("has_seen_onboarding").catch((err) => {
+            console.warn("AsyncStorage failed to load onboarding state:", err);
+            return null;
+          }),
+        ]);
+
+        if (storedSession) {
+          const parsed = JSON.parse(storedSession) as Session;
           setSession(parsed);
 
           // Hydrate profile metadata from the saved session user_metadata
@@ -49,17 +59,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             username,
           });
         }
+
+        setHasSeenOnboarding(storedOnboarding === "true");
       } catch (err) {
-        console.warn("SecureStore failed to load auth session:", err);
+        console.error("Auth initialization failed:", err);
       } finally {
         setLoading(false);
       }
     }
-    loadStoredSession();
-
-    AsyncStorage.getItem("has_seen_onboarding").then((val) => {
-      setHasSeenOnboarding(val === "true");
-    });
+    initializeAuth();
   }, []);
 
   const refreshProfile = useCallback(async () => {
