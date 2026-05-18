@@ -1,27 +1,41 @@
+import { useRouter } from "expo-router";
 import { SearchIcon, TrendingUpIcon, XIcon } from "lucide-react-native";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  Pressable,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-
+import { useAuth } from "@/contexts/auth-context";
 import {
   incrementBuzz,
   mockPopularTags,
   mockTrendingWaves,
 } from "@/features/search/mock-data/search";
+import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
 
 export function SearchScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { session, showAuthModal } = useAuth();
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [trendingWaves, setTrendingWaves] = useState(mockTrendingWaves);
   const [popularTags] = useState(mockPopularTags);
+  const [showComments, setShowComments] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -34,8 +48,11 @@ export function SearchScreen() {
   };
 
   const handlePressWave = (id: string) => {
+    if (!session) return showAuthModal();
     incrementBuzz(id);
     setTrendingWaves([...mockTrendingWaves]);
+    setSelectedPostId(id);
+    setShowComments(true);
   };
 
   return (
@@ -117,10 +134,18 @@ export function SearchScreen() {
                   <Glass
                     radius={24}
                     className="w-64 h-48 p-5 mr-4 border border-white/5 bg-white/5">
-                    <View className="flex-row items-center mb-4">
+                    <Pressable
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        router.push({
+                          pathname: "/profile/[id]",
+                          params: { id: item.author, username: item.author },
+                        });
+                      }}
+                      className="flex-row items-center mb-4">
                       <Avatar username={item.author} size={32} />
                       <Text className="ml-3 font-bold text-white text-sm">@{item.author}</Text>
-                    </View>
+                    </Pressable>
                     <View className="flex-1">
                       <Text className="text-white/80 text-sm leading-5" numberOfLines={3}>
                         {item.content}
@@ -137,6 +162,27 @@ export function SearchScreen() {
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showComments}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setShowComments(false);
+          setSelectedPostId(null);
+        }}>
+        <View className="flex-1 justify-end bg-black/40">
+          <View style={{ height: "80%" }}>
+            <CommentsSheet
+              postId={selectedPostId ? `fame-${selectedPostId}` : null}
+              onClose={() => {
+                setShowComments(false);
+                setSelectedPostId(null);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

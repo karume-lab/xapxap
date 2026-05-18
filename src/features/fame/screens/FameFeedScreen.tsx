@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
@@ -29,6 +30,7 @@ const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 
 function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [timeLeft, setTimeLeft] = useState(60);
   const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction();
@@ -84,7 +86,14 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         {/* Bottom: Post Info & Engagement */}
         <View className="flex-row items-end justify-between gap-6">
           <View className="flex-1">
-            <View className="flex-row items-center gap-3 mb-3">
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: "/profile/[id]",
+                  params: { id: item.author.id, username: item.author.username },
+                })
+              }
+              className="flex-row items-center gap-3 mb-3">
               <Avatar url={item.author.avatarUrl} username={item.author.username} size={48} ring />
               <View>
                 <Text className="font-bold text-white text-lg">@{item.author.username}</Text>
@@ -92,7 +101,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                   Rising Star
                 </Text>
               </View>
-            </View>
+            </Pressable>
             <Text className="text-white/95 text-base leading-6 font-medium" numberOfLines={3}>
               {item.content}
             </Text>

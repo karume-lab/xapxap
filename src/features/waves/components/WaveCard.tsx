@@ -1,4 +1,5 @@
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 import {
   BookmarkIcon,
   HeartIcon,
@@ -44,6 +45,7 @@ interface WaveCardProps {
 
 export function WaveCard({ post, children }: WaveCardProps) {
   const colors = useColors();
+  const router = useRouter();
   const { user, session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFleetInteraction();
 
@@ -65,25 +67,34 @@ export function WaveCard({ post, children }: WaveCardProps) {
     <Glass className="mx-4 mb-4 overflow-hidden">
       <View className="p-4">
         <View className="flex-row items-center gap-3">
-          <Avatar
-            url={post.author.avatarUrl}
-            username={post.author.username}
-            size={40}
-            ring={post.author.isPremium}
-          />
-          <View className="flex-1">
-            <View className="flex-row items-center gap-1">
-              <Text className="text-foreground font-semibold text-[15px] font-[Inter_600SemiBold]">
-                @{post.author.username}
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: "/profile/[id]",
+                params: { id: post.author.id, username: post.author.username },
+              })
+            }
+            className="flex-row items-center gap-3 flex-1">
+            <Avatar
+              url={post.author.avatarUrl}
+              username={post.author.username}
+              size={40}
+              ring={post.author.isPremium}
+            />
+            <View className="flex-1">
+              <View className="flex-row items-center gap-1">
+                <Text className="text-foreground font-semibold text-[15px] font-[Inter_600SemiBold]">
+                  @{post.author.username}
+                </Text>
+                {post.author.isPremium && (
+                  <ZapIcon size={12} color={colors.primary} fill={colors.primary} />
+                )}
+              </View>
+              <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
+                {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now"}
               </Text>
-              {post.author.isPremium && (
-                <ZapIcon size={12} color={colors.primary} fill={colors.primary} />
-              )}
             </View>
-            <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
-              {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now"}
-            </Text>
-          </View>
+          </Pressable>
           {!isOwn && (
             <Pressable
               onPress={() => {

@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { HeartIcon, MessageCircleIcon, SendIcon, XIcon } from "lucide-react-native";
 import { useRef, useState } from "react";
 import {
@@ -47,25 +48,37 @@ function CommentItem({
   onLike: () => void;
   isReply?: boolean;
 }) {
+  const router = useRouter();
   const liked = comment.myInteractions?.hug ?? false;
   const likesCount = comment.counts?.hugs ?? 0;
   const colors = useColors();
 
+  const handleProfilePress = () => {
+    router.push({
+      pathname: "/profile/[id]",
+      params: { id: comment.author.id, username: comment.author.username },
+    });
+  };
+
   return (
     <View
       className={`flex-row gap-3 py-3 ${isReply ? "pl-11 mt-1" : "border-b border-white/5 px-6"}`}>
-      <Avatar username={comment.author.username} url={comment.author.avatarUrl} size={32} />
+      <Pressable onPress={handleProfilePress}>
+        <Avatar username={comment.author.username} url={comment.author.avatarUrl} size={32} />
+      </Pressable>
       <View className="flex-1 gap-1">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2">
-            <Text className="text-white font-bold text-sm">@{comment.author.username}</Text>
-            {comment.author.isPremium && (
-              <View className="px-1.5 py-0.5 rounded bg-primary/20">
-                <Text className="text-primary text-[8px] font-bold uppercase font-[Inter_700Bold]">
-                  PRO
-                </Text>
-              </View>
-            )}
+            <Pressable onPress={handleProfilePress} className="flex-row items-center gap-2">
+              <Text className="text-white font-bold text-sm">@{comment.author.username}</Text>
+              {comment.author.isPremium && (
+                <View className="px-1.5 py-0.5 rounded bg-primary/20">
+                  <Text className="text-primary text-[8px] font-bold uppercase font-[Inter_700Bold]">
+                    PRO
+                  </Text>
+                </View>
+              )}
+            </Pressable>
             <Text className="text-white/40 text-xs font-[Inter_400Regular]">
               {formatTimeAgo(comment.createdAt ?? new Date())}
             </Text>
