@@ -1,6 +1,7 @@
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet, View, type ViewProps } from "react-native";
 import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 interface GlassProps extends ViewProps {
   intensity?: number;
@@ -8,6 +9,7 @@ interface GlassProps extends ViewProps {
   radius?: number;
   bordered?: boolean;
   glow?: "lime" | "cyan" | "magenta" | null;
+  className?: string;
 }
 
 /**
@@ -20,6 +22,7 @@ export function Glass({
   radius,
   bordered = true,
   glow = null,
+  className,
   style,
   children,
   ...rest
@@ -27,43 +30,27 @@ export function Glass({
   const colors = useColors();
   const r = radius ?? colors.radius;
 
-  const glowColor =
-    glow === "lime"
-      ? colors.primary
-      : glow === "cyan"
-        ? colors.accent
-        : glow === "magenta"
-          ? "#FF5FA8" // magenta from palette
-          : null;
-
-  const containerStyle = [
-    {
-      borderRadius: r,
-      overflow: "hidden" as const,
-      backgroundColor: Platform.OS === "ios" ? "transparent" : "rgba(255,255,255,0.05)",
-      borderWidth: bordered ? StyleSheet.hairlineWidth : 0,
-      borderColor: colors.border,
-    },
-    glowColor
-      ? {
-          shadowColor: glowColor,
-          shadowOpacity: 0.25,
-          shadowRadius: 20,
-          shadowOffset: { width: 0, height: 0 },
-        }
-      : null,
-    style,
-  ];
-
   return (
-    <View style={containerStyle} {...rest}>
+    <View
+      className={cn(
+        "overflow-hidden",
+        Platform.OS === "ios" ? "bg-transparent" : "bg-[rgba(255,255,255,0.05)]",
+        bordered ? "border-[0.5px] border-border" : "border-0",
+        glow === "lime" && "shadow-primary shadow-[0_0_20px_0_rgba(190,244,69,0.25)]",
+        glow === "cyan" && "shadow-accent shadow-[0_0_20px_0_rgba(0,255,255,0.25)]",
+        glow === "magenta" && "shadow-[#FF5FA8] shadow-[0_0_20px_0_rgba(255,95,168,0.25)]",
+        className
+      )}
+      style={[{ borderRadius: r }, style]}
+      {...rest}>
       {Platform.OS === "ios" ? (
         <BlurView intensity={intensity} tint={tint} style={StyleSheet.absoluteFill} />
       ) : null}
       <View
-        style={{
-          backgroundColor: Platform.OS === "ios" ? "rgba(255,255,255,0.03)" : "rgba(20,20,30,0.55)",
-        }}>
+        className={
+          Platform.OS === "ios" ? "bg-[rgba(255,255,255,0.03)]" : "bg-[rgba(20,20,30,0.55)]"
+        }
+        style={{ flex: 1 }}>
         {children}
       </View>
     </View>

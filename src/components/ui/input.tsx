@@ -1,6 +1,6 @@
 import { Pressable, TextInput, type TextInputProps, View } from 'react-native';
 import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
-import { Glass } from '@/components/ui/glass';
+import { Glass } from '@/components/layout/Glass';
 import { useColors } from '@/hooks/use-colors';
 import React, { useState } from 'react';
 

@@ -10,11 +10,11 @@ import {
   WifiOffIcon,
   ZapIcon,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -32,13 +32,19 @@ const CURRENCIES = [
 export function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const colors = useColors();
-  const { profile, signOut, updateProfile } = useAuth();
+  const { profile, session, signOut, updateProfile, showAuthModal } = useAuth();
   const { dataSaver, toggle: toggleDataSaver } = useDataSaver();
 
   const [username, setUsername] = useState(profile?.username ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [currency, setCurrency] = useState("KES");
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!session) {
+      showAuthModal();
+    }
+  }, [session, showAuthModal]);
 
   const handleSave = async () => {
     setIsSaving(true);

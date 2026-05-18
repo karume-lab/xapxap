@@ -1,5 +1,5 @@
 import { Pressable, View } from "react-native";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Text } from "@/components/ui/text";
 import { usePoll } from "@/features/fleet/api/queries";
 

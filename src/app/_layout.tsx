@@ -6,18 +6,19 @@ import {
   Inter_700Bold,
   useFonts,
 } from "@expo-google-fonts/inter";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useUniwind } from "uniwind";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { DataSaverProvider } from "@/contexts/data-saver-context";
+import { AuthModal } from "@/features/auth/components/AuthModal";
 import { NAV_THEME } from "@/lib/theme";
 
 const queryClient = new QueryClient();
@@ -31,30 +32,23 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
-  const { session, loading, profile } = useAuth();
+  const { session, loading, profile, hasSeenOnboarding } = useAuth();
   const { theme } = useUniwind();
   const router = useRouter();
   const segments = useSegments();
 
-  const [onboardingLoaded, setOnboardingLoaded] = useState(false);
-  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
+  // We no longer need local onboarding state since we read it from AuthContext.
+  // Wait until both fonts are loaded and the AuthContext has initialized.
 
   useEffect(() => {
-    AsyncStorage.getItem("has_seen_onboarding").then((val) => {
-      setHasSeenOnboarding(val === "true");
-      setOnboardingLoaded(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    // Only hide the splash screen when fonts are loaded and the initial auth check has finished
-    if (fontsLoaded && !loading && onboardingLoaded) {
+    // Only hide the splash screen when fonts are loaded and auth check is done
+    if (fontsLoaded && !loading) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, loading, onboardingLoaded]);
+  }, [fontsLoaded, loading]);
 
   useEffect(() => {
-    if (loading || !fontsLoaded || !onboardingLoaded) return;
+    if (loading || !fontsLoaded) return;
 
     const segs = segments as string[];
     const inAuthGroup = segs[0] === "(auth)";
@@ -62,12 +56,8 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
     const inOnboarding = segs[1] === "onboarding";
 
     if (!session) {
-      if (!inAuthGroup && segs[0] !== "(tabs)") {
-        if (!hasSeenOnboarding) {
-          router.replace("/(auth)/onboarding");
-        } else {
-          router.replace("/(tabs)");
-        }
+      if (!hasSeenOnboarding && !inOnboarding) {
+        router.replace("/(auth)/onboarding");
       }
       return;
     }
@@ -81,37 +71,21 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
     if (!needsAge && inAuthGroup && !inOnboarding) {
       router.replace("/(tabs)");
     }
-  }, [
-    session,
-    profile,
-    loading,
-    fontsLoaded,
-    onboardingLoaded,
-    hasSeenOnboarding,
-    segments,
-    router,
-  ]);
+  }, [session, profile, loading, fontsLoaded, hasSeenOnboarding, segments, router]);
 
   // Keep the native splash screen showing until fonts are loaded and auth check completes
-  if (!fontsLoaded || loading || !onboardingLoaded) {
+  if (!fontsLoaded || loading) {
     return null;
   }
-
-  const isAuthenticated = !!session;
-  const needsAge = isAuthenticated && !profile?.dateOfBirth;
 
   return (
     <ThemeProvider value={NAV_THEME[theme ?? "light"]}>
       <StatusBar style={theme === "dark" ? "light" : "dark"} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={!isAuthenticated || needsAge}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
-        <Stack.Protected guard={isAuthenticated && !needsAge}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="profile" />
-        </Stack.Protected>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
+      <AuthModal />
       <PortalHost />
     </ThemeProvider>
   );

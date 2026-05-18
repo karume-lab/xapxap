@@ -2,18 +2,20 @@ import { WifiOffIcon, ZapIcon } from "lucide-react-native";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
+import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Button } from "@/components/ui/button";
-import { XapXapHeader } from "@/components/ui/header";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { WaveCard } from "@/components/ui/wave-card";
+import { useAuth } from "@/contexts/auth-context";
 import { useFleetThreads } from "@/features/fleet/api/queries";
 import { PollUI } from "@/features/fleet/components/PollUI";
+import { WaveCard } from "@/features/waves/components/WaveCard";
 import { useNetwork } from "@/hooks/use-network";
 
 export function FleetDeckScreen() {
   const insets = useSafeAreaInsets();
   const { isOnline } = useNetwork();
+  const { session, showAuthModal } = useAuth();
   const { data: posts, isLoading, refetch } = useFleetThreads();
 
   if (isLoading) {
@@ -75,6 +77,9 @@ export function FleetDeckScreen() {
         <View className="absolute right-6" style={{ bottom: insets.bottom + 120 }}>
           <Button
             size="icon"
+            onPress={() => {
+              if (!session) return showAuthModal();
+            }}
             className="rounded-full h-14 w-14 bg-[#bef445] shadow-lg shadow-[#bef445]/40">
             <Icon as={ZapIcon} className="text-black" size={24} />
           </Button>

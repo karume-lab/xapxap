@@ -8,7 +8,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Text } from "@/components/ui/text";
 import { useColors } from "@/hooks/use-colors";
 
@@ -35,14 +35,10 @@ export function Slide2Visual() {
   }));
 
   return (
-    <Glass
-      glow="cyan"
-      className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800 shadow-2xl">
+    <Glass className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800">
       <Animated.View style={[animatedGemStyle]} className="items-center justify-center relative">
         {/* Floating Diamond Gem */}
-        <View
-          style={{ borderColor: colors.accent }}
-          className="w-24 h-24 bg-zinc-900/95 border rounded-2xl items-center justify-center transform rotate-45 shadow-2xl">
+        <View className="w-24 h-24 bg-zinc-900/95 border border-accent rounded-2xl items-center justify-center transform rotate-45">
           <View className="transform -rotate-45">
             <CoinsIcon size={38} color={colors.accent} />
           </View>

@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
 import { Slide1Visual } from "../components/Slide1Visual";
 import { Slide2Visual } from "../components/Slide2Visual";
@@ -95,6 +96,7 @@ export function OnboardingScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const { completeOnboarding } = useAuth();
 
   // Offload scroll events to the UI thread for 60fps smoothness
   const scrollHandler = useAnimatedScrollHandler({
@@ -126,10 +128,12 @@ export function OnboardingScreen() {
       if (selectedTags.length > 0) {
         await AsyncStorage.setItem("user_interests", JSON.stringify(selectedTags));
       }
+      completeOnboarding();
       // TikTok flow: go straight to feed tabs without forcing authentication first!
       router.replace("/(tabs)");
     } catch (e) {
       console.error("Failed to save onboarding progress", e);
+      completeOnboarding();
       router.replace("/(tabs)");
     }
   };

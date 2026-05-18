@@ -1,12 +1,11 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { FileTextIcon, ImageIcon, SendIcon } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Pressable, ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -17,8 +16,14 @@ export function CreatePostScreen() {
   const router = useRouter();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
-  const { profile } = useAuth();
+  const { profile, session, showAuthModal } = useAuth();
   const { mutateAsync: createPost } = useCreateFleetPost();
+
+  useEffect(() => {
+    if (!session) {
+      showAuthModal();
+    }
+  }, [session, showAuthModal]);
 
   const submit = async () => {
     if (!text.trim()) {

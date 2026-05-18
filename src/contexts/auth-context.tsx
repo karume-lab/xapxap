@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Session } from "@supabase/supabase-js";
 import * as SecureStore from "expo-secure-store";
 import type React from "react";
@@ -16,6 +17,11 @@ interface AuthContextValue {
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
+  isAuthModalVisible: boolean;
+  showAuthModal: () => void;
+  hideAuthModal: () => void;
+  hasSeenOnboarding: boolean;
+  completeOnboarding: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -24,6 +30,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
+  const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
 
   // Initialize and load session from Secure Store
   useEffect(() => {
@@ -48,6 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     loadStoredSession();
+
+    AsyncStorage.getItem("has_seen_onboarding").then((val) => {
+      setHasSeenOnboarding(val === "true");
+    });
   }, []);
 
   const refreshProfile = useCallback(async () => {
@@ -90,6 +102,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user: session?.user ?? null,
       profile,
       loading,
+      isAuthModalVisible,
+      showAuthModal: () => setIsAuthModalVisible(true),
+      hideAuthModal: () => setIsAuthModalVisible(false),
+      hasSeenOnboarding,
+      completeOnboarding: () => setHasSeenOnboarding(true),
       refreshProfile,
       signIn: async (email: string, _password: string) => {
         await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -135,7 +152,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
       updateProfile,
     }),
-    [session, profile, loading, refreshProfile, updateProfile]
+    [
+      session,
+      profile,
+      loading,
+      refreshProfile,
+      updateProfile,
+      isAuthModalVisible,
+      hasSeenOnboarding,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

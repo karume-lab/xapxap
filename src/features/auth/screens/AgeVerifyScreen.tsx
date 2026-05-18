@@ -5,9 +5,8 @@ import { useMemo, useRef, useState } from "react";
 import { Alert, Pressable, Text, TextInput, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";

@@ -1,7 +1,7 @@
 import { Pressable, View } from "react-native";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Text } from "@/components/ui/text";
-import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 export const AVAILABLE_TAGS = [
   { id: "music", label: "🎵 Music" },
@@ -20,12 +20,8 @@ interface TagSelectionSlideProps {
 }
 
 export function TagSelectionSlide({ selectedTags, onToggleTag }: TagSelectionSlideProps) {
-  const colors = useColors();
-
   return (
-    <Glass
-      glow="lime"
-      className="h-64 w-full p-4 justify-center items-center border border-zinc-800 shadow-2xl">
+    <Glass className="h-64 w-full p-4 justify-center items-center border border-zinc-800">
       <View className="flex-row flex-wrap justify-center gap-3 w-full">
         {AVAILABLE_TAGS.map((tag) => {
           const isSelected = selectedTags.includes(tag.id);
@@ -33,23 +29,15 @@ export function TagSelectionSlide({ selectedTags, onToggleTag }: TagSelectionSli
             <Pressable
               key={tag.id}
               onPress={() => onToggleTag(tag.id)}
-              style={[
-                {
-                  paddingVertical: 12,
-                  paddingHorizontal: 16,
-                  borderRadius: 20,
-                  borderWidth: 1.5,
-                  backgroundColor: isSelected ? `${colors.primary}26` : "rgba(255, 255, 255, 0.05)",
-                  borderColor: isSelected ? colors.primary : "rgba(255, 255, 255, 0.1)",
-                },
-              ]}
-              className="active:opacity-85 shadow-sm">
+              className={cn(
+                "py-3 px-4 rounded-lg border-[1.5px] active:opacity-85",
+                isSelected ? "bg-primary/15 border-primary" : "bg-white/5 border-white/10"
+              )}>
               <Text
-                style={{
-                  color: isSelected ? colors.primary : colors.foreground,
-                  fontWeight: isSelected ? "700" : "500",
-                }}
-                className="text-sm font-sans tracking-wide">
+                className={cn(
+                  "text-sm font-sans tracking-wide",
+                  isSelected ? "text-primary font-bold" : "text-foreground font-medium"
+                )}>
                 {tag.label}
               </Text>
             </Pressable>

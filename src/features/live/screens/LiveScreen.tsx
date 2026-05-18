@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { VideoIcon } from "lucide-react-native";
 import { View } from "react-native";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 

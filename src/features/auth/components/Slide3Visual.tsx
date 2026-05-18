@@ -9,7 +9,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Text } from "@/components/ui/text";
 import { useColors } from "@/hooks/use-colors";
 
@@ -41,36 +41,22 @@ export function Slide3Visual() {
   }));
 
   return (
-    <Glass
-      glow="lime"
-      className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800 shadow-2xl">
+    <Glass className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800">
       <View className="flex-row items-end justify-center gap-2 h-20 mb-4">
         {/* Signal Bars */}
         <View className="w-3 h-8 bg-zinc-800 rounded-full" />
         <Animated.View
-          style={[animatedSignalStyle, { backgroundColor: `${colors.primary}99` }]}
-          className="w-3 h-12 rounded-full"
+          style={animatedSignalStyle}
+          className="w-3 h-12 rounded-full bg-primary/60"
         />
-        <Animated.View
-          style={[animatedSignalStyle, { backgroundColor: colors.primary }]}
-          className="w-3 h-16 rounded-full"
-        />
+        <Animated.View style={animatedSignalStyle} className="w-3 h-16 rounded-full bg-primary" />
       </View>
 
       <Animated.View
-        style={[
-          pulseStyle,
-          {
-            backgroundColor: `${colors.primary}1A`,
-            borderColor: `${colors.primary}4D`,
-            borderWidth: 1,
-          },
-        ]}
-        className="px-4 py-1.5 rounded-full flex-row items-center gap-1.5">
+        style={pulseStyle}
+        className="px-4 py-1.5 rounded-full flex-row items-center gap-1.5 bg-primary/10 border border-primary/30">
         <RadioIcon size={14} color={colors.primary} />
-        <Text
-          style={{ color: colors.primary }}
-          className="text-xs font-bold tracking-wider font-mono">
+        <Text className="text-xs font-bold tracking-wider font-mono text-primary">
           DATA SAVER ACTIVE
         </Text>
       </Animated.View>

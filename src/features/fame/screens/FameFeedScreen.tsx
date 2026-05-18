@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
+import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import {
@@ -152,7 +152,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 }
 
 import { Modal } from "react-native";
-import { XapXapHeader } from "@/components/ui/header";
+import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 
 export function FameFeedScreen() {

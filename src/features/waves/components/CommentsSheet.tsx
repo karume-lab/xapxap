@@ -10,8 +10,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
-import { Glass } from "@/components/ui/glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -104,7 +104,7 @@ function CommentItem({
 
 export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const insets = useSafeAreaInsets();
-  const { profile } = useAuth();
+  const { profile, session, showAuthModal } = useAuth();
   const [commentText, setCommentText] = useState("");
   const [replyTo, setReplyTo] = useState<FleetPostWithAuthor | null>(null);
   const inputRef = useRef<TextInput>(null);
@@ -114,6 +114,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   const { mutate: toggleLike } = useToggleCommentLike();
 
   const handleSend = () => {
+    if (!session) return showAuthModal();
     if (!commentText.trim() || !postId || !profile) return;
 
     addComment({
@@ -133,6 +134,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
   };
 
   const handleReplyPress = (comment: FleetPostWithAuthor) => {
+    if (!session) return showAuthModal();
     setReplyTo(comment);
     inputRef.current?.focus();
   };
@@ -183,7 +185,10 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
                   <CommentItem
                     comment={topComment}
                     onReply={() => handleReplyPress(topComment)}
-                    onLike={() => toggleLike({ commentId: topComment.id, postId: postId ?? "" })}
+                    onLike={() => {
+                      if (!session) return showAuthModal();
+                      toggleLike({ commentId: topComment.id, postId: postId ?? "" });
+                    }}
                   />
 
                   {/* Indented Replies */}
@@ -193,7 +198,10 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
                       comment={reply}
                       isReply
                       onReply={() => {}}
-                      onLike={() => toggleLike({ commentId: reply.id, postId: postId ?? "" })}
+                      onLike={() => {
+                        if (!session) return showAuthModal();
+                        toggleLike({ commentId: reply.id, postId: postId ?? "" });
+                      }}
                     />
                   ))}
                 </View>

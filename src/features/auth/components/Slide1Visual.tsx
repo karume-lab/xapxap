@@ -8,7 +8,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { Glass } from "@/components/ui/glass";
+import { Glass } from "@/components/layout/Glass";
 import { Text } from "@/components/ui/text";
 import { useColors } from "@/hooks/use-colors";
 
@@ -35,34 +35,16 @@ export function Slide1Visual() {
   }));
 
   return (
-    <Glass
-      glow="lime"
-      className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800 shadow-2xl">
+    <Glass className="h-64 w-full items-center justify-center relative overflow-hidden border border-zinc-800">
       {/* Decorative Rotating Radar */}
       <Animated.View
-        style={[
-          {
-            width: 180,
-            height: 180,
-            borderRadius: 90,
-            borderWidth: 1,
-            borderColor: "rgba(196, 255, 61, 0.2)",
-            borderStyle: "dashed",
-            position: "absolute",
-          },
-          rotatingStyle,
-        ]}
+        style={rotatingStyle}
+        className="w-[180px] h-[180px] rounded-full border border-dashed border-[rgba(196,255,61,0.2)] absolute"
       />
       <View className="w-32 h-32 rounded-full border border-zinc-800 items-center justify-center bg-zinc-900/80 backdrop-blur-md relative z-10">
         <Animated.View
-          style={[
-            animatedStyle,
-            {
-              backgroundColor: `${colors.primary}1A`,
-              borderColor: `${colors.primary}4D`,
-            },
-          ]}
-          className="p-5 rounded-full border shadow-lg">
+          style={animatedStyle}
+          className="p-5 rounded-full border bg-primary/10 border-primary/30">
           <FlameIcon size={44} color={colors.primary} />
         </Animated.View>
       </View>
