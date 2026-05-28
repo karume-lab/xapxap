@@ -309,9 +309,9 @@ export function toggleFameInteraction(
   const post = mockFameBursts.find((p) => p.id === postId);
   if (!post) return null;
 
-  const interactionList =
-    postInteractions[postId][(type + "s") as keyof (typeof postInteractions)[string]] ||
-    postInteractions[postId][(type + "es") as keyof (typeof postInteractions)[string]];
+  const _interactionList =
+    postInteractions[postId][`${type}s` as keyof (typeof postInteractions)[string]] ||
+    postInteractions[postId][`${type}es` as keyof (typeof postInteractions)[string]];
   // handle the key mapping
   let key: "hugs" | "echoes" | "casts" | "anchors" = "hugs";
   if (type === "echo") key = "echoes";

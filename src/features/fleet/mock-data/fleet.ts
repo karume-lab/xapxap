@@ -105,8 +105,9 @@ export const pollVotes: Record<string, Record<string, string>> = {}; // pollId -
 
 Object.keys(mockPolls).forEach((pollId) => {
   pollVotes[pollId] = {};
-  if (mockPolls[pollId].userVotedId) {
-    pollVotes[pollId]["mock-user-id"] = mockPolls[pollId].userVotedId!;
+  const userVotedId = mockPolls[pollId].userVotedId;
+  if (userVotedId) {
+    pollVotes[pollId]["mock-user-id"] = userVotedId;
   }
 });
 
@@ -138,15 +139,20 @@ export function voteInPoll(userId: string | null, pollId: string, optionId: stri
   };
 }
 
-export function createFleetPost(content: string, authorProfile: Profile | null) {
+export function createFleetPost(
+  content: string,
+  authorProfile: Profile | null,
+  mediaUrl?: string,
+  mediaType?: "image" | "video" | "pdf"
+) {
   const newPost: FleetPostWithAuthor = {
     id: `post-${Date.now()}`,
     content,
     createdAt: new Date(),
     updatedAt: new Date(),
     authorId: authorProfile?.id || "mock-user-id",
-    mediaUrl: null,
-    mediaType: "text",
+    mediaUrl: mediaUrl || null,
+    mediaType: mediaType || "text",
     parentId: null,
     pollId: null,
     checksum: null,

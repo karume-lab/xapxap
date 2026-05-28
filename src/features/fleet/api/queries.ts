@@ -107,11 +107,15 @@ export function useCreateFleetPost() {
     mutationFn: async ({
       content,
       authorProfile,
+      mediaUrl,
+      mediaType,
     }: {
       content: string;
       authorProfile: Profile | null;
+      mediaUrl?: string;
+      mediaType?: "image" | "video" | "pdf";
     }) => {
-      return createFleetPost(content, authorProfile);
+      return createFleetPost(content, authorProfile, mediaUrl, mediaType);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });

@@ -3,7 +3,6 @@ import type { LiveStreamWithAuthor, Profile } from "@/lib/types";
 
 export type { LiveStreamWithAuthor };
 
-import { gemActivityOptions, walletBalanceOptions } from "@/features/gems/api/queries";
 import {
   mockLiveStreams,
   purchaseTicket,

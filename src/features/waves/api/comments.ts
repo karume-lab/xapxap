@@ -1,5 +1,4 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fameBurstOptions } from "@/features/fame/api/queries";
 import { mockFameBursts } from "@/features/fame/mock-data/fame";
 import type { FleetPostWithAuthor } from "@/lib/types";
 
