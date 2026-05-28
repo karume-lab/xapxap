@@ -6,44 +6,66 @@ export type { FleetPostWithAuthor, PollWithDetails };
 import { fameBurstOptions } from "@/features/fame/api/queries";
 import {
   createFleetPost,
+  fleetInteractions,
   mockFleetPosts,
   mockPolls,
+  pollVotes,
   toggleFleetInteraction,
   voteInPoll,
 } from "@/features/fleet/mock-data/fleet";
 
-export const fleetThreadsOptions = queryOptions({
-  queryKey: ["fleet-threads"],
-  queryFn: async () => {
-    return [...mockFleetPosts];
-  },
-});
-
-export function useFleetThreads() {
-  return useQuery(fleetThreadsOptions);
-}
-
-export const pollOptions = (pollId: string) =>
+export const fleetThreadsOptions = (userId: string | null) =>
   queryOptions({
-    queryKey: ["poll", pollId],
+    queryKey: ["fleet-threads", userId],
     queryFn: async () => {
-      return mockPolls[pollId] || null;
+      return mockFleetPosts.map((post) => ({
+        ...post,
+        myInteractions:
+          userId && typeof userId === "string" && fleetInteractions[post.id]
+            ? {
+                hug: fleetInteractions[post.id].hugs.includes(userId),
+                echo: fleetInteractions[post.id].echoes.includes(userId),
+                cast: fleetInteractions[post.id].casts.includes(userId),
+                anchor: fleetInteractions[post.id].anchors.includes(userId),
+              }
+            : { hug: false, echo: false, cast: false, anchor: false },
+      }));
     },
   });
 
-export function usePoll(pollId: string) {
+export function useFleetThreads(userId: string | null) {
+  return useQuery(fleetThreadsOptions(userId));
+}
+
+export const pollOptions = (pollId: string, userId: string | null) =>
+  queryOptions({
+    queryKey: ["poll", pollId, userId],
+    queryFn: async () => {
+      const poll = mockPolls[pollId];
+      if (!poll) return null;
+      return {
+        ...poll,
+        userVotedId:
+          userId && typeof userId === "string" && pollVotes[pollId]
+            ? pollVotes[pollId][userId] || null
+            : null,
+      };
+    },
+  });
+
+export function usePoll(pollId: string, userId: string | null) {
   const queryClient = useQueryClient();
 
-  const query = useQuery(pollOptions(pollId));
+  const query = useQuery(pollOptions(pollId, userId));
 
   const voteMutation = useMutation({
     mutationFn: async (optionId: string) => {
-      return voteInPoll(pollId, optionId);
+      return voteInPoll(userId, pollId, optionId);
     },
     onSuccess: (updatedPoll) => {
       if (updatedPoll) {
-        queryClient.setQueryData(pollOptions(pollId).queryKey, updatedPoll);
-        queryClient.invalidateQueries({ queryKey: fleetThreadsOptions.queryKey });
+        queryClient.setQueryData(pollOptions(pollId, userId).queryKey, updatedPoll);
+        queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
       }
     },
   });
@@ -51,7 +73,7 @@ export function usePoll(pollId: string) {
   return { ...query, vote: voteMutation.mutate };
 }
 
-export function useToggleFleetInteraction() {
+export function useToggleFleetInteraction(userId: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,18 +84,18 @@ export function useToggleFleetInteraction() {
       postId: string;
       type: "hug" | "echo" | "cast" | "anchor";
     }) => {
-      return toggleFleetInteraction(postId, type);
+      return toggleFleetInteraction(userId, postId, type);
     },
     onSuccess: (updatedPost) => {
       if (updatedPost) {
         queryClient.setQueryData(
-          fleetThreadsOptions.queryKey,
+          fleetThreadsOptions(userId).queryKey,
           (old: FleetPostWithAuthor[] | undefined) => {
             if (!old) return old;
             return old.map((p) => (p.id === updatedPost.id ? { ...p, ...updatedPost } : p));
           }
         );
-        queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey });
+        queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
       }
     },
   });
@@ -93,8 +115,8 @@ export function useCreateFleetPost() {
       return createFleetPost(content, authorProfile);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fleetThreadsOptions.queryKey });
-      queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
+      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
     },
   });
 }

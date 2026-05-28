@@ -48,7 +48,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
   const colors = useColors();
   const router = useRouter();
   const { user, session, showAuthModal } = useAuth();
-  const { mutate: toggleInteraction } = useToggleFleetInteraction();
+  const { mutate: toggleInteraction } = useToggleFleetInteraction(session?.user?.id || null);
 
   const toggle = useCallback(
     (type: "hug" | "echo" | "cast" | "anchor") => {

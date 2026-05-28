@@ -44,7 +44,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
   const colors = useColors();
   const [timeLeft, setTimeLeft] = useState(60);
   const { session, showAuthModal } = useAuth();
-  const { mutate: toggleInteraction } = useToggleFameInteraction();
+  const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
   const player = useVideoPlayer(item.mediaUrl || "", (player) => {
     player.loop = true;
@@ -135,21 +135,23 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
           paddingBottom: insets.bottom + 110,
           pointerEvents: "box-none",
         }}>
-        {/* Top: Fame Time Remaining */}
-        <View className="flex-row justify-center" pointerEvents="box-none">
-          <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-primary/30 bg-background/70">
-            <View className="w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
-            <Text
-              className="font-bold text-primary text-sm uppercase tracking-widest"
-              style={{
-                textShadowColor: colors.background,
-                textShadowOffset: { width: 0, height: 1 },
-                textShadowRadius: 3,
-              }}>
-              Fame Pulse: {timeLeft}s
-            </Text>
+        {/* Top: Fame Time Remaining (Hidden by default) */}
+        {false && (
+          <View className="flex-row justify-center" pointerEvents="box-none">
+            <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-primary/30 bg-background/70">
+              <View className="w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
+              <Text
+                className="font-bold text-primary text-sm uppercase tracking-widest"
+                style={{
+                  textShadowColor: colors.background,
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 3,
+                }}>
+                Fame Pulse: {timeLeft}s
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Bottom: Post Info & Engagement */}
         <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
@@ -242,7 +244,10 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 }
 
 export function FameFeedScreen() {
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst();
+  const { session } = useAuth();
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst(
+    session?.user?.id || null
+  );
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
   const colors = useColors();

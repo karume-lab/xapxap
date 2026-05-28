@@ -4,13 +4,15 @@ import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import { useDataSaver } from "@/contexts/data-saver-context";
 import { useWalletBalance } from "@/features/gems/api/queries";
 import { useColors } from "@/hooks/use-colors";
 
 export function XapXapHeader() {
   const router = useRouter();
-  const { data: wallet } = useWalletBalance();
+  const { session } = useAuth();
+  const { data: wallet } = useWalletBalance(session?.user?.id || null);
   const { dataSaver, toggle: toggleDataSaver } = useDataSaver();
   const colors = useColors();
 

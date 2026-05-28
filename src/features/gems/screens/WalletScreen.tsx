@@ -11,13 +11,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import { useGemActivity, useWalletBalance } from "@/features/gems/api/queries";
 import { useColors } from "@/hooks/use-colors";
 
 export function WalletScreen() {
   const insets = useSafeAreaInsets();
-  const { data: wallet } = useWalletBalance();
-  const { data: activity } = useGemActivity();
+  const { session } = useAuth();
+  const { data: wallet } = useWalletBalance(session?.user?.id || null);
+  const { data: activity } = useGemActivity(session?.user?.id || null);
   const colors = useColors();
 
   return (

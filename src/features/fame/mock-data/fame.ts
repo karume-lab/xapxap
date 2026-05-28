@@ -286,13 +286,57 @@ export const mockFameBursts: FameBurstItem[] = [
   },
 ];
 
-export function toggleFameInteraction(postId: string, type: "hug" | "echo" | "cast" | "anchor") {
+export const postInteractions: Record<
+  string,
+  { hugs: string[]; echoes: string[]; casts: string[]; anchors: string[] }
+> = {};
+
+mockFameBursts.forEach((post) => {
+  postInteractions[post.id] = { hugs: [], echoes: [], casts: [], anchors: [] };
+  // Add some initial fake interactions for the mock user if it was true before
+  if (post.myInteractions.hug) postInteractions[post.id].hugs.push("mock-user-id");
+  if (post.myInteractions.echo) postInteractions[post.id].echoes.push("mock-user-id");
+  if (post.myInteractions.cast) postInteractions[post.id].casts.push("mock-user-id");
+  if (post.myInteractions.anchor) postInteractions[post.id].anchors.push("mock-user-id");
+});
+
+export function toggleFameInteraction(
+  userId: string | null,
+  postId: string,
+  type: "hug" | "echo" | "cast" | "anchor"
+) {
+  if (!userId) return null;
   const post = mockFameBursts.find((p) => p.id === postId);
   if (!post) return null;
-  const isOn = post.myInteractions[type];
-  post.myInteractions[type] = !isOn;
-  const key =
-    type === "hug" ? "hugs" : type === "echo" ? "echoes" : type === "cast" ? "casts" : "anchors";
-  post.counts[key] += isOn ? -1 : 1;
-  return post;
+
+  const interactionList =
+    postInteractions[postId][(type + "s") as keyof (typeof postInteractions)[string]] ||
+    postInteractions[postId][(type + "es") as keyof (typeof postInteractions)[string]];
+  // handle the key mapping
+  let key: "hugs" | "echoes" | "casts" | "anchors" = "hugs";
+  if (type === "echo") key = "echoes";
+  if (type === "cast") key = "casts";
+  if (type === "anchor") key = "anchors";
+
+  const list = postInteractions[postId][key];
+  const isOn = list.includes(userId);
+
+  if (isOn) {
+    postInteractions[postId][key] = list.filter((id) => id !== userId);
+    post.counts[key] = Math.max(0, post.counts[key] - 1);
+  } else {
+    postInteractions[postId][key].push(userId);
+    post.counts[key] += 1;
+  }
+
+  // Update the returned post with the new interaction state for the user
+  return {
+    ...post,
+    myInteractions: {
+      hug: postInteractions[postId].hugs.includes(userId),
+      echo: postInteractions[postId].echoes.includes(userId),
+      cast: postInteractions[postId].casts.includes(userId),
+      anchor: postInteractions[postId].anchors.includes(userId),
+    },
+  };
 }

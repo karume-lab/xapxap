@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import { usePoll } from "@/features/fleet/api/queries";
 
 interface PollUIProps {
@@ -9,7 +10,8 @@ interface PollUIProps {
 }
 
 export function PollUI({ pollId }: PollUIProps) {
-  const { data: poll, vote, isLoading } = usePoll(pollId);
+  const { session } = useAuth();
+  const { data: poll, vote, isLoading } = usePoll(pollId, session?.user?.id || null);
 
   if (isLoading || !poll) return null;
 

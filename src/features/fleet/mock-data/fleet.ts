@@ -52,34 +52,90 @@ export const mockPolls: Record<string, PollWithDetails> = {
   },
 };
 
-export function toggleFleetInteraction(postId: string, type: "hug" | "echo" | "cast" | "anchor") {
+export const fleetInteractions: Record<
+  string,
+  { hugs: string[]; echoes: string[]; casts: string[]; anchors: string[] }
+> = {};
+
+mockFleetPosts.forEach((post) => {
+  fleetInteractions[post.id] = { hugs: [], echoes: [], casts: [], anchors: [] };
+  if (post.myInteractions.hug) fleetInteractions[post.id].hugs.push("mock-user-id");
+  if (post.myInteractions.echo) fleetInteractions[post.id].echoes.push("mock-user-id");
+  if (post.myInteractions.cast) fleetInteractions[post.id].casts.push("mock-user-id");
+  if (post.myInteractions.anchor) fleetInteractions[post.id].anchors.push("mock-user-id");
+});
+
+export function toggleFleetInteraction(
+  userId: string | null,
+  postId: string,
+  type: "hug" | "echo" | "cast" | "anchor"
+) {
+  if (!userId) return null;
   const post = mockFleetPosts.find((p) => p.id === postId);
   if (!post) return null;
-  const isOn = post.myInteractions[type];
-  post.myInteractions[type] = !isOn;
-  const key =
-    type === "hug" ? "hugs" : type === "echo" ? "echoes" : type === "cast" ? "casts" : "anchors";
-  post.counts[key] += isOn ? -1 : 1;
-  return post;
+
+  let key: "hugs" | "echoes" | "casts" | "anchors" = "hugs";
+  if (type === "echo") key = "echoes";
+  if (type === "cast") key = "casts";
+  if (type === "anchor") key = "anchors";
+
+  const list = fleetInteractions[postId][key];
+  const isOn = list.includes(userId);
+
+  if (isOn) {
+    fleetInteractions[postId][key] = list.filter((id) => id !== userId);
+    post.counts[key] = Math.max(0, post.counts[key] - 1);
+  } else {
+    fleetInteractions[postId][key].push(userId);
+    post.counts[key] += 1;
+  }
+
+  return {
+    ...post,
+    myInteractions: {
+      hug: fleetInteractions[postId].hugs.includes(userId),
+      echo: fleetInteractions[postId].echoes.includes(userId),
+      cast: fleetInteractions[postId].casts.includes(userId),
+      anchor: fleetInteractions[postId].anchors.includes(userId),
+    },
+  };
 }
 
-export function voteInPoll(pollId: string, optionId: string) {
+export const pollVotes: Record<string, Record<string, string>> = {}; // pollId -> { userId -> optionId }
+
+Object.keys(mockPolls).forEach((pollId) => {
+  pollVotes[pollId] = {};
+  if (mockPolls[pollId].userVotedId) {
+    pollVotes[pollId]["mock-user-id"] = mockPolls[pollId].userVotedId!;
+  }
+});
+
+export function voteInPoll(userId: string | null, pollId: string, optionId: string) {
+  if (!userId) return null;
   const poll = mockPolls[pollId];
   if (!poll) return null;
-  if (poll.userVotedId) {
-    const prevOption = poll.options.find((o) => o.id === poll.userVotedId);
+
+  const userVotedId = pollVotes[pollId][userId];
+
+  if (userVotedId) {
+    const prevOption = poll.options.find((o) => o.id === userVotedId);
     if (prevOption) {
       prevOption.votes = Math.max(0, prevOption.votes - 1);
       poll.totalVotes = Math.max(0, poll.totalVotes - 1);
     }
   }
-  poll.userVotedId = optionId;
+
+  pollVotes[pollId][userId] = optionId;
   const option = poll.options.find((o) => o.id === optionId);
   if (option) {
     option.votes += 1;
     poll.totalVotes += 1;
   }
-  return poll;
+
+  return {
+    ...poll,
+    userVotedId: optionId,
+  };
 }
 
 export function createFleetPost(content: string, authorProfile: Profile | null) {

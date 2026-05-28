@@ -8,6 +8,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
 import { useTipMutation, useWalletBalance } from "@/features/gems/api/queries";
 import { useColors } from "@/hooks/use-colors";
 
@@ -23,8 +24,9 @@ export default function GemsScreen() {
     avatarUrl: string;
   }>();
 
-  const { data: wallet } = useWalletBalance();
-  const { mutate: tip, isPending } = useTipMutation();
+  const { session } = useAuth();
+  const { data: wallet } = useWalletBalance(session?.user?.id || null);
+  const { mutate: tip, isPending } = useTipMutation(session?.user?.id || null);
   const [selectedAmount, setSelectedAmount] = useState(50);
 
   const handleTip = () => {

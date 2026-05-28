@@ -32,8 +32,8 @@ export function useJoinStreamMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: liveStreamsOptions.queryKey });
-      queryClient.invalidateQueries({ queryKey: walletBalanceOptions.queryKey });
-      queryClient.invalidateQueries({ queryKey: gemActivityOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
+      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
     },
   });
 }

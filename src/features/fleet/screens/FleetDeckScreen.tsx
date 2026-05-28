@@ -17,7 +17,7 @@ export function FleetDeckScreen() {
   const insets = useSafeAreaInsets();
   const { isOnline } = useNetwork();
   const { session, showAuthModal } = useAuth();
-  const { data: posts, isLoading, refetch } = useFleetThreads();
+  const { data: posts, isLoading, refetch } = useFleetThreads(session?.user?.id || null);
   const colors = useColors();
 
   if (isLoading) {

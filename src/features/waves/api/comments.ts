@@ -268,7 +268,7 @@ export function useAddComment() {
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: commentsOptions(res.postId).queryKey });
-      queryClient.invalidateQueries({ queryKey: fameBurstOptions.queryKey }); // Invalidate feed to update echoes counts
+      queryClient.invalidateQueries({ queryKey: ["fame-burst"] }); // Invalidate feed to update echoes counts
     },
   });
 }
