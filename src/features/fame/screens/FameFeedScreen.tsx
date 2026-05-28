@@ -1,6 +1,7 @@
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
@@ -8,12 +9,14 @@ import {
   Dimensions,
   FlatList,
   Modal,
+  Pressable,
   Share,
   StyleSheet,
   View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
@@ -43,6 +46,11 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
   const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction();
 
+  const player = useVideoPlayer(item.mediaUrl || "", (player) => {
+    player.loop = true;
+    player.play();
+  });
+
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
       const end = new Date(item.fame_heuristics.burstEndedAt).getTime();
@@ -56,27 +64,79 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
     }
   }, [item.fame_heuristics?.burstEndedAt]);
 
-  return (
-    <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-background">
-      {/* Background Media */}
+  const renderMedia = () => {
+    if (item.mediaType === "video") {
+      return (
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            if (player.playing) {
+              player.pause();
+            } else {
+              player.play();
+            }
+          }}>
+          <VideoView
+            style={StyleSheet.absoluteFill}
+            player={player}
+            allowsPictureInPicture={false}
+            nativeControls={false}
+            contentFit="cover"
+          />
+        </Pressable>
+      );
+    } else if (item.mediaType === "pdf") {
+      return (
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: "#fff", paddingTop: insets.top + 50, paddingBottom: 350 },
+          ]}>
+          <WebView
+            source={{ uri: `https://docs.google.com/gview?embedded=true&url=${item.mediaUrl}` }}
+            style={{ flex: 1 }}
+          />
+        </View>
+      );
+    }
+
+    return (
       <Image
         source={{ uri: item.mediaUrl || undefined }}
         style={StyleSheet.absoluteFill}
         contentFit="cover"
       />
+    );
+  };
+
+  return (
+    <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-background">
+      {/* Background Media */}
+      {renderMedia()}
 
       {/* Dark Overlay for legibility */}
       <LinearGradient
         colors={["transparent", colors.background]}
-        style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 350 }}
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 350,
+          pointerEvents: "none",
+        }}
       />
 
       {/* Overlays */}
       <View
         className="absolute inset-0 justify-between p-6"
-        style={{ paddingTop: insets.top + 85, paddingBottom: insets.bottom + 110 }}>
+        style={{
+          paddingTop: insets.top + 85,
+          paddingBottom: insets.bottom + 110,
+          pointerEvents: "box-none",
+        }}>
         {/* Top: Fame Time Remaining */}
-        <View className="flex-row justify-center">
+        <View className="flex-row justify-center" pointerEvents="box-none">
           <View className="px-6 py-3 rounded-full flex-row items-center gap-2.5 border border-primary/30 bg-background/70">
             <View className="w-2.5 h-2.5 rounded-full bg-primary shadow-lg shadow-primary/50" />
             <Text
@@ -92,8 +152,8 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         </View>
 
         {/* Bottom: Post Info & Engagement */}
-        <View className="flex-row items-end justify-between gap-6">
-          <View className="flex-1">
+        <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
+          <View className="flex-1" pointerEvents="box-none">
             <Button
               variant="ghost"
               onPress={() =>
@@ -124,7 +184,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
           </View>
 
           {/* Engagement Buttons */}
-          <View className="gap-5 items-center">
+          <View className="gap-5 items-center" pointerEvents="box-none">
             <View className="items-center">
               <Button
                 variant="ghost"

@@ -13,8 +13,8 @@ interface AuthContextValue {
   profile: Profile | null;
   loading: boolean;
   refreshProfile: () => Promise<void>;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, username: string) => Promise<void>;
+  signIn: (identifier: string, password: string) => Promise<void>;
+  signUp: (identifier: string, password: string, username: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
   isAuthModalVisible: boolean;
@@ -116,12 +116,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       hasSeenOnboarding,
       completeOnboarding: () => setHasSeenOnboarding(true),
       refreshProfile,
-      signIn: async (email: string, _password: string) => {
+      signIn: async (identifier: string, _password: string) => {
         await new Promise((resolve) => setTimeout(resolve, 1200));
         const newSession = {
           user: {
             id: mockProfile.id,
-            email,
+            email: identifier,
             user_metadata: { username: mockProfile.username },
           },
           access_token: "mock",
@@ -132,13 +132,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(newSession);
         setProfile({ ...mockProfile });
       },
-      signUp: async (email: string, _password: string, username: string) => {
+      signUp: async (identifier: string, _password: string, username: string) => {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         const updated = updateMockProfile({ username });
         const newSession = {
           user: {
             id: mockProfile.id,
-            email,
+            email: identifier,
             user_metadata: { username },
           },
           access_token: "mock",

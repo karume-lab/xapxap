@@ -15,26 +15,26 @@ export function AuthModal() {
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async () => {
     if (isSignUp && !username) return setError("Please enter a username");
-    if (!email || !password) return setError("Please enter email and password");
+    if (!identifier || !password) return setError("Please enter email/phone and password");
 
     setBusy(true);
     setError(null);
     try {
       if (isSignUp) {
-        await signUp(email.trim(), password, username.trim());
+        await signUp(identifier.trim(), password, username.trim());
       } else {
-        await signIn(email.trim(), password);
+        await signIn(identifier.trim(), password);
       }
       hideAuthModal();
       setUsername("");
-      setEmail("");
+      setIdentifier("");
       setPassword("");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Authentication failed");
@@ -61,14 +61,14 @@ export function AuthModal() {
         onPress={hideAuthModal}
         className="flex-1 bg-background/75 items-center justify-center p-6">
         {/* Prevent clicks from propagating to the overlay */}
-        <Pressable className="w-full max-w-[400px]">
+        <Pressable className="w-full max-w-100">
           <View className="w-full p-6 bg-background border border-border rounded-3xl relative overflow-hidden">
             {/* Top Premium Color Accent Glow */}
             <LinearGradient
               colors={[colors.primary, "transparent"]}
               start={{ x: 0.5, y: 0 }}
               end={{ x: 0.5, y: 1 }}
-              className="absolute top-0 left-0 right-0 h-[60px] opacity-10"
+              className="absolute top-0 left-0 right-0 h-15 opacity-10"
             />
 
             {/* Modal Header */}
@@ -111,14 +111,13 @@ export function AuthModal() {
 
               <View className="gap-1">
                 <Input
-                  value={email}
+                  value={identifier}
                   onChangeText={(t) => {
-                    setEmail(t);
+                    setIdentifier(t);
                     setError(null);
                   }}
-                  placeholder="Email"
+                  placeholder="Email or Phone Number"
                   autoCapitalize="none"
-                  keyboardType="email-address"
                   icon={<MailIcon size={18} color={colors.mutedForeground} />}
                 />
               </View>
