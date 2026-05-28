@@ -3,7 +3,6 @@ import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@/lib/types"
 
 export type { FleetPostWithAuthor, PollWithDetails };
 
-import { fameBurstOptions } from "@/features/fame/api/queries";
 import {
   createFleetPost,
   fleetInteractions,
