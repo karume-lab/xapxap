@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function initializeAuth() {
       try {
-        const [storedSession, storedOnboarding] = await Promise.all([
+        const [storedSession, storedOnboarding, storedDob] = await Promise.all([
           SecureStore.getItemAsync(AUTH_SESSION_KEY).catch((err) => {
             console.warn("SecureStore failed to load auth session:", err);
             return null;
@@ -46,18 +46,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.warn("AsyncStorage failed to load onboarding state:", err);
             return null;
           }),
+          AsyncStorage.getItem("user_date_of_birth").catch(() => null),
         ]);
+
+        console.log(storedSession, storedOnboarding, storedDob);
+
+        // Parse stored DOB (session-independent so it survives pre-login onboarding)
+        const persistedDob = storedDob ? new Date(storedDob) : null;
 
         if (storedSession) {
           const parsed = JSON.parse(storedSession) as Session;
           setSession(parsed);
 
-          // Hydrate profile metadata from the saved session user_metadata
+          // Hydrate profile — prefer AsyncStorage DOB; fall back to session metadata
           const username = parsed.user?.user_metadata?.username || mockProfile.username;
+          const sessionDob = parsed.user?.user_metadata?.dateOfBirth;
+          const resolvedDob = persistedDob ?? (sessionDob ? new Date(sessionDob) : null);
           setProfile({
             ...mockProfile,
             username,
+            ...(resolvedDob && { dateOfBirth: resolvedDob }),
           });
+        } else {
+          // No session yet (e.g. user went through age-verify during onboarding)
+          if (persistedDob) {
+            setProfile({ ...mockProfile, dateOfBirth: persistedDob });
+          }
         }
 
         setHasSeenOnboarding(storedOnboarding === "true");
@@ -80,15 +94,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const updated = updateMockProfile(patch);
       setProfile(updated);
 
-      // If username changes, also update the session inside SecureStore to stay in sync!
-      if (patch.username && session) {
+      // Always persist DOB to AsyncStorage so it survives reloads even without a session
+      if (patch.dateOfBirth) {
+        try {
+          await AsyncStorage.setItem("user_date_of_birth", patch.dateOfBirth.toISOString());
+        } catch (err) {
+          console.warn("AsyncStorage failed to save DOB:", err);
+        }
+      }
+
+      // Also sync to SecureStore session when a session exists (belt-and-suspenders)
+      if ((patch.username || patch.dateOfBirth) && session) {
         const updatedSession = {
           ...session,
           user: {
             ...session.user,
             user_metadata: {
               ...session.user?.user_metadata,
-              username: patch.username,
+              ...(patch.username && { username: patch.username }),
+              ...(patch.dateOfBirth && { dateOfBirth: patch.dateOfBirth.toISOString() }),
             },
           },
         } as unknown as Session;
@@ -97,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await SecureStore.setItemAsync(AUTH_SESSION_KEY, JSON.stringify(updatedSession));
           setSession(updatedSession);
         } catch (err) {
-          console.warn("SecureStore failed to sync username change:", err);
+          console.warn("SecureStore failed to sync profile changes:", err);
         }
       }
     },

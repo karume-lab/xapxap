@@ -33,7 +33,7 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
-  const { loading, hasSeenOnboarding } = useAuth();
+  const { loading, hasSeenOnboarding, session, showAuthModal } = useAuth();
   const { theme } = useUniwind();
   const router = useRouter();
   const segments = useSegments();
@@ -67,6 +67,15 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
       }
     }
   }, [loading, fontsLoaded, hasSeenOnboarding, segments, router]);
+
+  // When the user signs out (session goes null) after having completed onboarding,
+  // surface the auth modal so they can sign back in.
+  useEffect(() => {
+    if (loading || !fontsLoaded) return;
+    if (hasSeenOnboarding && !session) {
+      showAuthModal();
+    }
+  }, [loading, fontsLoaded, hasSeenOnboarding, session, showAuthModal]);
 
   // Keep the native splash screen showing until fonts are loaded and auth check completes
   if (!fontsLoaded || loading) {

@@ -61,8 +61,9 @@ export const mockFameBursts: FameBurstItem[] = [
     id: "fame-3",
     content:
       "My thesis presentation slides! Very excited to share this research. 📚 #Research #Tech",
-    mediaUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    mediaType: "pdf",
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    mediaType: "video",
     createdAt: new Date(Date.now() - 120000),
     updatedAt: new Date(Date.now() - 120000),
     authorId: "u12",
@@ -174,8 +175,9 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-7",
     content: "Project specs and documentation for the new API! 📄💻",
-    mediaUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    mediaType: "pdf",
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    mediaType: "video",
     createdAt: new Date(Date.now() - 360000),
     updatedAt: new Date(Date.now() - 360000),
     authorId: "u16",

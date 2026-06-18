@@ -1,8 +1,9 @@
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { AlertCircleIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
-import { useMemo, useRef, useState } from "react";
-import { Alert, Text, TextInput, useWindowDimensions, View } from "react-native";
+import { AlertCircleIcon, CalendarIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
+import { useState } from "react";
+import { Alert, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -28,31 +29,28 @@ export function AgeVerifyScreen() {
   const router = useRouter();
   const { height } = useWindowDimensions();
   const { updateProfile, signOut } = useAuth();
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [busy, setBusy] = useState(false);
 
-  const monthRef = useRef<TextInput>(null);
-  const yearRef = useRef<TextInput>(null);
+  const [dob, setDob] = useState<Date | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   const compact = height < 700;
 
-  const dob = useMemo(() => {
-    const d = parseInt(day, 10);
-    const m = parseInt(month, 10);
-    const y = parseInt(year, 10);
-    if (!d || !m || !y || y < 1900 || y > new Date().getFullYear()) return null;
-    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
-    const date = new Date(Date.UTC(y, m - 1, d));
-    if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) {
-      return null;
-    }
-    return date;
-  }, [day, month, year]);
-
   const age = dob ? ageFromDate(dob) : null;
   const tooYoung = age !== null && age < MIN_AGE;
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === "android") {
+      setShowPicker(false);
+    }
+    if (selectedDate) {
+      setDob(selectedDate);
+    }
+  };
+
+  const handleDismiss = () => {
+    setShowPicker(false);
+  };
 
   const submit = async () => {
     if (!dob) {
@@ -79,7 +77,7 @@ export function AgeVerifyScreen() {
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <LinearGradient
         colors={[colors.muted, "transparent"]}
-        className="absolute top-0 left-0 right-0 h-[360px] opacity-70"
+        className="absolute top-0 left-0 right-0 h-90 opacity-70"
       />
       <KeyboardAwareScrollView
         contentContainerStyle={{
@@ -104,7 +102,7 @@ export function AgeVerifyScreen() {
           <Icon as={LogOutIcon} className="text-muted-foreground" size={20} />
         </Button>
 
-        <View className="w-full max-w-[460px] self-center gap-6">
+        <View className="w-full max-w-115 self-center gap-6">
           <View>
             <Text className="text-foreground font-bold text-3xl tracking-tight font-[Inter_700Bold]">
               Quick check
@@ -115,95 +113,36 @@ export function AgeVerifyScreen() {
             </Text>
           </View>
 
-          <View className="flex-row gap-3">
-            <View className="flex-1">
-              <Text className="text-muted-foreground font-medium text-[11px] tracking-widest uppercase mb-2 ml-1">
-                Day
-              </Text>
-              <Glass radius={20}>
-                <TextInput
-                  value={day}
-                  onChangeText={(t) => {
-                    const clean = t.replace(/\D/g, "").slice(0, 2);
-                    setDay(clean);
-                    if (clean.length === 2) monthRef.current?.focus();
-                  }}
-                  placeholder="DD"
-                  placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl py-4 px-0"
-                  style={{
-                    textAlign: "center",
-                    textAlignVertical: "center",
-                    width: "100%",
-                    paddingHorizontal: 0,
-                    includeFontPadding: false,
-                  }}
-                  keyboardType="number-pad"
-                  selectionColor={colors.primary}
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => monthRef.current?.focus()}
-                />
+          <View>
+            <Text className="text-muted-foreground font-medium text-[11px] tracking-widest uppercase mb-2 ml-1">
+              Date of Birth
+            </Text>
+            <Pressable onPress={() => setShowPicker(true)}>
+              <Glass radius={20} className="flex-row items-center justify-between p-4 px-6 h-16">
+                <Text
+                  className={cn(
+                    "text-xl font-semibold",
+                    dob ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                  {dob ? dob.toLocaleDateString() : "Select your date of birth"}
+                </Text>
+                <Icon as={CalendarIcon} size={24} className="text-primary" />
               </Glass>
-            </View>
-            <View className="flex-1">
-              <Text className="text-muted-foreground font-medium text-[11px] tracking-widest uppercase mb-2 ml-1">
-                Month
-              </Text>
-              <Glass radius={20}>
-                <TextInput
-                  ref={monthRef}
-                  value={month}
-                  onChangeText={(t) => {
-                    const clean = t.replace(/\D/g, "").slice(0, 2);
-                    setMonth(clean);
-                    if (clean.length === 2) yearRef.current?.focus();
-                  }}
-                  placeholder="MM"
-                  placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl py-4 px-0"
-                  style={{
-                    textAlign: "center",
-                    textAlignVertical: "center",
-                    width: "100%",
-                    paddingHorizontal: 0,
-                    includeFontPadding: false,
-                  }}
-                  keyboardType="number-pad"
-                  selectionColor={colors.primary}
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => yearRef.current?.focus()}
-                />
-              </Glass>
-            </View>
-            <View className="flex-[1.3]">
-              <Text className="text-muted-foreground font-medium text-[11px] tracking-widest uppercase mb-2 ml-1">
-                Year
-              </Text>
-              <Glass radius={20}>
-                <TextInput
-                  ref={yearRef}
-                  value={year}
-                  onChangeText={(t) => setYear(t.replace(/\D/g, "").slice(0, 4))}
-                  placeholder="YYYY"
-                  placeholderTextColor={colors.mutedForeground}
-                  className="text-foreground font-semibold text-2xl py-4 px-0"
-                  style={{
-                    textAlign: "center",
-                    textAlignVertical: "center",
-                    width: "100%",
-                    paddingHorizontal: 0,
-                    includeFontPadding: false,
-                  }}
-                  keyboardType="number-pad"
-                  selectionColor={colors.primary}
-                  maxLength={4}
-                  returnKeyType="done"
-                  onSubmitEditing={submit}
-                />
-              </Glass>
-            </View>
+            </Pressable>
+
+            {showPicker && (
+              <DateTimePicker
+                value={dob || new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onValueChange={handleDateChange}
+                onDismiss={handleDismiss}
+                maximumDate={new Date()}
+                themeVariant="dark"
+                textColor={colors.foreground}
+                accentColor={colors.primary}
+              />
+            )}
           </View>
 
           {age !== null ? (
