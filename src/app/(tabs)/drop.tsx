@@ -1,1 +1,1 @@
-export { CreatePostScreen as default } from "@/features/fleet/screens/CreatePostScreen";
+export { StreamingHubScreen as default } from "@/features/streaming/screens/StreamingHubScreen";

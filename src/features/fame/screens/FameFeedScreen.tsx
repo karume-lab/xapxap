@@ -129,7 +129,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 
       {/* Overlays */}
       <View
-        className="absolute inset-0 justify-between p-6"
+        className="absolute inset-0 justify-end p-6"
         style={{
           paddingTop: insets.top + 85,
           paddingBottom: insets.bottom + 110,

@@ -4,7 +4,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-1",
     content: "Surfing down the sand dunes of the rift valley! 🏄‍♂️✨ #Adrenaline #Vibes",
-    mediaUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    mediaUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     mediaType: "video",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -117,7 +117,8 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-5",
     content: "Look at this amazing animation 🎬",
-    mediaUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    mediaUrl:
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 240000),
     updatedAt: new Date(Date.now() - 240000),
@@ -230,7 +231,7 @@ export const mockFameBursts: FameBurstItem[] = [
     id: "fame-9",
     content: "Look at this blazing fire! 🔥",
     mediaUrl:
-      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 480000),
     updatedAt: new Date(Date.now() - 480000),
@@ -259,7 +260,7 @@ export const mockFameBursts: FameBurstItem[] = [
     id: "fame-10",
     content: "Driving down the coast 🚗🌊",
     mediaUrl:
-      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 540000),
     updatedAt: new Date(Date.now() - 540000),
