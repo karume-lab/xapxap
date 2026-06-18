@@ -3,7 +3,11 @@ import type { Session } from "@supabase/supabase-js";
 import * as SecureStore from "expo-secure-store";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { AUTH_SESSION_KEY } from "@/features/auth/constants";
+import {
+  AUTH_SESSION_KEY,
+  HAS_SEEN_ONBOARDING_KEY,
+  USER_DATE_OF_BIRTH_KEY,
+} from "@/features/auth/constants";
 import { mockProfile, updateMockProfile } from "@/features/auth/mock-data/auth";
 import type { Profile } from "@/lib/types";
 
@@ -42,14 +46,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.warn("SecureStore failed to load auth session:", err);
             return null;
           }),
-          AsyncStorage.getItem("has_seen_onboarding").catch((err) => {
+          AsyncStorage.getItem(HAS_SEEN_ONBOARDING_KEY).catch((err) => {
             console.warn("AsyncStorage failed to load onboarding state:", err);
             return null;
           }),
-          AsyncStorage.getItem("user_date_of_birth").catch(() => null),
+          AsyncStorage.getItem(USER_DATE_OF_BIRTH_KEY).catch(() => null),
         ]);
-
-        console.log(storedSession, storedOnboarding, storedDob);
 
         // Parse stored DOB (session-independent so it survives pre-login onboarding)
         const persistedDob = storedDob ? new Date(storedDob) : null;
@@ -97,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Always persist DOB to AsyncStorage so it survives reloads even without a session
       if (patch.dateOfBirth) {
         try {
-          await AsyncStorage.setItem("user_date_of_birth", patch.dateOfBirth.toISOString());
+          await AsyncStorage.setItem(USER_DATE_OF_BIRTH_KEY, patch.dateOfBirth.toISOString());
         } catch (err) {
           console.warn("AsyncStorage failed to save DOB:", err);
         }

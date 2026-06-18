@@ -1,4 +1,4 @@
-import { CoinsIcon, SparklesIcon } from "lucide-react-native";
+import { CoinsIcon } from "lucide-react-native";
 import { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
@@ -9,7 +9,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Glass } from "@/components/layout/Glass";
-import { Text } from "@/components/ui/text";
 import { useColors } from "@/hooks/use-colors";
 
 export function Slide2Visual() {
@@ -44,11 +43,6 @@ export function Slide2Visual() {
           </View>
         </View>
       </Animated.View>
-
-      <View className="absolute bottom-4 px-3 py-1 bg-zinc-900/60 rounded-full border border-zinc-800 flex-row items-center gap-1.5">
-        <SparklesIcon size={12} color={colors.primary} />
-        <Text className="text-xs text-zinc-400 font-mono">INSTANT PAYOUTS</Text>
-      </View>
     </Glass>
   );
 }

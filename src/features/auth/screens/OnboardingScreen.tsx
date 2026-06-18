@@ -19,6 +19,7 @@ import { Slide1Visual } from "@/features/auth/components/Slide1Visual";
 import { Slide2Visual } from "@/features/auth/components/Slide2Visual";
 import { Slide3Visual } from "@/features/auth/components/Slide3Visual";
 import { TagSelectionSlide } from "@/features/auth/components/TagSelectionSlide";
+import { HAS_SEEN_ONBOARDING_KEY, USER_INTERESTS_KEY } from "@/features/auth/constants";
 import { useColors } from "@/hooks/use-colors";
 
 const SLIDES = [
@@ -124,9 +125,9 @@ export function OnboardingScreen() {
 
   const handleFinishOnboarding = async () => {
     try {
-      await AsyncStorage.setItem("has_seen_onboarding", "true");
+      await AsyncStorage.setItem(HAS_SEEN_ONBOARDING_KEY, "true");
       if (selectedTags.length > 0) {
-        await AsyncStorage.setItem("user_interests", JSON.stringify(selectedTags));
+        await AsyncStorage.setItem(USER_INTERESTS_KEY, JSON.stringify(selectedTags));
       }
       completeOnboarding();
       // TikTok flow: go straight to feed tabs without forcing authentication first!
