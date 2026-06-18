@@ -29,7 +29,7 @@
       },
       "package": "com.karume_lab.xapxap"
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": ["expo-router", "expo-secure-store", "expo-font", "expo-image", "expo-video"],
     "experiments": {
       "typedRoutes": true
     }
