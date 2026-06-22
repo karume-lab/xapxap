@@ -1,4 +1,6 @@
-import { DarkTheme, DefaultTheme, type Theme } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme } from "expo-router";
+
+export type Theme = typeof DefaultTheme;
 
 export const THEME = {
   light: {

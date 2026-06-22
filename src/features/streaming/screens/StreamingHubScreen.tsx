@@ -7,7 +7,6 @@ import {
   LockIcon,
   PlayIcon,
   PlusIcon,
-  RadioIcon,
   ShieldAlertIcon,
   UsersIcon,
   VideoIcon,
@@ -183,7 +182,7 @@ export function StreamingHubScreen() {
       </View>
 
       <LinearGradient
-        colors={[colors.primary + "20", colors.primary + "10"]}
+        colors={[`${colors.primary}20`, `${colors.primary}10`]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -191,7 +190,7 @@ export function StreamingHubScreen() {
           padding: 24,
           marginBottom: 32,
           borderWidth: 1,
-          borderColor: colors.primary + "30",
+          borderColor: `${colors.primary}30`,
         }}>
         <View className="flex-row items-center gap-4 mb-4">
           <View className="w-14 h-14 rounded-full bg-destructive/10 border border-destructive/20 items-center justify-center">
