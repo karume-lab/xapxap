@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { CameraIcon, PlusIcon, RadioIcon, SearchIcon, UserIcon } from "lucide-react-native";
+import { PlusIcon, RadioIcon, SearchIcon, UserIcon, VideoIcon } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/use-colors";
@@ -77,11 +77,26 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen name="fleet" options={{ href: null }} />
       <Tabs.Screen
-        name="fleet"
+        name="live"
         options={{
-          title: "Fleet",
-          tabBarIcon: ({ color }) => <CameraIcon size={24} color={color} strokeWidth={2.5} />,
+          title: "Live",
+          tabBarIcon: ({ color }) => (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <VideoIcon size={24} color={color} strokeWidth={2.5} />
+              <View
+                style={{
+                  position: "absolute",
+                  bottom: -8,
+                  width: 4,
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: "#FBBF24", // Yellow-400 or warning
+                }}
+              />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
@@ -91,8 +106,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <UserIcon size={24} color={color} strokeWidth={2.5} />,
         }}
       />
-
-      <Tabs.Screen name="live" options={{ href: null }} />
       <Tabs.Screen name="gems" options={{ href: null }} />
     </Tabs>
   );
