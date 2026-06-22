@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { HeartIcon, MessageCircleIcon, Share2Icon } from "lucide-react-native";
+import { Heart, MessageCircle, Share2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -199,7 +199,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                   item.myInteractions?.hug && "bg-magenta/20 border-magenta"
                 )}>
                 <Icon
-                  as={HeartIcon}
+                  as={Heart}
                   color={item.myInteractions?.hug ? colors.magenta : colors.foreground}
                   fill={item.myInteractions?.hug ? colors.magenta : "transparent"}
                   size={26}
@@ -215,7 +215,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                 variant="ghost"
                 onPress={onShowComments}
                 className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
-                <Icon as={MessageCircleIcon} className="text-foreground" size={26} />
+                <Icon as={MessageCircle} className="text-foreground" size={26} />
               </Button>
               <Text className="text-foreground text-xs mt-1.5 font-bold">
                 {item.counts?.echoes ?? 0}
@@ -234,7 +234,7 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
                 }
               }}
               className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
-              <Icon as={Share2Icon} className="text-foreground" size={26} />
+              <Icon as={Share2} className="text-foreground" size={26} />
             </Button>
           </View>
         </View>

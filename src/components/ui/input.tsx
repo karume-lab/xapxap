@@ -1,5 +1,5 @@
 import { TextInput, type TextInputProps, View } from 'react-native';
-import { EyeIcon, EyeOffIcon } from 'lucide-react-native';
+import { Eye, EyeOff } from 'lucide-react-native';
 import { Glass } from '@/components/layout/Glass';
 import { Button } from '@/components/ui/button';
 import { useColors } from '@/hooks/use-colors';
@@ -35,9 +35,9 @@ export const Input = React.forwardRef<TextInput, InputProps>(
               className="p-1 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent"
             >
               {showPassword ? (
-                <EyeOffIcon size={20} color={colors.mutedForeground} />
+                <EyeOff size={20} color={colors.mutedForeground} />
               ) : (
-                <EyeIcon size={20} color={colors.mutedForeground} />
+                <Eye size={20} color={colors.mutedForeground} />
               )}
             </Button>
           )}

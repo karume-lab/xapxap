@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { PlusIcon, RadioIcon, SearchIcon, UserIcon, VideoIcon } from "lucide-react-native";
+import { Plus, Radio, Search, User, Video } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/use-colors";
@@ -41,14 +41,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <RadioIcon size={24} color={color} strokeWidth={2.5} />,
+          tabBarIcon: ({ color }) => <Radio size={24} color={color} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
         name="hunt"
         options={{
           title: "Hunt",
-          tabBarIcon: ({ color }) => <SearchIcon size={24} color={color} strokeWidth={2.5} />,
+          tabBarIcon: ({ color }) => <Search size={24} color={color} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
@@ -72,7 +72,7 @@ export default function TabLayout() {
                 borderWidth: 6,
                 borderColor: colors.background,
               }}>
-              <PlusIcon size={32} color={colors.primaryForeground} strokeWidth={3} />
+              <Plus size={32} color={colors.primaryForeground} strokeWidth={3} />
             </View>
           ),
         }}
@@ -84,7 +84,7 @@ export default function TabLayout() {
           title: "Live",
           tabBarIcon: ({ color }) => (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <VideoIcon size={24} color={color} strokeWidth={2.5} />
+              <Video size={24} color={color} strokeWidth={2.5} />
               <View
                 style={{
                   position: "absolute",
@@ -103,7 +103,7 @@ export default function TabLayout() {
         name="space"
         options={{
           title: "Space",
-          tabBarIcon: ({ color }) => <UserIcon size={24} color={color} strokeWidth={2.5} />,
+          tabBarIcon: ({ color }) => <User size={24} color={color} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen name="gems" options={{ href: null }} />

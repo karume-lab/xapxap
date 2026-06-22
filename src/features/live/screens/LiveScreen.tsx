@@ -1,5 +1,5 @@
 import { router, Stack } from "expo-router";
-import { ArrowLeftIcon, ZapIcon } from "lucide-react-native";
+import { ArrowLeft, Zap } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 
 import { Glass } from "@/components/layout/Glass";
@@ -23,12 +23,12 @@ export function LiveScreen() {
         <Glass className="p-6 rounded-3xl gap-4 w-full mb-32">
           <View className="flex-row items-start gap-4">
             <View className="bg-amber-500/20 p-4 rounded-full mt-1">
-              <Icon as={ZapIcon} className="text-amber-500 size-6" />
+              <Icon as={Zap} className="text-amber-500 size-6" />
             </View>
             <View className="flex-1">
               <Text className="text-xl font-bold text-foreground mb-2">Boost any wave</Text>
               <Text className="text-muted-foreground text-base leading-6">
-                Tap the <Icon as={ZapIcon} className="text-amber-500 size-4 inline" /> "1 Min Fame"
+                Tap the <Icon as={Zap} className="text-amber-500 size-4 inline" /> "1 Min Fame"
                 button on your waves in the feed to launch a 60-second boost window and track live
                 engagement.
               </Text>
@@ -39,7 +39,7 @@ export function LiveScreen() {
               variant="outline"
               className="rounded-full border-amber-500/30 gap-2 px-6"
               onPress={() => router.push("/")}>
-              <Icon as={ArrowLeftIcon} className="text-amber-500 size-4" />
+              <Icon as={ArrowLeft} className="text-amber-500 size-4" />
               <Text className="text-amber-500 font-semibold">Go to Feed</Text>
             </Button>
           </View>

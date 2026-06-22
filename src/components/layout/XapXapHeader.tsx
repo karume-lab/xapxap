@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { BellIcon, WifiIcon } from "lucide-react-native";
+import { Bell, Wifi } from "lucide-react-native";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -49,7 +49,7 @@ export function XapXapHeader() {
           variant="ghost"
           onPress={() => router.push("/notifications")}
           className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
-          <Icon as={BellIcon} size={18} className="text-foreground" />
+          <Icon as={Bell} size={18} className="text-foreground" />
         </Button>
 
         {/* Data Saver / Signal */}
@@ -57,11 +57,7 @@ export function XapXapHeader() {
           variant="ghost"
           onPress={toggleDataSaver}
           className={`w-10 h-10 rounded-full items-center justify-center border p-0 min-w-0 min-h-0 active:bg-transparent ${dataSaver ? "bg-primary/10 border-primary/40" : "bg-muted border-border"}`}>
-          <Icon
-            as={WifiIcon}
-            size={18}
-            className={dataSaver ? "text-primary" : "text-foreground"}
-          />
+          <Icon as={Wifi} size={18} className={dataSaver ? "text-primary" : "text-foreground"} />
         </Button>
       </View>
     </View>

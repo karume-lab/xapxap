@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { LockIcon, MailIcon, UserIcon, XIcon } from "lucide-react-native";
+import { Lock, Mail, User, X } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Pressable, View } from "react-native";
 import { Button } from "@/components/ui/button";
@@ -88,7 +88,7 @@ export function AuthModal() {
                 variant="ghost"
                 onPress={hideAuthModal}
                 className="w-8 h-8 rounded-full bg-muted items-center justify-center border border-border p-0 min-w-0 min-h-0 active:bg-transparent">
-                <Icon as={XIcon} size={16} className="text-foreground" />
+                <Icon as={X} size={16} className="text-foreground" />
               </Button>
             </View>
 
@@ -104,7 +104,7 @@ export function AuthModal() {
                     }}
                     placeholder="Username"
                     autoCapitalize="none"
-                    icon={<UserIcon size={18} color={colors.mutedForeground} />}
+                    icon={<User size={18} color={colors.mutedForeground} />}
                   />
                 </View>
               )}
@@ -118,7 +118,7 @@ export function AuthModal() {
                   }}
                   placeholder="Email or Phone Number"
                   autoCapitalize="none"
-                  icon={<MailIcon size={18} color={colors.mutedForeground} />}
+                  icon={<Mail size={18} color={colors.mutedForeground} />}
                 />
               </View>
 
@@ -131,7 +131,7 @@ export function AuthModal() {
                   }}
                   placeholder="Password"
                   secureTextEntry
-                  icon={<LockIcon size={18} color={colors.mutedForeground} />}
+                  icon={<Lock size={18} color={colors.mutedForeground} />}
                 />
               </View>
 

@@ -1,14 +1,14 @@
 import {
   AlertTriangleIcon,
   AnchorIcon,
-  CalendarIcon,
+  Calendar,
   ChevronRightIcon,
   GlobeIcon,
-  LogOutIcon,
+  LogOut,
   ShieldCheckIcon,
-  WifiIcon,
-  WifiOffIcon,
-  ZapIcon,
+  Wifi,
+  WifiOff,
+  Zap,
 } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, ScrollView, Switch, TextInput, View } from "react-native";
@@ -87,7 +87,7 @@ export function ProfileScreen() {
       <View className="items-center mb-6">
         <Glass radius={20} className="px-4 py-2 border border-primary/20 bg-primary/5">
           <View className="flex-row items-center gap-2">
-            <Icon as={ZapIcon} size={14} className="text-primary" />
+            <Icon as={Zap} size={14} className="text-primary" />
             <Text className="text-primary font-bold text-xs">52 gems ≈ KSh68</Text>
           </View>
         </Glass>
@@ -151,7 +151,7 @@ export function ProfileScreen() {
           <View className="gap-3">
             <Glass radius={24} className="p-5 border border-border flex-row items-center">
               <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center mr-4">
-                <Icon as={dataSaver ? WifiOffIcon : WifiIcon} size={24} className="text-primary" />
+                <Icon as={dataSaver ? WifiOff : Wifi} size={24} className="text-primary" />
               </View>
               <View className="flex-1">
                 <Text className="text-foreground font-bold text-base">Data Saver Mode</Text>
@@ -208,7 +208,7 @@ export function ProfileScreen() {
 
             <Glass radius={24} className="p-5 border border-border flex-row items-center">
               <View className="w-12 h-12 rounded-2xl bg-accent/10 items-center justify-center mr-4">
-                <Icon as={CalendarIcon} size={24} className="text-accent" />
+                <Icon as={Calendar} size={24} className="text-accent" />
               </View>
               <View className="flex-1">
                 <Text className="text-foreground font-bold text-base">Date of birth</Text>
@@ -233,7 +233,7 @@ export function ProfileScreen() {
               onPress={signOut}
               className="h-16 flex-row items-center justify-center gap-3 p-0 min-w-0 min-h-0 w-full bg-transparent active:bg-transparent">
               <View className="flex-row items-center justify-center gap-3">
-                <Icon as={LogOutIcon} size={20} className="text-foreground" />
+                <Icon as={LogOut} size={20} className="text-foreground" />
                 <Text className="text-foreground font-bold text-base">Sign out</Text>
               </View>
             </Button>

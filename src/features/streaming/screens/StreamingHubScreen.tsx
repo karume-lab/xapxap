@@ -2,15 +2,15 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
-  DiamondIcon,
+  Diamond,
   GlobeIcon,
-  LockIcon,
+  Lock,
   PlayIcon,
   PlusIcon,
   ShieldAlertIcon,
-  UsersIcon,
+  Users,
   VideoIcon,
-  XIcon,
+  X,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -97,7 +97,7 @@ function StreamCard({ item, onPress }: { item: LiveStreamWithAuthor; onPress: ()
                   <Text className="font-bold text-primary-foreground">
                     Unlock for {item.entryFeeGems}
                   </Text>
-                  <Icon as={DiamondIcon} size={14} className="text-primary-foreground" />
+                  <Icon as={Diamond} size={14} className="text-primary-foreground" />
                 </View>
               </Button>
             </Glass>
@@ -284,7 +284,7 @@ export function StreamingHubScreen() {
                   variant="ghost"
                   onPress={() => setCreateVisible(false)}
                   className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
-                  <Icon as={XIcon} className="text-foreground" size={20} />
+                  <Icon as={X} className="text-foreground" size={20} />
                 </Button>
               </View>
 
@@ -343,7 +343,7 @@ export function StreamingHubScreen() {
                       )}>
                       <View className="flex-row items-center gap-2 p-4">
                         <Icon
-                          as={LockIcon}
+                          as={Lock}
                           size={16}
                           className={streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"}
                         />
@@ -377,7 +377,7 @@ export function StreamingHubScreen() {
 
                 <View className="flex-row items-center justify-between py-2">
                   <View className="flex-row items-center gap-3">
-                    <Icon as={UsersIcon} size={18} className="text-muted-foreground" />
+                    <Icon as={Users} size={18} className="text-muted-foreground" />
                     <Text className="text-foreground font-bold">Invite Only</Text>
                   </View>
                   <Switch

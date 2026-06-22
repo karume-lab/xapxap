@@ -1,11 +1,5 @@
 import { useRouter } from "expo-router";
-import {
-  ArrowLeftIcon,
-  BellIcon,
-  HeartIcon,
-  MessageCircleIcon,
-  SparklesIcon,
-} from "lucide-react-native";
+import { ArrowLeft, Bell, Heart, MessageCircle, SparklesIcon } from "lucide-react-native";
 import { useState } from "react";
 import { FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -117,7 +111,7 @@ export default function NotificationsScreen() {
         )}>
         {item.type === "system" ? (
           <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center border border-primary/20">
-            <Icon as={BellIcon} size={18} className="text-primary" />
+            <Icon as={Bell} size={18} className="text-primary" />
           </View>
         ) : (
           <Avatar
@@ -148,13 +142,13 @@ export default function NotificationsScreen() {
             )}
             {item.type === "comment" && (
               <View className="flex-row items-center gap-1 bg-accent/10 px-2 py-0.5 rounded-full border border-accent/20">
-                <MessageCircleIcon size={10} color={colors.accent} />
+                <MessageCircle size={10} color={colors.accent} />
                 <Text className="text-accent text-[10px] font-bold">Reply</Text>
               </View>
             )}
             {item.type === "like" && (
               <View className="flex-row items-center gap-1 bg-destructive/10 px-2 py-0.5 rounded-full border border-destructive/20">
-                <HeartIcon size={10} color={colors.destructive} />
+                <Heart size={10} color={colors.destructive} />
                 <Text className="text-destructive text-[10px] font-bold">Love</Text>
               </View>
             )}
@@ -175,7 +169,7 @@ export default function NotificationsScreen() {
               variant="ghost"
               onPress={() => router.back()}
               className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
-              <Icon as={ArrowLeftIcon} size={18} className="text-foreground" />
+              <Icon as={ArrowLeft} size={18} className="text-foreground" />
             </Button>
             <Text className="text-foreground font-bold text-xl font-[Inter_700Bold]">
               Notifications
@@ -186,7 +180,7 @@ export default function NotificationsScreen() {
         {/* CTA Container */}
         <View className="flex-1 items-center justify-center p-6 pb-24">
           <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
-            <Icon as={BellIcon} size={36} className="text-primary" />
+            <Icon as={Bell} size={36} className="text-primary" />
           </View>
           <Text className="text-foreground font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
             Your Notifications
@@ -216,7 +210,7 @@ export default function NotificationsScreen() {
             variant="ghost"
             onPress={() => router.back()}
             className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
-            <Icon as={ArrowLeftIcon} size={18} className="text-foreground" />
+            <Icon as={ArrowLeft} size={18} className="text-foreground" />
           </Button>
           <Text className="text-foreground font-bold text-xl font-[Inter_700Bold]">
             Notifications
@@ -257,7 +251,7 @@ export default function NotificationsScreen() {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center p-12 py-32">
             <View className="w-16 h-16 rounded-full bg-muted items-center justify-center mb-4">
-              <Icon as={BellIcon} size={28} className="text-muted-foreground" />
+              <Icon as={Bell} size={28} className="text-muted-foreground" />
             </View>
             <Text className="text-muted-foreground text-center text-sm leading-6">
               No notifications yet in this category.

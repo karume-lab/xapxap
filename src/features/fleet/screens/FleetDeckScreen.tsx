@@ -1,4 +1,4 @@
-import { WifiOffIcon, ZapIcon } from "lucide-react-native";
+import { WifiOff, Zap } from "lucide-react-native";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
@@ -42,7 +42,7 @@ export function FleetDeckScreen() {
 
         {!isOnline && (
           <View className="bg-amber/10 p-2 flex-row items-center justify-center gap-2">
-            <Icon as={WifiOffIcon} size={14} className="text-amber" />
+            <Icon as={WifiOff} size={14} className="text-amber" />
             <Text className="text-[10px] text-amber font-bold uppercase">
               Offline Mode: Syncing via Mesh
             </Text>
@@ -83,7 +83,7 @@ export function FleetDeckScreen() {
               if (!session) return showAuthModal();
             }}
             className="rounded-full h-14 w-14 bg-primary shadow-lg shadow-primary/40">
-            <Icon as={ZapIcon} className="text-primary-foreground" size={24} />
+            <Icon as={Zap} className="text-primary-foreground" size={24} />
           </Button>
         </View>
       </View>

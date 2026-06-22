@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { UsersIcon, XIcon } from "lucide-react-native";
+import { Users, X } from "lucide-react-native";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
@@ -96,7 +96,7 @@ export function LiveStreamScreen({ streamId }: { streamId: string }) {
                   </Text>
                 </View>
                 <View className="flex-row items-center gap-1">
-                  <Icon as={UsersIcon} size={10} color="#fff" />
+                  <Icon as={Users} size={10} color="#fff" />
                   <Text className="text-white text-[10px] font-bold">{stream.viewerCount}</Text>
                 </View>
               </View>
@@ -107,7 +107,7 @@ export function LiveStreamScreen({ streamId }: { streamId: string }) {
           <Pressable
             onPress={() => router.back()}
             className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
-            <Icon as={XIcon} size={20} color="#fff" />
+            <Icon as={X} size={20} color="#fff" />
           </Pressable>
         </View>
 

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { SearchIcon, TrendingUpIcon, XIcon } from "lucide-react-native";
+import { Search, TrendingUp, X } from "lucide-react-native";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Modal, ScrollView, TextInput, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -55,7 +55,7 @@ export function SearchScreen() {
 
       <View className="px-6 py-2">
         <View className="bg-muted rounded-full flex-row items-center px-5 h-14 border border-border">
-          <Icon as={SearchIcon} size={20} className="text-muted-foreground mr-3" />
+          <Icon as={Search} size={20} className="text-muted-foreground mr-3" />
           <TextInput
             value={query}
             onChangeText={handleSearch}
@@ -69,7 +69,7 @@ export function SearchScreen() {
               variant="ghost"
               onPress={() => handleSearch("")}
               className="p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-              <Icon as={XIcon} size={20} className="text-muted-foreground" />
+              <Icon as={X} size={20} className="text-muted-foreground" />
             </Button>
           )}
         </View>
@@ -152,7 +152,7 @@ export function SearchScreen() {
                       </Text>
                     </View>
                     <View className="flex-row items-center mt-2">
-                      <Icon as={TrendingUpIcon} size={14} className="text-primary mr-1.5" />
+                      <Icon as={TrendingUp} size={14} className="text-primary mr-1.5" />
                       <Text className="text-primary font-bold text-xs">{item.buzz} buzz</Text>
                     </View>
                   </Glass>

@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { FileTextIcon, ImageIcon, SendIcon, XIcon } from "lucide-react-native";
+import { FileText, Image as ImageIcon, Send, X } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -44,7 +44,7 @@ export function CreatePostScreen() {
         className="flex-1 bg-background items-center justify-center p-6"
         style={{ paddingTop: insets.top }}>
         <View className="w-20 h-20 rounded-full bg-primary/10 items-center justify-center mb-6 border border-primary/20">
-          <Icon as={SendIcon} size={32} className="text-primary mr-1 mt-0.5" />
+          <Icon as={Send} size={32} className="text-primary mr-1 mt-0.5" />
         </View>
         <Text className="text-foreground font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
           Drop a Wave
@@ -180,7 +180,7 @@ export function CreatePostScreen() {
                   )}
                   {media.type === "pdf" && (
                     <View className="items-center justify-center p-4">
-                      <Icon as={FileTextIcon} size={48} className="text-magenta mb-2" />
+                      <Icon as={FileText} size={48} className="text-magenta mb-2" />
                       <Text className="text-foreground font-bold text-center" numberOfLines={1}>
                         {media.name || "Selected PDF"}
                       </Text>
@@ -190,7 +190,7 @@ export function CreatePostScreen() {
                   <Pressable
                     onPress={() => setMedia(null)}
                     className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/50 items-center justify-center">
-                    <Icon as={XIcon} size={16} className="text-white" />
+                    <Icon as={X} size={16} className="text-white" />
                   </Pressable>
                 </View>
               </View>
@@ -216,7 +216,7 @@ export function CreatePostScreen() {
                 variant="ghost"
                 onPress={pickDocument}
                 className="flex-row items-center justify-center gap-3 py-5 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent">
-                <Icon as={FileTextIcon} className="text-magenta" size={18} />
+                <Icon as={FileText} className="text-magenta" size={18} />
                 <Text className="text-foreground font-bold text-sm">PDF</Text>
               </Button>
             </Glass>
@@ -228,7 +228,7 @@ export function CreatePostScreen() {
             disabled={!text.trim() && !media}
             className="h-20 rounded-4xl bg-primary">
             <View className="flex-row items-center gap-3">
-              <Icon as={SendIcon} className="text-primary-foreground/60" size={20} />
+              <Icon as={Send} className="text-primary-foreground/60" size={20} />
               <Text className="text-primary-foreground/80 font-bold text-xl">Drop the wave</Text>
             </View>
           </Button>

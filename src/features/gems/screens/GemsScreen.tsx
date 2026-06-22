@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { DiamondIcon, SendIcon, XIcon } from "lucide-react-native";
+import { Diamond, Send, X } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -63,7 +63,7 @@ export default function GemsScreen() {
             variant="ghost"
             onPress={() => router.back()}
             className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
-            <Icon as={XIcon} className="text-foreground" size={20} />
+            <Icon as={X} className="text-foreground" size={20} />
           </Button>
         </View>
 
@@ -71,7 +71,7 @@ export default function GemsScreen() {
           <View className="relative">
             <Avatar url={avatarUrl as string} username={username as string} size={100} ring />
             <View className="absolute -bottom-1 -right-1 bg-primary w-6 h-6 rounded-full items-center justify-center border-2 border-background">
-              <Icon as={DiamondIcon} className="text-primary-foreground" size={12} />
+              <Icon as={Diamond} className="text-primary-foreground" size={12} />
             </View>
           </View>
           <Text className="mt-4 font-bold text-2xl text-foreground">@{username}</Text>
@@ -96,7 +96,7 @@ export default function GemsScreen() {
               className={`px-8 py-4 rounded-3xl border h-auto min-h-0 min-w-0 active:bg-transparent ${selectedAmount === amount ? "bg-primary border-primary" : "bg-muted border-border"}`}>
               <View className="flex-row items-center gap-2">
                 <Icon
-                  as={DiamondIcon}
+                  as={Diamond}
                   size={16}
                   className={selectedAmount === amount ? "text-primary-foreground" : "text-primary"}
                 />
@@ -117,7 +117,7 @@ export default function GemsScreen() {
             <Text className="font-bold text-primary text-2xl">{wallet?.balance ?? 0} Gems</Text>
           </View>
           <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center">
-            <DiamondIcon size={28} color={colors.primary} />
+            <Diamond size={28} color={colors.primary} />
           </View>
         </View>
 
@@ -127,7 +127,7 @@ export default function GemsScreen() {
           className="h-18 rounded-3xl bg-primary shadow-lg shadow-primary/20">
           <View className="flex-row items-center gap-3">
             <Text className="text-primary-foreground font-bold text-xl">Confirm & Send</Text>
-            <Icon as={SendIcon} className="text-primary-foreground" size={20} />
+            <Icon as={Send} className="text-primary-foreground" size={20} />
           </View>
         </Button>
       </Glass>

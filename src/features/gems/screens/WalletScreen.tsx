@@ -4,7 +4,7 @@ import {
   ArrowUpRightIcon,
   DownloadIcon,
   PlusCircleIcon,
-  ZapIcon,
+  Zap,
 } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -44,7 +44,7 @@ export function WalletScreen() {
           end={{ x: 1, y: 1 }}
           className="rounded-[40px] p-8 items-center border border-border overflow-hidden">
           <View className="items-center">
-            <Icon as={ZapIcon} size={32} className="text-primary mb-2" />
+            <Icon as={Zap} size={32} className="text-primary mb-2" />
             <Text className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">
               Gem Balance
             </Text>

@@ -1,7 +1,7 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { AlertCircleIcon, CalendarIcon, CheckCircleIcon, LogOutIcon } from "lucide-react-native";
+import { Calendar, CircleAlert, CircleCheck, LogOut } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -99,7 +99,7 @@ export function AgeVerifyScreen() {
           }}
           onPress={() => signOut()}
           className="p-0 min-w-0 min-h-0 bg-transparent active:bg-transparent">
-          <Icon as={LogOutIcon} className="text-muted-foreground" size={20} />
+          <Icon as={LogOut} className="text-muted-foreground" size={20} />
         </Button>
 
         <View className="w-full max-w-115 self-center gap-6">
@@ -126,7 +126,7 @@ export function AgeVerifyScreen() {
                   )}>
                   {dob ? dob.toLocaleDateString() : "Select your date of birth"}
                 </Text>
-                <Icon as={CalendarIcon} size={24} className="text-primary" />
+                <Icon as={Calendar} size={24} className="text-primary" />
               </Glass>
             </Pressable>
 
@@ -152,7 +152,7 @@ export function AgeVerifyScreen() {
                 tooYoung ? "bg-magenta/10" : "bg-cyan/10"
               )}>
               <Icon
-                as={tooYoung ? AlertCircleIcon : CheckCircleIcon}
+                as={tooYoung ? CircleAlert : CircleCheck}
                 className={tooYoung ? "text-magenta" : "text-cyan"}
                 size={18}
               />

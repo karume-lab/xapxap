@@ -1,4 +1,4 @@
-import { CoinsIcon } from "lucide-react-native";
+import { Coins } from "lucide-react-native";
 import { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
@@ -39,7 +39,7 @@ export function Slide2Visual() {
         {/* Floating Diamond Gem */}
         <View className="w-24 h-24 bg-zinc-900/95 border border-accent rounded-2xl items-center justify-center transform rotate-45">
           <View className="transform -rotate-45">
-            <CoinsIcon size={38} color={colors.accent} />
+            <Coins size={38} color={colors.accent} />
           </View>
         </View>
       </Animated.View>

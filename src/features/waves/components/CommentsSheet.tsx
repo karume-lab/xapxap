@@ -5,7 +5,7 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { useRouter } from "expo-router";
-import { HeartIcon, MessageCircleIcon, SendIcon, XIcon } from "lucide-react-native";
+import { Heart, MessageCircle, Send, X } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, View } from "react-native";
 import type { TextInput } from "react-native-gesture-handler";
@@ -98,7 +98,7 @@ function CommentItem({
             onPress={onLike}
             className="flex-row items-center gap-1.5 active:scale-90 pr-2 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
             <Icon
-              as={HeartIcon}
+              as={Heart}
               size={14}
               color={liked ? colors.destructive : colors.mutedForeground}
               fill={liked ? colors.destructive : "transparent"}
@@ -215,7 +215,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
             variant="ghost"
             onPress={() => sheetRef.current?.close()}
             className="w-8 h-8 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
-            <Icon as={XIcon} size={18} className="text-foreground" />
+            <Icon as={X} size={18} className="text-foreground" />
           </Button>
         </View>
 
@@ -227,7 +227,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
           ) : topLevelComments.length === 0 ? (
             <View className="flex-1 items-center justify-center p-12">
               <View className="w-20 h-20 rounded-full bg-muted items-center justify-center mb-6">
-                <Icon as={MessageCircleIcon} size={40} className="text-muted-foreground" />
+                <Icon as={MessageCircle} size={40} className="text-muted-foreground" />
               </View>
               <Text className="text-muted-foreground text-center text-sm leading-6 font-[Inter_400Regular]">
                 No comments yet. Be the first to start the conversation.
@@ -282,7 +282,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
                 variant="ghost"
                 onPress={() => setReplyTo(null)}
                 className="p-1 active:opacity-75 bg-transparent active:bg-transparent min-w-0 min-h-0 h-auto w-auto">
-                <Icon as={XIcon} size={14} className="text-muted-foreground" />
+                <Icon as={X} size={14} className="text-muted-foreground" />
               </Button>
             </View>
           )}
@@ -326,7 +326,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
                 onPress={handleSend}
                 className={`w-12 h-12 rounded-full items-center justify-center active:scale-95 p-0 min-w-0 min-h-0 ${commentText.trim() ? "bg-primary" : "bg-muted"}`}>
                 <Icon
-                  as={SendIcon}
+                  as={Send}
                   size={20}
                   className={
                     commentText.trim() ? "text-primary-foreground" : "text-muted-foreground"

@@ -1,13 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import {
-  BookmarkIcon,
-  HeartIcon,
-  type LucideIcon,
-  RepeatIcon,
-  SendIcon,
-  ZapIcon,
-} from "lucide-react-native";
+import { BookmarkIcon, Heart, type LucideIcon, RepeatIcon, Send, Zap } from "lucide-react-native";
 import { useCallback } from "react";
 import { Platform, Text, View } from "react-native";
 import { Glass } from "@/components/layout/Glass";
@@ -89,7 +82,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
                   @{post.author.username}
                 </Text>
                 {post.author.isPremium && (
-                  <ZapIcon size={12} color={colors.primary} fill={colors.primary} />
+                  <Zap size={12} color={colors.primary} fill={colors.primary} />
                 )}
               </View>
               <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
@@ -105,7 +98,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
                 // Gift logic would go here
               }}
               className="bg-primary/10 border border-primary/30 flex-row items-center gap-1 py-1.5 px-3 rounded-full h-auto min-h-0 min-w-0">
-              <ZapIcon size={12} color={colors.primary} />
+              <Zap size={12} color={colors.primary} />
               <Text className="text-primary font-semibold text-xs font-[Inter_600SemiBold]">
                 Gift
               </Text>
@@ -123,7 +116,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
 
         <View className="flex-row items-center justify-between mt-4">
           <InteractionButton
-            icon={HeartIcon}
+            icon={Heart}
             count={post.counts.hugs}
             active={post.myInteractions.hug}
             color="magenta"
@@ -137,7 +130,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
             onPress={() => toggle("echo")}
           />
           <InteractionButton
-            icon={SendIcon}
+            icon={Send}
             count={post.counts.casts}
             active={post.myInteractions.cast}
             color="lime"

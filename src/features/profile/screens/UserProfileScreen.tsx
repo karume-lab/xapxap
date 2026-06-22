@@ -1,13 +1,13 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  ArrowLeftIcon,
+  ArrowLeft,
   BookmarkIcon,
-  CheckCircleIcon,
+  CircleCheck,
   CloudIcon,
-  HeartIcon,
-  MessageCircleIcon,
+  Heart,
+  MessageCircle,
   RepeatIcon,
-  SendIcon,
+  Send,
 } from "lucide-react-native";
 import { Image as RNImage, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,10 +20,10 @@ import { useColors } from "@/hooks/use-colors";
 
 const STATS_KEYS = [
   { label: "WAVES", icon: CloudIcon, count: 2, colorKey: "cyan" },
-  { label: "HUGS", icon: HeartIcon, count: 3, colorKey: "magenta" },
+  { label: "HUGS", icon: Heart, count: 3, colorKey: "magenta" },
   { label: "ECHOES", icon: RepeatIcon, count: 1, colorKey: "cyan" },
-  { label: "REPLIES", icon: MessageCircleIcon, count: 1, colorKey: "cyan" },
-  { label: "CASTS", icon: SendIcon, count: 0, colorKey: "primary" },
+  { label: "REPLIES", icon: MessageCircle, count: 1, colorKey: "cyan" },
+  { label: "CASTS", icon: Send, count: 0, colorKey: "primary" },
   { label: "SAVES", icon: BookmarkIcon, count: 0, colorKey: "amber" },
 ] as const;
 
@@ -43,7 +43,7 @@ export function UserProfileScreen() {
           variant="ghost"
           onPress={() => router.back()}
           className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-4 p-0 min-w-0 min-h-0 active:bg-transparent">
-          <Icon as={ArrowLeftIcon} size={20} className="text-foreground" />
+          <Icon as={ArrowLeft} size={20} className="text-foreground" />
         </Button>
         <Text className="text-foreground font-bold text-lg">@{username}</Text>
       </View>
@@ -59,7 +59,7 @@ export function UserProfileScreen() {
 
             <View className="flex-row items-center mt-4 gap-2">
               <Text className="text-foreground text-3xl font-bold">@{username}</Text>
-              <Icon as={CheckCircleIcon} size={20} className="text-cyan" />
+              <Icon as={CircleCheck} size={20} className="text-cyan" />
             </View>
 
             <Text className="text-muted-foreground text-xs font-bold uppercase tracking-widest mt-2">
@@ -99,7 +99,7 @@ export function UserProfileScreen() {
                 <View className="ml-3 flex-1">
                   <View className="flex-row items-center gap-1">
                     <Text className="text-foreground font-bold">@{username}</Text>
-                    <Icon as={CheckCircleIcon} size={14} className="text-cyan" />
+                    <Icon as={CircleCheck} size={14} className="text-cyan" />
                   </View>
                   <Text className="text-muted-foreground text-xs">1d • video</Text>
                 </View>
@@ -124,7 +124,7 @@ export function UserProfileScreen() {
                 <Button
                   variant="ghost"
                   className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                  <Icon as={HeartIcon} size={18} className="text-muted-foreground" />
+                  <Icon as={Heart} size={18} className="text-muted-foreground" />
                   <Text className="text-muted-foreground text-xs font-bold">1</Text>
                 </Button>
                 <Button
@@ -137,14 +137,14 @@ export function UserProfileScreen() {
                   variant="ghost"
                   className="flex-row items-center gap-2 bg-cyan/10 px-3 py-1.5 rounded-full border border-cyan/20 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent">
                   <View className="flex-row items-center gap-2 px-3 py-1.5">
-                    <Icon as={MessageCircleIcon} size={18} className="text-cyan" />
+                    <Icon as={MessageCircle} size={18} className="text-cyan" />
                     <Text className="text-cyan text-xs font-bold">1</Text>
                   </View>
                 </Button>
                 <Button
                   variant="ghost"
                   className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                  <Icon as={SendIcon} size={18} className="text-muted-foreground" />
+                  <Icon as={Send} size={18} className="text-muted-foreground" />
                   <Text className="text-muted-foreground text-xs font-bold">Cast</Text>
                 </Button>
                 <Button

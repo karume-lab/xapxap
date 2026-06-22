@@ -1,4 +1,4 @@
-import { FlameIcon } from "lucide-react-native";
+import { Flame } from "lucide-react-native";
 import { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
@@ -44,7 +44,7 @@ export function Slide1Visual() {
         <Animated.View
           style={animatedStyle}
           className="p-5 rounded-full border bg-primary/10 border-primary/30">
-          <FlameIcon size={44} color={colors.primary} />
+          <Flame size={44} color={colors.primary} />
         </Animated.View>
       </View>
     </Glass>
