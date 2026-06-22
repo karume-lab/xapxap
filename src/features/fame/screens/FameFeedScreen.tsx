@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Heart, MessageCircle, Share2 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -13,6 +13,7 @@ import {
   StyleSheet,
   useWindowDimensions,
   View,
+  type ViewToken,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,7 +36,13 @@ import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { cn } from "@/lib/utils";
 
-function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
+type FameItemProps = {
+  item: FameBurstItem;
+  onShowComments: () => void;
+  isActive: boolean;
+};
+
+function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -46,8 +53,18 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 
   const player = useVideoPlayer(item.mediaUrl || "", (player) => {
     player.loop = true;
-    player.play();
+    // Don't autoplay — controlled by isActive
   });
+
+  // Play/pause based on whether this item is the active one in view
+  useEffect(() => {
+    if (item.mediaType !== "video") return;
+    if (isActive) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [isActive, item.mediaType, player]);
 
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
@@ -131,8 +148,8 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         className="absolute inset-0 justify-end p-6"
         style={{
           paddingTop: insets.top + 85,
-          // 80 (tab bar height) + 38 (Plus button overhang) + 16 breathing room
-          paddingBottom: insets.bottom + 134,
+          // 80 (tab bar height) + 38 (Plus button overhang) + 40 breathing room
+          paddingBottom: insets.bottom + 180,
           pointerEvents: "box-none",
         }}>
         {/* Top: Fame Time Remaining (Hidden by default) */}
@@ -254,6 +271,20 @@ export function FameFeedScreen() {
   const colors = useColors();
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const viewabilityConfig = useRef({
+    itemVisiblePercentThreshold: 80,
+  }).current;
+
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+        setActiveIndex(viewableItems[0].index);
+      }
+    },
+    []
+  );
 
   const posts = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -289,9 +320,10 @@ export function FameFeedScreen() {
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <FameItem
               item={item}
+              isActive={index === activeIndex}
               onShowComments={() => {
                 setSelectedPostId(item.id);
                 setShowComments(true);
@@ -308,6 +340,12 @@ export function FameFeedScreen() {
           decelerationRate="fast"
           pagingEnabled={true}
           showsVerticalScrollIndicator={false}
+          removeClippedSubviews={true}
+          initialNumToRender={2}
+          maxToRenderPerBatch={3}
+          windowSize={5}
+          viewabilityConfig={viewabilityConfig}
+          onViewableItemsChanged={onViewableItemsChanged}
           onEndReached={() => {
             if (hasNextPage) fetchNextPage();
           }}
