@@ -4,11 +4,27 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { FileText, Image as ImageIcon, Send, X } from "lucide-react-native";
+import {
+  Anchor,
+  Cpu,
+  FileText,
+  Image as ImageIcon,
+  Mail,
+  Radio,
+  Send,
+  X,
+} from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -16,6 +32,7 @@ import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useCreateFleetPost } from "@/features/fleet/api/queries";
 import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 type MediaPreview = {
   uri: string;
@@ -30,6 +47,7 @@ export function CreatePostScreen() {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [media, setMedia] = useState<MediaPreview | null>(null);
+  const [postDestination, setPostDestination] = useState<"feed" | "fleet" | "inbox">("feed");
   const { profile, session, showAuthModal } = useAuth();
   const { mutateAsync: createPost } = useCreateFleetPost();
 
@@ -196,40 +214,157 @@ export function CreatePostScreen() {
               </View>
             )}
 
-            <View className="flex-row justify-end p-5 pt-0">
+            <View className="flex-row justify-between items-center p-5 pt-0">
               <Text className="text-muted-foreground font-medium text-xs">{text.length}/500</Text>
+              <Button
+                variant="ghost"
+                className="flex-row items-center gap-2 rounded-full border border-[#0ea5e9]/30 bg-[#0ea5e9]/10 px-4 py-2 min-h-0 min-w-0 h-auto active:bg-[#0ea5e9]/20">
+                <Icon as={Cpu} size={14} className="text-[#0ea5e9]" />
+                <Text className="text-[#0ea5e9] font-bold text-xs">AI Assist</Text>
+              </Button>
             </View>
           </Glass>
 
           <View className="flex-row gap-4">
-            <Glass radius={24} className="flex-1 border border-border overflow-hidden">
-              <Button
-                variant="ghost"
-                onPress={pickImage}
-                className="flex-row items-center justify-center gap-3 py-5 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent">
-                <Icon as={ImageIcon} className="text-accent" size={18} />
-                <Text className="text-foreground font-bold text-sm">Photo / Video</Text>
-              </Button>
-            </Glass>
-            <Glass radius={24} className="flex-1 border border-border overflow-hidden">
-              <Button
-                variant="ghost"
-                onPress={pickDocument}
-                className="flex-row items-center justify-center gap-3 py-5 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent">
-                <Icon as={FileText} className="text-magenta" size={18} />
-                <Text className="text-foreground font-bold text-sm">PDF</Text>
-              </Button>
-            </Glass>
+            <Pressable
+              onPress={pickImage}
+              className="flex-1 flex-row items-center justify-center gap-3 h-14 rounded-full border border-border bg-muted/20 active:bg-muted/40">
+              <Icon as={ImageIcon} className="text-[#0ea5e9]" size={18} />
+              <Text className="text-foreground font-bold text-sm">Photo / Video</Text>
+            </Pressable>
+            <Pressable
+              onPress={pickDocument}
+              className="flex-1 flex-row items-center justify-center gap-3 h-14 rounded-full border border-border bg-muted/20 active:bg-muted/40">
+              <Icon as={FileText} className="text-magenta" size={18} />
+              <Text className="text-foreground font-bold text-sm">PDF</Text>
+            </Pressable>
           </View>
+
+          {/* POST TO Section */}
+          <View className="mt-2">
+            <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3 ml-1">
+              POST TO
+            </Text>
+            <View className="flex-row gap-3">
+              {/* Feed */}
+              <Pressable
+                onPress={() => setPostDestination("feed")}
+                className={cn(
+                  "flex-1 p-4 rounded-3xl items-center justify-center border",
+                  postDestination === "feed"
+                    ? "bg-primary/10 border-primary"
+                    : "bg-muted/40 border-transparent"
+                )}>
+                <Icon
+                  as={Radio}
+                  size={22}
+                  className={cn(
+                    "mb-2",
+                    postDestination === "feed" ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                <Text
+                  className={cn(
+                    "font-bold text-[13px] mb-0.5",
+                    postDestination === "feed" ? "text-primary" : "text-foreground"
+                  )}>
+                  Feed
+                </Text>
+                <Text
+                  className={cn(
+                    "text-[10px]",
+                    postDestination === "feed" ? "text-primary/60" : "text-muted-foreground"
+                  )}>
+                  Public
+                </Text>
+              </Pressable>
+              {/* Fleet */}
+              <Pressable
+                onPress={() => setPostDestination("fleet")}
+                className={cn(
+                  "flex-1 p-4 rounded-3xl items-center justify-center border",
+                  postDestination === "fleet"
+                    ? "bg-primary/10 border-primary"
+                    : "bg-muted/40 border-transparent"
+                )}>
+                <Icon
+                  as={Anchor}
+                  size={22}
+                  className={cn(
+                    "mb-2",
+                    postDestination === "fleet" ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                <Text
+                  className={cn(
+                    "font-bold text-[13px] mb-0.5",
+                    postDestination === "fleet" ? "text-primary" : "text-foreground"
+                  )}>
+                  Fleet
+                </Text>
+                <Text
+                  className={cn(
+                    "text-[10px]",
+                    postDestination === "fleet" ? "text-primary/60" : "text-muted-foreground"
+                  )}>
+                  Deck
+                </Text>
+              </Pressable>
+              {/* Inbox */}
+              <Pressable
+                onPress={() => setPostDestination("inbox")}
+                className={cn(
+                  "flex-1 p-4 rounded-3xl items-center justify-center border",
+                  postDestination === "inbox"
+                    ? "bg-primary/10 border-primary"
+                    : "bg-muted/40 border-transparent"
+                )}>
+                <Icon
+                  as={Mail}
+                  size={22}
+                  className={cn(
+                    "mb-2",
+                    postDestination === "inbox" ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                <Text
+                  className={cn(
+                    "font-bold text-[13px] mb-0.5",
+                    postDestination === "inbox" ? "text-primary" : "text-foreground"
+                  )}>
+                  Inbox
+                </Text>
+                <Text
+                  className={cn(
+                    "text-[10px]",
+                    postDestination === "inbox" ? "text-primary/60" : "text-muted-foreground"
+                  )}>
+                  Private
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Dynamic Content based on Destination */}
+          {postDestination === "fleet" && (
+            <View className="mt-6 mb-2">
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-8 ml-1">
+                CHOOSE FLEET DECK
+              </Text>
+              <View className="items-center justify-center pb-4">
+                <ActivityIndicator color={colors.primary} />
+              </View>
+            </View>
+          )}
 
           <Button
             onPress={submit}
             isLoading={busy}
             disabled={!text.trim() && !media}
-            className="h-20 rounded-4xl bg-primary">
+            className="h-16 rounded-full bg-primary mt-4">
             <View className="flex-row items-center gap-3">
-              <Icon as={Send} className="text-primary-foreground/60" size={20} />
-              <Text className="text-primary-foreground/80 font-bold text-xl">Drop the wave</Text>
+              <Icon as={Send} className="text-primary-foreground" size={18} />
+              <Text className="text-primary-foreground font-bold text-lg">Drop the wave</Text>
             </View>
           </Button>
         </View>
