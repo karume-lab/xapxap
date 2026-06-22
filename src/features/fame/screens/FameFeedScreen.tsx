@@ -250,6 +250,7 @@ export function FameFeedScreen() {
   );
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const colors = useColors();
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -297,7 +298,15 @@ export function FameFeedScreen() {
               }}
             />
           )}
-          pagingEnabled
+          getItemLayout={(_, index) => ({
+            length: SCREEN_HEIGHT,
+            offset: SCREEN_HEIGHT * index,
+            index,
+          })}
+          snapToInterval={SCREEN_HEIGHT}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          pagingEnabled={true}
           showsVerticalScrollIndicator={false}
           onEndReached={() => {
             if (hasNextPage) fetchNextPage();
