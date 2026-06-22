@@ -7,8 +7,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  type ImageRequireSource,
   Modal,
   Pressable,
+  Image as RNImage,
   Share,
   StyleSheet,
   useWindowDimensions,
@@ -101,6 +103,50 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
         </Pressable>
       );
     } else if (item.mediaType === "pdf") {
+      const uri =
+        typeof item.mediaUrl === "number" ||
+        (typeof item.mediaUrl === "string" && !item.mediaUrl.startsWith("http"))
+          ? RNImage.resolveAssetSource(item.mediaUrl as unknown as ImageRequireSource)?.uri
+          : item.mediaUrl;
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+          </head>
+          <body style="margin:0;padding:0;background-color:#fff;display:flex;justify-content:center;">
+            <canvas id="the-canvas" style="max-width:100%;"></canvas>
+            <script>
+              var url = '${uri}';
+              var pdfjsLib = window['pdfjs-dist/build/pdf'];
+              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+              
+              var loadingTask = pdfjsLib.getDocument(url);
+              loadingTask.promise.then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                  var scale = 1.5;
+                  var viewport = page.getViewport({scale: scale});
+                  var canvas = document.getElementById('the-canvas');
+                  var context = canvas.getContext('2d');
+                  canvas.height = viewport.height;
+                  canvas.width = viewport.width;
+                  var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                  };
+                  page.render(renderContext);
+                });
+              }).catch(function(err) {
+                 console.error(err);
+                 document.body.innerHTML = "<div style='padding:20px; word-wrap: break-word;'>Could not load local PDF:<br/>Error: " + err.message + "<br/>URL: " + url + "</div>";
+              });
+            </script>
+          </body>
+        </html>
+      `;
+
       return (
         <View
           style={[
@@ -108,8 +154,14 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
             { backgroundColor: "#fff", paddingTop: insets.top + 50, paddingBottom: 350 },
           ]}>
           <WebView
-            source={{ uri: `https://docs.google.com/gview?embedded=true&url=${item.mediaUrl}` }}
+            source={{ html, baseUrl: uri || undefined }}
             style={{ flex: 1 }}
+            mixedContentMode="always"
+            originWhitelist={["*"]}
+            allowFileAccess={true}
+            allowUniversalAccessFromFileURLs={true}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
           />
         </View>
       );
@@ -117,7 +169,7 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
 
     return (
       <Image
-        source={{ uri: item.mediaUrl || undefined }}
+        source={typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl}
         style={StyleSheet.absoluteFill}
         contentFit="cover"
       />

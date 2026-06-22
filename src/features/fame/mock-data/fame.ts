@@ -4,7 +4,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-1",
     content: "Surfing down the sand dunes of the rift valley! 🏄‍♂️✨ #Adrenaline #Vibes",
-    mediaUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    mediaUrl: require("../../../../assets/fame/bunny.mp4"),
     mediaType: "video",
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -32,7 +32,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-2",
     content: "Checking out the solar-powered mesh network node I set up today! ☀️🔋 #DIY #OffGrid",
-    mediaUrl: "https://picsum.photos/seed/fame2/1080/1920",
+    mediaUrl: require("../../../../assets/fame/img1.jpg"),
     mediaType: "image",
     createdAt: new Date(Date.now() - 60000),
     updatedAt: new Date(Date.now() - 60000),
@@ -61,8 +61,7 @@ export const mockFameBursts: FameBurstItem[] = [
     id: "fame-3",
     content:
       "My thesis presentation slides! Very excited to share this research. 📚 #Research #Tech",
-    mediaUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    mediaUrl: require("../../../../assets/fame/bunny.mp4"),
     mediaType: "video",
     createdAt: new Date(Date.now() - 120000),
     updatedAt: new Date(Date.now() - 120000),
@@ -90,7 +89,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-4",
     content: "Beautiful sunrise in the city! 🏙️🌅",
-    mediaUrl: "https://picsum.photos/seed/fame4/1080/1920",
+    mediaUrl: require("../../../../assets/fame/img2.jpg"),
     mediaType: "image",
     createdAt: new Date(Date.now() - 180000),
     updatedAt: new Date(Date.now() - 180000),
@@ -118,8 +117,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-5",
     content: "Look at this amazing animation 🎬",
-    mediaUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    mediaUrl: "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 240000),
     updatedAt: new Date(Date.now() - 240000),
@@ -175,9 +173,8 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-7",
     content: "Project specs and documentation for the new API! 📄💻",
-    mediaUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-    mediaType: "video",
+    mediaUrl: require("../../../../assets/fame/doc.pdf") as unknown as string,
+    mediaType: "pdf",
     createdAt: new Date(Date.now() - 360000),
     updatedAt: new Date(Date.now() - 360000),
     authorId: "u16",
@@ -204,8 +201,8 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-8",
     content: "Just another day in paradise 🏝️",
-    mediaUrl: "https://picsum.photos/seed/fame8/1080/1920",
-    mediaType: "image",
+    mediaUrl: null,
+    mediaType: "text",
     createdAt: new Date(Date.now() - 420000),
     updatedAt: new Date(Date.now() - 420000),
     authorId: "u17",
@@ -232,8 +229,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-9",
     content: "Look at this blazing fire! 🔥",
-    mediaUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    mediaUrl: "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 480000),
     updatedAt: new Date(Date.now() - 480000),
@@ -261,8 +257,7 @@ export const mockFameBursts: FameBurstItem[] = [
   {
     id: "fame-10",
     content: "Driving down the coast 🚗🌊",
-    mediaUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    mediaUrl: "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4",
     mediaType: "video",
     createdAt: new Date(Date.now() - 540000),
     updatedAt: new Date(Date.now() - 540000),

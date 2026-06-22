@@ -1,6 +1,14 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { BookmarkIcon, Heart, type LucideIcon, RepeatIcon, Send, Zap } from "lucide-react-native";
+import {
+  BookmarkIcon,
+  Heart,
+  type LucideIcon,
+  MessageCircle,
+  RepeatIcon,
+  Send,
+  Zap,
+} from "lucide-react-native";
 import { useCallback } from "react";
 import { Platform, Text, View } from "react-native";
 import { Glass } from "@/components/layout/Glass";
@@ -56,11 +64,13 @@ export function WaveCard({ post, children }: WaveCardProps) {
   );
 
   const isOwn = post.author.id === user?.id;
+  const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now";
 
   return (
-    <Glass className="mx-4 mb-4 overflow-hidden">
+    <Glass className="mx-4 mb-4 overflow-hidden rounded-2xl">
       <View className="p-4">
-        <View className="flex-row items-center gap-3">
+        {/* Header */}
+        <View className="flex-row items-start gap-3">
           <Button
             variant="ghost"
             onPress={() =>
@@ -69,76 +79,98 @@ export function WaveCard({ post, children }: WaveCardProps) {
                 params: { id: post.author.id, username: post.author.username },
               })
             }
-            className="flex-row items-center gap-3 flex-1 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
+            className="flex-row items-start gap-3 flex-1 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
             <Avatar
               url={post.author.avatarUrl}
               username={post.author.username}
-              size={40}
+              size={48}
               ring={post.author.isPremium}
             />
-            <View className="flex-1">
+            <View className="flex-1 mt-0.5">
               <View className="flex-row items-center gap-1">
-                <Text className="text-foreground font-semibold text-[15px] font-[Inter_600SemiBold]">
+                <Text className="text-foreground font-bold text-[17px] font-[Inter_700Bold]">
                   @{post.author.username}
                 </Text>
                 {post.author.isPremium && (
-                  <Zap size={12} color={colors.primary} fill={colors.primary} />
+                  <Zap size={14} color={colors.primary} fill={colors.primary} />
                 )}
               </View>
-              <Text className="text-muted-foreground text-xs mt-0.5 font-[Inter_400Regular]">
-                {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now"}
+              <Text className="text-muted-foreground text-[13px] mt-0.5 font-[Inter_500Medium]">
+                {dateStr} • update
               </Text>
+              <View className="flex-row items-center mt-0.5">
+                <View className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-1.5" />
+                <Text className="text-muted-foreground text-[13px] font-[Inter_500Medium]">
+                  Away 50d ago
+                </Text>
+              </View>
             </View>
           </Button>
+
           {!isOwn && (
             <Button
               variant="ghost"
               onPress={() => {
                 if (!session) return showAuthModal();
-                // Gift logic would go here
+                // Gift logic
               }}
-              className="bg-primary/10 border border-primary/30 flex-row items-center gap-1 py-1.5 px-3 rounded-full h-auto min-h-0 min-w-0">
-              <Zap size={12} color={colors.primary} />
-              <Text className="text-primary font-semibold text-xs font-[Inter_600SemiBold]">
+              className="bg-[#4ade80]/10 border border-[#4ade80]/30 flex-row items-center gap-1.5 py-1.5 px-3 rounded-full h-auto min-h-0 min-w-0">
+              <Zap size={14} color="#4ade80" />
+              <Text className="text-[#4ade80] font-semibold text-[13px] font-[Inter_600SemiBold]">
                 Gift
               </Text>
             </Button>
           )}
         </View>
 
+        {/* Content */}
         {post.content && (
-          <Text className="text-foreground text-[15px] leading-6 mt-3 font-[Inter_400Regular]">
+          <Text className="text-foreground text-[17px] leading-6 mt-4 mb-3 font-[Inter_400Regular]">
             {post.content}
           </Text>
         )}
 
-        {children}
+        {/* Media */}
+        {children && <View className="mt-1 rounded-2xl overflow-hidden">{children}</View>}
 
-        <View className="flex-row items-center justify-between mt-4">
-          <InteractionButton
-            icon={Heart}
-            count={post.counts.hugs}
-            active={post.myInteractions.hug}
-            color="magenta"
-            onPress={() => toggle("hug")}
-          />
-          <InteractionButton
-            icon={RepeatIcon}
-            count={post.counts.echoes}
-            active={post.myInteractions.echo}
-            color="cyan"
-            onPress={() => toggle("echo")}
-          />
-          <InteractionButton
-            icon={Send}
-            count={post.counts.casts}
-            active={post.myInteractions.cast}
-            color="lime"
-            onPress={() => toggle("cast")}
-          />
+        {/* Footer Interactions */}
+        <View className="flex-row items-center mt-4">
+          <View className="flex-row items-center gap-6">
+            <InteractionButton
+              icon={Heart}
+              label={post.counts.hugs > 0 ? post.counts.hugs.toString() : "Like"}
+              active={post.myInteractions.hug}
+              color="magenta"
+              onPress={() => toggle("hug")}
+            />
+            <InteractionButton
+              icon={RepeatIcon}
+              label="Echo"
+              active={post.myInteractions.echo}
+              color="cyan"
+              onPress={() => toggle("echo")}
+            />
+            <InteractionButton
+              icon={MessageCircle}
+              label="Reply"
+              active={false}
+              color="cyan"
+              onPress={() => {}}
+            />
+            <InteractionButton
+              icon={Send}
+              label="Cast"
+              active={post.myInteractions.cast}
+              color="lime"
+              onPress={() => toggle("cast")}
+            />
+          </View>
+
+          <View className="flex-1" />
+
           <InteractionButton
             icon={BookmarkIcon}
-            count={post.counts.anchors}
+            label=""
             active={post.myInteractions.anchor}
             color="amber"
             onPress={() => toggle("anchor")}
@@ -151,13 +183,13 @@ export function WaveCard({ post, children }: WaveCardProps) {
 
 interface InteractionButtonProps {
   icon: LucideIcon;
-  count: number;
+  label: string;
   active: boolean;
   color: "magenta" | "cyan" | "lime" | "amber";
   onPress: () => void;
 }
 
-function InteractionButton({ icon: Icon, count, active, color, onPress }: InteractionButtonProps) {
+function InteractionButton({ icon: Icon, label, active, color, onPress }: InteractionButtonProps) {
   const colors = useColors();
 
   const tint =
@@ -173,18 +205,20 @@ function InteractionButton({ icon: Icon, count, active, color, onPress }: Intera
     <Button
       variant="ghost"
       onPress={onPress}
-      className="flex-row items-center gap-1.5 py-1.5 px-2 rounded-full h-auto min-h-0 min-w-0 bg-transparent active:bg-transparent"
-      style={{ backgroundColor: active ? `${tint}22` : "transparent" }}>
+      className="flex-row items-center gap-2 p-0 h-auto min-h-0 min-w-0 bg-transparent active:bg-transparent"
+      style={{ opacity: active ? 1 : 0.7 }}>
       <Icon
-        size={18}
+        size={20}
         color={active ? tint : colors.mutedForeground}
         fill={active && color === "magenta" ? tint : "transparent"}
       />
-      <Text
-        className="font-medium text-xs"
-        style={{ color: active ? tint : colors.mutedForeground, fontFamily: "Inter_500Medium" }}>
-        {count || ""}
-      </Text>
+      {label ? (
+        <Text
+          className="font-medium text-[15px]"
+          style={{ color: active ? tint : colors.mutedForeground, fontFamily: "Inter_500Medium" }}>
+          {label}
+        </Text>
+      ) : null}
     </Button>
   );
 }
