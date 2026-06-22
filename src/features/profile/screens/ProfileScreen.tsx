@@ -84,7 +84,7 @@ export function ProfileScreen() {
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Top User Card */}
-      <View className="px-6 mb-8 mt-2">
+      <View className="px-6 mb-8 mt-6">
         <Glass radius={24} className="p-5 border border-border">
           {/* User Info Row */}
           <View className="flex-row items-center mb-6">
