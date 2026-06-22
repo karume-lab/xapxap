@@ -38,8 +38,10 @@ export function TagSelectionSlide({ selectedTags, onToggleTag }: TagSelectionSli
               <View className="py-3 px-4">
                 <Text
                   className={cn(
-                    "text-sm font-sans tracking-wide",
-                    isSelected ? "text-primary font-bold" : "text-foreground font-medium"
+                    "text-sm tracking-wide",
+                    isSelected
+                      ? "text-primary font-[Inter_700Bold]"
+                      : "text-foreground font-[Inter_400Regular]"
                   )}>
                   {tag.label}
                 </Text>

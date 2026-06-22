@@ -6,7 +6,6 @@ import {
   GlobeIcon,
   Lock,
   PlayIcon,
-  PlusIcon,
   ShieldAlertIcon,
   Users,
   VideoIcon,
@@ -250,15 +249,6 @@ export function StreamingHubScreen() {
             }
           />
         )}
-
-        {/* Drop a Wave FAB */}
-        <View className="absolute right-6" style={{ bottom: insets.bottom + 100 }}>
-          <Button
-            onPress={() => router.push("/create-post")}
-            className="w-14 h-14 rounded-full bg-primary items-center justify-center shadow-lg shadow-primary/30 p-0 active:bg-primary/90">
-            <Icon as={PlusIcon} size={28} className="text-primary-foreground" />
-          </Button>
-        </View>
 
         {/* Go Live Modal */}
         <Modal

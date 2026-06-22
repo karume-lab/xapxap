@@ -1,1 +1,1 @@
-export { LiveScreen as default } from "@/features/live/screens/LiveScreen";
+export { StreamingHubScreen as default } from "@/features/streaming/screens/StreamingHubScreen";

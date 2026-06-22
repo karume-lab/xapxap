@@ -1,1 +1,5 @@
-export { StreamingHubScreen as default } from "@/features/streaming/screens/StreamingHubScreen";
+import { CreatePostScreen } from "@/features/fleet/screens/CreatePostScreen";
+
+export default function DropScreen() {
+  return <CreatePostScreen />;
+}

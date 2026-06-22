@@ -6,18 +6,17 @@ import { Heart, MessageCircle, Share2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   Modal,
   Pressable,
   Share,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
-
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -36,9 +35,8 @@ import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { cn } from "@/lib/utils";
 
-const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
-
 function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComments: () => void }) {
+  const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const colors = useColors();
@@ -116,13 +114,14 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
 
       {/* Dark Overlay for legibility */}
       <LinearGradient
-        colors={["transparent", colors.background]}
+        colors={["transparent", `${colors.background}cc`, colors.background]}
+        locations={[0, 0.55, 1]}
         style={{
           position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
-          height: 350,
+          height: 480,
           pointerEvents: "none",
         }}
       />
@@ -132,7 +131,8 @@ function FameItem({ item, onShowComments }: { item: FameBurstItem; onShowComment
         className="absolute inset-0 justify-end p-6"
         style={{
           paddingTop: insets.top + 85,
-          paddingBottom: insets.bottom + 110,
+          // 80 (tab bar height) + 38 (Plus button overhang) + 16 breathing room
+          paddingBottom: insets.bottom + 134,
           pointerEvents: "box-none",
         }}>
         {/* Top: Fame Time Remaining (Hidden by default) */}
