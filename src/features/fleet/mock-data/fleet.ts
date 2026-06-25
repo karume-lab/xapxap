@@ -1,4 +1,37 @@
-import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@/lib/types";
+import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@/lib/types";
+
+export const mockFleetDecks: FleetDeck[] = [
+  {
+    id: "deck-1",
+    name: "General Tech",
+    description: "Discuss the latest in technology and software.",
+    category: "tech",
+    isOpen: true,
+    memberCount: 1542,
+    captainId: "u1",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "deck-2",
+    name: "Music Fans",
+    description: "Share your favorite tracks and artists.",
+    category: "music",
+    isOpen: true,
+    memberCount: 890,
+    captainId: "u2",
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+  },
+  {
+    id: "deck-3",
+    name: "Startup Founders",
+    description: "A private deck for founders to discuss growth and funding.",
+    category: "finance",
+    isOpen: false,
+    memberCount: 120,
+    captainId: "u3",
+    createdAt: new Date(Date.now() - 172800000).toISOString(),
+  },
+];
 
 export const mockFleetPosts: FleetPostWithAuthor[] = [
   {

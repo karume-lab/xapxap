@@ -141,6 +141,15 @@ export function OnboardingScreen() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
+      {/* Skip Button */}
+      {currentIndex < SLIDES.length - 1 && (
+        <View className="absolute z-10 right-4" style={{ top: Math.max(insets.top + 16, 24) }}>
+          <Button variant="ghost" onPress={handleFinishOnboarding}>
+            <Text className="text-zinc-400 font-[Inter_600SemiBold] text-sm">Skip</Text>
+          </Button>
+        </View>
+      )}
+
       {/* The Animated FlatList */}
       <Animated.FlatList
         ref={flatListRef}

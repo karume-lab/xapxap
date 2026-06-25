@@ -77,7 +77,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="fleet" options={{ href: null }} />
+      <Tabs.Screen name="fleet" options={{ href: null, tabBarStyle: { display: "none" } }} />
       <Tabs.Screen
         name="live"
         options={{
@@ -106,7 +106,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <User size={24} color={color} strokeWidth={2.5} />,
         }}
       />
-      <Tabs.Screen name="gems" options={{ href: null }} />
+      <Tabs.Screen name="gems" options={{ href: null, tabBarStyle: { display: "none" } }} />
     </Tabs>
   );
 }

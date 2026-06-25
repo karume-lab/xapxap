@@ -6,6 +6,7 @@ export type { FleetPostWithAuthor, PollWithDetails };
 import {
   createFleetPost,
   fleetInteractions,
+  mockFleetDecks,
   mockFleetPosts,
   mockPolls,
   pollVotes,
@@ -34,6 +35,18 @@ export const fleetThreadsOptions = (userId: string | null) =>
 
 export function useFleetThreads(userId: string | null) {
   return useQuery(fleetThreadsOptions(userId));
+}
+
+export const fleetDecksOptions = () =>
+  queryOptions({
+    queryKey: ["fleet-decks"],
+    queryFn: async () => {
+      return mockFleetDecks;
+    },
+  });
+
+export function useFleets() {
+  return useQuery(fleetDecksOptions());
 }
 
 export const pollOptions = (pollId: string, userId: string | null) =>

@@ -77,3 +77,14 @@ export type LiveStreamWithAuthor = LiveStream & {
   };
   viewerCount: number;
 };
+
+export type FleetDeck = {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  isOpen: boolean;
+  memberCount: number;
+  captainId: string;
+  createdAt: string;
+};

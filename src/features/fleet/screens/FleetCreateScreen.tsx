@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import {
   AnchorIcon,
+  ArrowLeft,
   Camera,
   Code,
   Heart,
@@ -8,10 +9,10 @@ import {
   Music,
   Star,
   TrendingUp,
-  X,
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -37,20 +38,21 @@ export function FleetCreateScreen() {
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isOpenFleet, setIsOpenFleet] = useState(true);
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-background pt-6">
+    <View className="flex-1 bg-background" style={{ paddingTop: Math.max(insets.top + 16, 24) }}>
       {/* Header */}
-      <View className="px-6 flex-row items-center justify-between mb-8">
-        <Text className="text-foreground font-bold text-2xl font-[Inter_700Bold]">
-          Create Fleet Deck
-        </Text>
+      <View className="px-6 flex-row items-center mb-8">
         <Button
           variant="ghost"
           onPress={() => router.back()}
-          className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
-          <Icon as={X} size={20} className="text-foreground" />
+          className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-4 p-0 min-w-0 min-h-0 active:bg-transparent">
+          <Icon as={ArrowLeft} size={20} className="text-foreground" />
         </Button>
+        <Text className="text-foreground font-bold text-2xl font-[Inter_700Bold]">
+          Create Fleet Deck
+        </Text>
       </View>
 
       <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
@@ -96,7 +98,7 @@ export function FleetCreateScreen() {
           <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
             CATEGORY (OPTIONAL)
           </Text>
-          <View className="flex-row flex-wrap gap-3">
+          <View className="flex-row flex-wrap gap-x-3 gap-y-3">
             {CATEGORIES.map((cat) => {
               const isSelected = selectedCategory === cat.id;
               return (
@@ -111,7 +113,7 @@ export function FleetCreateScreen() {
                     className={isSelected ? "text-primary" : "text-muted-foreground"}
                   />
                   <Text
-                    className={`font-bold text-sm ${isSelected ? "text-primary" : "text-foreground"}`}>
+                    className={`font-bold text-sm font-[Inter_600SemiBold] ${isSelected ? "text-primary" : "text-foreground"}`}>
                     {cat.label}
                   </Text>
                 </Button>
