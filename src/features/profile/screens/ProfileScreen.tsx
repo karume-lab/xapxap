@@ -7,6 +7,7 @@ import {
   ChevronRightIcon,
   GlobeIcon,
   LogOut,
+  User,
   Users,
   Wifi,
   WifiOff,
@@ -144,6 +145,54 @@ export function ProfileScreen() {
         className="flex-1"
         contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
         showsVerticalScrollIndicator={false}>
+        {/* Navigate Section */}
+        <View className="px-6 mb-8">
+          <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
+            NAVIGATE
+          </Text>
+          <Glass radius={24} className="border border-border">
+            {/* View My Profile */}
+            <Button
+              variant="ghost"
+              onPress={() =>
+                router.push(`/profile/${session?.user?.id}?username=${profile?.username}`)
+              }
+              className="flex-row items-center justify-between p-5 border-b border-border/30 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
+              <View className="flex-row items-center gap-4">
+                <Icon as={User} size={20} className="text-[#0ea5e9]" />
+                <Text className="text-foreground font-bold text-base">View My Profile</Text>
+              </View>
+              <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+            </Button>
+
+            {/* My Gems */}
+            <Button
+              variant="ghost"
+              onPress={() => router.push("/wallet")}
+              className="flex-row items-center justify-between p-5 border-b border-border/30 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
+              <View className="flex-row items-center gap-4">
+                <Icon as={Zap} size={20} className="text-primary" />
+                <Text className="text-foreground font-bold text-base">My Gems</Text>
+              </View>
+              <View className="flex-row items-center gap-3">
+                <Text className="text-primary font-bold text-base">{gemsBalance}</Text>
+                <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+              </View>
+            </Button>
+
+            {/* Fleet Decks */}
+            <Button
+              variant="ghost"
+              onPress={() => router.push("/fleet")}
+              className="flex-row items-center justify-between p-5 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
+              <View className="flex-row items-center gap-4">
+                <Icon as={AnchorIcon} size={20} className="text-accent" />
+                <Text className="text-foreground font-bold text-base">Fleet Decks</Text>
+              </View>
+              <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+            </Button>
+          </Glass>
+        </View>
         {/* Command Centre */}
         <View className="px-6 mb-8">
           <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
