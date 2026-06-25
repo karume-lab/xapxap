@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import {
   AlertTriangleIcon,
   AnchorIcon,
@@ -6,14 +7,13 @@ import {
   ChevronRightIcon,
   GlobeIcon,
   LogOut,
-  ShieldCheckIcon,
   Users,
   Wifi,
   WifiOff,
   Zap,
 } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, ScrollView, Switch, TextInput, View } from "react-native";
+import { Pressable, ScrollView, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
@@ -36,13 +36,11 @@ const CURRENCIES = [
 export function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const colors = useColors();
-  const { profile, session, signOut, updateProfile, showAuthModal } = useAuth();
+  const { profile, session, signOut, showAuthModal } = useAuth();
   const { dataSaver, toggle: toggleDataSaver } = useDataSaver();
+  const router = useRouter();
 
-  const [username, setUsername] = useState(profile?.username ?? "");
-  const [bio, setBio] = useState(profile?.bio ?? "");
   const [currency, setCurrency] = useState("KES");
-  const [isSaving, setIsSaving] = useState(false);
 
   const { data: wallet } = useWalletBalance(session?.user?.id || null);
   const gemsBalance = wallet?.balance ?? 1250;
@@ -72,135 +70,80 @@ export function ProfileScreen() {
     );
   }
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      await updateProfile({ username, bio });
-      Alert.alert("Success", "Profile updated successfully");
-    } catch (_) {
-      Alert.alert("Error", "Failed to update profile");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const isCaptain = profile?.role === "captain";
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Top User Card */}
       <View className="px-6 mb-8 mt-6">
-        <Glass radius={24} className="p-5 border border-border">
-          {/* User Info Row */}
-          <View className="flex-row items-center mb-6">
-            <View className="relative mr-4">
-              <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
-                <Text className="text-3xl font-bold text-foreground">
-                  {profile?.username?.[0]?.toUpperCase() || "A"}
-                </Text>
-              </View>
-              <View className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
-                <Icon as={Camera} size={14} className="text-primary-foreground" />
-              </View>
-            </View>
-            <View className="flex-1">
-              <View className="flex-row items-center gap-2 mb-1">
-                <Text className="text-xl font-bold text-foreground">
-                  @{profile?.username || "anax"}
-                </Text>
-                <View className="bg-muted px-2 py-0.5 rounded-full">
-                  <Text className="text-[10px] font-bold text-muted-foreground uppercase">
-                    Drifter
+        <Pressable onPress={() => router.push("/profile/edit")}>
+          <Glass radius={24} className="p-5 border border-border">
+            {/* User Info Row */}
+            <View className="flex-row items-center mb-6">
+              <View className="relative mr-4">
+                <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
+                  <Text className="text-3xl font-bold text-foreground">
+                    {profile?.username?.[0]?.toUpperCase() || "A"}
                   </Text>
                 </View>
+                <View className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
+                  <Icon as={Camera} size={14} className="text-primary-foreground" />
+                </View>
               </View>
-              <Text className="text-muted-foreground text-sm" numberOfLines={1}>
-                {session?.user?.email || "anaxlee44@gmail.com"}
-              </Text>
+              <View className="flex-1">
+                <View className="flex-row items-center gap-2 mb-1">
+                  <Text className="text-xl font-bold text-foreground">
+                    @{profile?.username || "anax"}
+                  </Text>
+                  <View className="bg-muted px-2 py-0.5 rounded-full">
+                    <Text className="text-[10px] font-bold text-muted-foreground uppercase">
+                      Drifter
+                    </Text>
+                  </View>
+                </View>
+                <Text className="text-muted-foreground text-sm" numberOfLines={1}>
+                  {session?.user?.email || "anaxlee44@gmail.com"}
+                </Text>
+              </View>
+              <View className="w-8 h-8 rounded-full bg-muted/50 items-center justify-center ml-2">
+                <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+              </View>
             </View>
-            <View className="w-8 h-8 rounded-full bg-muted/50 items-center justify-center ml-2">
-              <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
-            </View>
-          </View>
 
-          {/* Stats Row */}
-          <View className="flex-row gap-3 mb-6">
-            <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-primary/10 border border-primary/30">
-              <Icon as={Zap} size={14} className="text-primary" />
-              <Text className="text-primary font-bold text-[13px]" numberOfLines={1}>
-                {gemsBalance} gems ≈ ${gemsValue}
-              </Text>
+            {/* Stats Row */}
+            <View className="flex-row gap-3 mb-6">
+              <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-primary/10 border border-primary/30">
+                <Icon as={Zap} size={14} className="text-primary" />
+                <Text className="text-primary font-bold text-[13px]" numberOfLines={1}>
+                  {gemsBalance} gems ≈ ${gemsValue}
+                </Text>
+              </View>
+              <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-[#0ea5e9]/10 border border-[#0ea5e9]/20">
+                <Icon as={Users} size={14} className="text-[#0ea5e9]" />
+                <Text className="text-[#0ea5e9] font-bold text-[13px]" numberOfLines={1}>
+                  0 Crew
+                </Text>
+              </View>
             </View>
-            <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-[#0ea5e9]/10 border border-[#0ea5e9]/20">
-              <Icon as={Users} size={14} className="text-[#0ea5e9]" />
-              <Text className="text-[#0ea5e9] font-bold text-[13px]" numberOfLines={1}>
-                0 Crew
-              </Text>
-            </View>
-          </View>
 
-          {/* Level Progress */}
-          <View>
-            <View className="flex-row justify-between items-center mb-3">
-              <Text className="text-foreground font-bold text-base">Drifter</Text>
-              <Text className="text-muted-foreground text-[11px]">0 pts • 100 to Sailor</Text>
+            {/* Level Progress */}
+            <View>
+              <View className="flex-row justify-between items-center mb-3">
+                <Text className="text-foreground font-bold text-base">Drifter</Text>
+                <Text className="text-muted-foreground text-[11px]">0 pts • 100 to Sailor</Text>
+              </View>
+              <View className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                <View className="h-full bg-primary" style={{ width: "0%" }} />
+              </View>
             </View>
-            <View className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <View className="h-full bg-primary" style={{ width: "0%" }} />
-            </View>
-          </View>
-        </Glass>
+          </Glass>
+        </Pressable>
       </View>
 
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
         showsVerticalScrollIndicator={false}>
-        {/* Profile Section */}
-        <View className="px-6 mb-8">
-          <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
-            Profile
-          </Text>
-
-          <View className="gap-4">
-            <Glass radius={24} className="p-5 border border-border">
-              <Text className="text-muted-foreground text-[10px] font-bold uppercase mb-2 ml-1">
-                Username
-              </Text>
-              <TextInput
-                value={username}
-                onChangeText={setUsername}
-                className="text-foreground text-lg font-bold"
-                placeholder="Username"
-              />
-            </Glass>
-
-            <Glass radius={24} className="p-5 border border-border min-h-30">
-              <Text className="text-muted-foreground text-[10px] font-bold uppercase mb-2 ml-1">
-                Bio
-              </Text>
-              <TextInput
-                value={bio}
-                onChangeText={setBio}
-                multiline
-                className="text-foreground text-base leading-6"
-                placeholder="Tell people what you're about..."
-                placeholderTextColor={colors.mutedForeground}
-              />
-            </Glass>
-
-            <Button
-              onPress={handleSave}
-              isLoading={isSaving}
-              className="h-16 rounded-[28px] bg-primary">
-              <View className="flex-row items-center gap-2">
-                <Icon as={ShieldCheckIcon} size={18} className="text-primary-foreground" />
-                <Text className="text-primary-foreground font-bold text-lg">Save changes</Text>
-              </View>
-            </Button>
-          </View>
-        </View>
-
         {/* Command Centre */}
         <View className="px-6 mb-8">
           <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
