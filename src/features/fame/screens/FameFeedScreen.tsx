@@ -1,16 +1,12 @@
+import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useVideoPlayer, VideoView } from "expo-video";
 import { Heart, MessageCircle, Play, Share2 } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
-  type ImageRequireSource,
   Modal,
-  Pressable,
-  Image as RNImage,
   Share,
   StyleSheet,
   useWindowDimensions,
@@ -19,7 +15,6 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { WebView } from "react-native-webview";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -53,28 +48,6 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
-  const player = useVideoPlayer(item.mediaUrl || "", (player) => {
-    player.loop = true;
-    // Don't autoplay — controlled by isActive
-  });
-
-  const [isPausedByUser, setIsPausedByUser] = useState(false);
-
-  // Reset pause state when video becomes inactive
-  useEffect(() => {
-    if (!isActive) setIsPausedByUser(false);
-  }, [isActive]);
-
-  // Play/pause based on whether this item is the active one in view
-  useEffect(() => {
-    if (item.mediaType !== "video") return;
-    if (isActive && !isPausedByUser) {
-      player.play();
-    } else {
-      player.pause();
-    }
-  }, [isActive, item.mediaType, player, isPausedByUser]);
-
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
       const end = new Date(item.fame_heuristics.burstEndedAt).getTime();
@@ -89,106 +62,39 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   }, [item.fame_heuristics?.burstEndedAt]);
 
   const renderMedia = () => {
-    if (item.mediaType === "video") {
+    const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
+
+    if (isActive) {
+      // Mockup of a heavy video player UI
       return (
-        <View style={StyleSheet.absoluteFill}>
-          <VideoView
+        <View style={StyleSheet.absoluteFill} className="bg-zinc-950 justify-center items-center">
+          <Image
+            source={imageUrl}
             style={StyleSheet.absoluteFill}
-            player={player}
-            allowsPictureInPicture={false}
-            nativeControls={false}
             contentFit="cover"
+            className="opacity-40"
           />
-          <Pressable
-            style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
-            onPress={() => {
-              const newPausedState = !isPausedByUser;
-              setIsPausedByUser(newPausedState);
-              if (newPausedState) {
-                player.pause();
-              } else {
-                player.play();
-              }
-            }}>
-            {isPausedByUser && (
-              <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
-                <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
-              </View>
-            )}
-          </Pressable>
-        </View>
-      );
-    } else if (item.mediaType === "pdf") {
-      const uri =
-        typeof item.mediaUrl === "number" ||
-        (typeof item.mediaUrl === "string" && !item.mediaUrl.startsWith("http"))
-          ? RNImage.resolveAssetSource(item.mediaUrl as unknown as ImageRequireSource)?.uri
-          : item.mediaUrl;
-
-      const html = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-          </head>
-          <body style="margin:0;padding:0;background-color:#fff;display:flex;justify-content:center;">
-            <canvas id="the-canvas" style="max-width:100%;"></canvas>
-            <script>
-              var url = '${uri}';
-              var pdfjsLib = window['pdfjs-dist/build/pdf'];
-              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-              
-              var loadingTask = pdfjsLib.getDocument(url);
-              loadingTask.promise.then(function(pdf) {
-                pdf.getPage(1).then(function(page) {
-                  var scale = 1.5;
-                  var viewport = page.getViewport({scale: scale});
-                  var canvas = document.getElementById('the-canvas');
-                  var context = canvas.getContext('2d');
-                  canvas.height = viewport.height;
-                  canvas.width = viewport.width;
-                  var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                  };
-                  page.render(renderContext);
-                });
-              }).catch(function(err) {
-                 console.error(err);
-                 document.body.innerHTML = "<div style='padding:20px; word-wrap: break-word;'>Could not load local PDF:<br/>Error: " + err.message + "<br/>URL: " + url + "</div>";
-              });
-            </script>
-          </body>
-        </html>
-      `;
-
-      return (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: "#fff", paddingTop: insets.top + 50, paddingBottom: 350 },
-          ]}>
-          <WebView
-            source={{ html, baseUrl: uri || undefined }}
-            style={{ flex: 1 }}
-            mixedContentMode="always"
-            originWhitelist={["*"]}
-            allowFileAccess={true}
-            allowUniversalAccessFromFileURLs={true}
-            javaScriptEnabled={true}
-            domStorageEnabled={true}
-          />
+          <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
+            <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
+          </View>
+          {/* Mock Progress Bar */}
+          <View className="absolute bottom-0 w-full h-1 bg-white/20">
+            <View className="h-full bg-primary w-1/3" />
+          </View>
         </View>
       );
     }
 
+    // Lightweight poster image
     return (
-      <Image
-        source={typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl}
-        style={StyleSheet.absoluteFill}
-        contentFit="cover"
-      />
+      <View style={StyleSheet.absoluteFill} className="bg-zinc-900">
+        <Image
+          source={imageUrl}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          className="opacity-50"
+        />
+      </View>
     );
   };
 
@@ -216,7 +122,6 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
         className="absolute inset-0 justify-end p-6"
         style={{
           paddingTop: insets.top + 85,
-          // 80 (tab bar height) + 38 (Plus button overhang) + 40 breathing room
           paddingBottom: insets.bottom + 80,
           pointerEvents: "box-none",
         }}>
@@ -385,7 +290,7 @@ export function FameFeedScreen() {
         <View style={{ position: "absolute", top: insets.top, left: 0, right: 0, zIndex: 50 }}>
           <XapXapHeader />
         </View>
-        <FlatList
+        <FlashList
           data={posts}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
@@ -398,20 +303,12 @@ export function FameFeedScreen() {
               }}
             />
           )}
-          getItemLayout={(_, index) => ({
-            length: SCREEN_HEIGHT,
-            offset: SCREEN_HEIGHT * index,
-            index,
-          })}
+          pagingEnabled={true}
           snapToInterval={SCREEN_HEIGHT}
           snapToAlignment="start"
           decelerationRate="fast"
-          pagingEnabled={true}
+          disableIntervalMomentum={true}
           showsVerticalScrollIndicator={false}
-          removeClippedSubviews={true}
-          initialNumToRender={2}
-          maxToRenderPerBatch={3}
-          windowSize={5}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={onViewableItemsChanged}
           onEndReached={() => {
