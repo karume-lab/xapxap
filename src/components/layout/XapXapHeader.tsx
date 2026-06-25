@@ -4,17 +4,12 @@ import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useAuth } from "@/contexts/auth-context";
 import { useDataSaver } from "@/contexts/data-saver-context";
-import { useWalletBalance } from "@/features/gems/api/queries";
-import { useColors } from "@/hooks/use-colors";
 
 export function XapXapHeader() {
   const router = useRouter();
-  const { session } = useAuth();
-  const { data: wallet } = useWalletBalance(session?.user?.id || null);
+
   const { dataSaver, toggle: toggleDataSaver } = useDataSaver();
-  const colors = useColors();
 
   return (
     <View className="flex-row items-center justify-between px-6 py-4">
@@ -26,24 +21,6 @@ export function XapXapHeader() {
 
       {/* Right Actions */}
       <View className="flex-row items-center gap-3">
-        {/* Gems Pill */}
-        <Button
-          variant="ghost"
-          onPress={() => router.push("/gems")}
-          className="p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
-          <View className="px-4 py-1.5 rounded-full border border-primary/30 bg-muted">
-            <Text
-              className="text-primary font-bold text-sm"
-              style={{
-                textShadowColor: colors.background,
-                textShadowOffset: { width: 0, height: 1 },
-                textShadowRadius: 3,
-              }}>
-              {wallet?.balance ?? 1250} gems
-            </Text>
-          </View>
-        </Button>
-
         {/* Notification Bell */}
         <Button
           variant="ghost"

@@ -21,6 +21,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useDataSaver } from "@/contexts/data-saver-context";
+import { useWalletBalance } from "@/features/gems/api/queries";
 import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +43,10 @@ export function ProfileScreen() {
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [currency, setCurrency] = useState("KES");
   const [isSaving, setIsSaving] = useState(false);
+
+  const { data: wallet } = useWalletBalance(session?.user?.id || null);
+  const gemsBalance = wallet?.balance ?? 1250;
+  const gemsValue = (gemsBalance / 100).toFixed(2);
 
   if (!session) {
     return (
@@ -123,7 +128,7 @@ export function ProfileScreen() {
             <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-primary/10 border border-primary/30">
               <Icon as={Zap} size={14} className="text-primary" />
               <Text className="text-primary font-bold text-[13px]" numberOfLines={1}>
-                49 gems ≈ $0.49
+                {gemsBalance} gems ≈ ${gemsValue}
               </Text>
             </View>
             <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-[#0ea5e9]/10 border border-[#0ea5e9]/20">

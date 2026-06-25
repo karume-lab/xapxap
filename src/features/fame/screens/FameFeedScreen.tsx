@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { Heart, MessageCircle, Share2 } from "lucide-react-native";
+import { Heart, MessageCircle, Play, Share2 } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -58,15 +58,22 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
     // Don't autoplay — controlled by isActive
   });
 
+  const [isPausedByUser, setIsPausedByUser] = useState(false);
+
+  // Reset pause state when video becomes inactive
+  useEffect(() => {
+    if (!isActive) setIsPausedByUser(false);
+  }, [isActive]);
+
   // Play/pause based on whether this item is the active one in view
   useEffect(() => {
     if (item.mediaType !== "video") return;
-    if (isActive) {
+    if (isActive && !isPausedByUser) {
       player.play();
     } else {
       player.pause();
     }
-  }, [isActive, item.mediaType, player]);
+  }, [isActive, item.mediaType, player, isPausedByUser]);
 
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
@@ -84,15 +91,7 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   const renderMedia = () => {
     if (item.mediaType === "video") {
       return (
-        <Pressable
-          style={StyleSheet.absoluteFill}
-          onPress={() => {
-            if (player.playing) {
-              player.pause();
-            } else {
-              player.play();
-            }
-          }}>
+        <View style={StyleSheet.absoluteFill}>
           <VideoView
             style={StyleSheet.absoluteFill}
             player={player}
@@ -100,7 +99,24 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
             nativeControls={false}
             contentFit="cover"
           />
-        </Pressable>
+          <Pressable
+            style={[StyleSheet.absoluteFill, { alignItems: "center", justifyContent: "center" }]}
+            onPress={() => {
+              const newPausedState = !isPausedByUser;
+              setIsPausedByUser(newPausedState);
+              if (newPausedState) {
+                player.pause();
+              } else {
+                player.play();
+              }
+            }}>
+            {isPausedByUser && (
+              <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
+                <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
+              </View>
+            )}
+          </Pressable>
+        </View>
       );
     } else if (item.mediaType === "pdf") {
       const uri =
@@ -201,7 +217,7 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
         style={{
           paddingTop: insets.top + 85,
           // 80 (tab bar height) + 38 (Plus button overhang) + 40 breathing room
-          paddingBottom: insets.bottom + 180,
+          paddingBottom: insets.bottom + 80,
           pointerEvents: "box-none",
         }}>
         {/* Top: Fame Time Remaining (Hidden by default) */}
@@ -265,12 +281,12 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
                 }}
                 className={cn(
                   "w-14 h-14 rounded-full items-center justify-center border backdrop-blur-xl p-0 min-w-0 min-h-0 bg-muted/30 border-border active:bg-muted/50",
-                  item.myInteractions?.hug && "bg-magenta/20 border-magenta"
+                  item.myInteractions?.hug && "bg-primary/20 border-primary"
                 )}>
                 <Icon
                   as={Heart}
-                  color={item.myInteractions?.hug ? colors.magenta : colors.foreground}
-                  fill={item.myInteractions?.hug ? colors.magenta : "transparent"}
+                  color={item.myInteractions?.hug ? colors.primary : colors.foreground}
+                  fill={item.myInteractions?.hug ? colors.primary : "transparent"}
                   size={26}
                 />
               </Button>
