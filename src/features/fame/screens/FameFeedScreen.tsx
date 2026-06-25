@@ -65,22 +65,31 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
     const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
 
     if (isActive) {
-      // Mockup of a heavy video player UI
+      if (item.mediaType === "video") {
+        // Mockup of a heavy video player UI
+        return (
+          <View style={StyleSheet.absoluteFill} className="bg-zinc-950 justify-center items-center">
+            <Image
+              source={imageUrl}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              className="opacity-40"
+            />
+            <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
+              <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
+            </View>
+            {/* Mock Progress Bar */}
+            <View className="absolute bottom-0 w-full h-1 bg-white/20">
+              <View className="h-full bg-primary w-1/3" />
+            </View>
+          </View>
+        );
+      }
+
+      // Active state for images (no play button)
       return (
-        <View style={StyleSheet.absoluteFill} className="bg-zinc-950 justify-center items-center">
-          <Image
-            source={imageUrl}
-            style={StyleSheet.absoluteFill}
-            contentFit="cover"
-            className="opacity-40"
-          />
-          <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
-            <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
-          </View>
-          {/* Mock Progress Bar */}
-          <View className="absolute bottom-0 w-full h-1 bg-white/20">
-            <View className="h-full bg-primary w-1/3" />
-          </View>
+        <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
+          <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="cover" />
         </View>
       );
     }
@@ -311,6 +320,8 @@ export function FameFeedScreen() {
           showsVerticalScrollIndicator={false}
           viewabilityConfig={viewabilityConfig}
           onViewableItemsChanged={onViewableItemsChanged}
+          extraData={activeIndex}
+          getItemType={(item) => item.mediaType ?? undefined}
           onEndReached={() => {
             if (hasNextPage) fetchNextPage();
           }}
