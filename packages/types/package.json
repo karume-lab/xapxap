@@ -1,0 +1,9 @@
+{
+  "name": "@xapxap/types",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@xapxap/db": "workspace:*",
+    "drizzle-orm": "^0.30.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1784723460454,
+      "tag": "0000_fair_sleeper",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1784794752256,
+      "tag": "0001_workable_ken_ellis",
+      "breakpoints": true
+    }
+  ]
+}

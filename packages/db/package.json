@@ -1,0 +1,11 @@
+{
+  "name": "@xapxap/db",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "drizzle-orm": "^0.30.0"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.20.0"
+  }
+}

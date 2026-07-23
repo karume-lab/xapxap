@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.5/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!src/components/ui", "!uniwind-types.d.ts"]
+    "includes": ["**", "!**/src/components/ui", "!**/uniwind-types.d.ts", "!apps/supabase"]
   },
   "formatter": {
     "enabled": true,
