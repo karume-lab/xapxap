@@ -8,5 +8,12 @@
   "scripts": {
     "clean": "biome check --write --unsafe",
     "typecheck": "cd apps/mobile && bun run typecheck"
+  },
+  "overrides": {
+    "expo-constants": "~57.0.7",
+    "expo-font": "~57.0.1",
+    "expo-manifests": "~57.0.1",
+    "expo-updates-interface": "~57.0.1",
+    "expo-json-utils": "~57.0.1"
   }
 }
