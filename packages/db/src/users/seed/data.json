@@ -1,0 +1,18 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "username": "testuser1",
+    "displayName": "Test User 1",
+    "bio": "Test user 1 bio",
+    "role": "admin",
+    "avatarFile": "img1.jpg"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "username": "testuser2",
+    "displayName": "Test User 2",
+    "bio": "Test user 2 bio",
+    "role": "user",
+    "avatarFile": "img2.jpg"
+  }
+]

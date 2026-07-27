@@ -1,0 +1,26 @@
+{
+  "wallets": [
+    { "userId": "00000000-0000-0000-0000-000000000001", "balance": 5000 },
+    { "userId": "00000000-0000-0000-0000-000000000002", "balance": 1000 }
+  ],
+  "gemTransactions": [
+    {
+      "senderId": "00000000-0000-0000-0000-000000000001",
+      "receiverId": "00000000-0000-0000-0000-000000000002",
+      "amount": 500,
+      "type": "tip",
+      "status": "completed"
+    }
+  ],
+  "payoutRequests": [
+    {
+      "userId": "00000000-0000-0000-0000-000000000001",
+      "gemAmount": 1000,
+      "fiatAmount": "10.00",
+      "fiatCurrency": "KES",
+      "mobileMoneyNumber": "0700000000",
+      "provider": "MPESA",
+      "status": "pending"
+    }
+  ]
+}

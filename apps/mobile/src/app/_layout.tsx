@@ -8,7 +8,7 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { PortalHost } from "@rn-primitives/portal";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack, ThemeProvider, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -18,9 +18,8 @@ import { useUniwind } from "uniwind";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { DataSaverProvider } from "@/contexts/data-saver-context";
 import { AuthModal } from "@/features/auth/components/AuthModal";
+import { queryClient } from "@/lib/query-client";
 import { NAV_THEME } from "@/lib/theme";
-
-const queryClient = new QueryClient();
 
 export {
   // Catch any errors thrown by the Layout component.

@@ -1,5 +1,15 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { QueryClient, queryOptions, useQuery } from "@tanstack/react-query";
 import { type User, UserSchema } from "@xapxap/validators";
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: true,
+    },
+  },
+});
 
 export const userOptions = (id: string) =>
   queryOptions({

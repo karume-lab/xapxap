@@ -1,21 +1,26 @@
 name: supabase
-
 services:
   db:
     container_name: supabase_db_xapxap
     image: supabase/postgres:17.6.1.143
     restart: unless-stopped
     volumes:
-      - ./apps/supabase/volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
-      - ./apps/supabase/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
-      - ./apps/supabase/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
-      - ./apps/supabase/migrations:/docker-entrypoint-initdb.d/migrations:Z
-      - db-data:/var/lib/postgresql/data:Z
-      - db-config:/etc/postgresql-custom
+    - ./apps/supabase/volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
+    - ./apps/supabase/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
+    - ./apps/supabase/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
+    - ./apps/supabase/migrations:/docker-entrypoint-initdb.d/migrations:Z
+    - db-data:/var/lib/postgresql/data:Z
+    - db-config:/etc/postgresql-custom
     ports:
-      - "54322:5432"
+    - 54322:5432
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      test:
+      - CMD
+      - pg_isready
+      - -U
+      - postgres
+      - -h
+      - localhost
       interval: 5s
       timeout: 5s
       retries: 10
@@ -30,18 +35,23 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXP: ${JWT_EXPIRY}
     command:
-      - postgres
-      - -c
-      - config_file=/etc/postgresql/postgresql.conf
-      - -c
-      - log_min_messages=fatal
-
+    - postgres
+    - -c
+    - config_file=/etc/postgresql/postgresql.conf
+    - -c
+    - log_min_messages=fatal
   auth:
     container_name: supabase_auth_xapxap
     image: supabase/gotrue:v2.192.0
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      test:
+      - CMD
+      - wget
+      - --no-verbose
+      - --tries=1
+      - --spider
+      - http://localhost:9999/health
       timeout: 5s
       interval: 5s
       retries: 3
@@ -78,7 +88,6 @@ services:
       GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-
   rest:
     container_name: supabase_rest_xapxap
     image: postgrest/postgrest:v14.14
@@ -87,7 +96,10 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "postgrest", "--ready"]
+      test:
+      - CMD
+      - postgrest
+      - --ready
       interval: 5s
       timeout: 5s
       retries: 3
@@ -98,12 +110,11 @@ services:
       PGRST_DB_EXTRA_SEARCH_PATH: ${PGRST_DB_EXTRA_SEARCH_PATH}
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
-      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_DB_USE_LEGACY_GUCS: 'false'
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
-      PGRST_ADMIN_SERVER_PORT: "3001"
-      PGRST_ADMIN_SERVER_HOST: "localhost"
-
+      PGRST_ADMIN_SERVER_PORT: '3001'
+      PGRST_ADMIN_SERVER_HOST: localhost
   realtime:
     container_name: supabase_realtime_xapxap
     image: supabase/realtime:v2.112.6
@@ -113,10 +124,8 @@ services:
         condition: service_healthy
     healthcheck:
       test:
-        [
-          "CMD-SHELL",
-          "curl -sSfL --head -o /dev/null -H \"Authorization: Bearer ${ANON_KEY}\" http://localhost:4000/api/tenants/realtime-dev/health"
-        ]
+      - CMD-SHELL
+      - 'curl -sSfL --head -o /dev/null -H "Authorization: Bearer ${ANON_KEY}" http://localhost:4000/api/tenants/realtime-dev/health'
       timeout: 5s
       interval: 30s
       retries: 3
@@ -128,19 +137,18 @@ services:
       DB_USER: supabase_admin
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
-      DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
+      DB_AFTER_CONNECT_QUERY: SET search_path TO _realtime
       DB_ENC_KEY: ${REALTIME_DB_ENC_KEY}
       API_JWT_SECRET: ${JWT_SECRET}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
       METRICS_JWT_SECRET: ${JWT_SECRET}
       ERL_AFLAGS: -proto_dist inet_tcp
-      DNS_NODES: "''"
-      RLIMIT_NOFILE: "10000"
+      DNS_NODES: ''''''
+      RLIMIT_NOFILE: '10000'
       APP_NAME: realtime
-      SEED_SELF_HOST: "true"
-      RUN_JANITOR: "true"
-      DISABLE_HEALTHCHECK_LOGGING: "true"
-
+      SEED_SELF_HOST: 'true'
+      RUN_JANITOR: 'true'
+      DISABLE_HEALTHCHECK_LOGGING: 'true'
   storage:
     container_name: supabase_storage_xapxap
     image: supabase/storage-api:v1.62.5
@@ -153,7 +161,13 @@ services:
       imgproxy:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://storage:5000/status"]
+      test:
+      - CMD
+      - wget
+      - --no-verbose
+      - --tries=1
+      - --spider
+      - http://storage:5000/status
       timeout: 5s
       interval: 5s
       retries: 3
@@ -165,38 +179,39 @@ services:
       AUTH_JWT_SECRET: ${JWT_SECRET}
       DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       STORAGE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
-      REQUEST_ALLOW_X_FORWARDED_PATH: "true"
+      REQUEST_ALLOW_X_FORWARDED_PATH: 'true'
       FILE_SIZE_LIMIT: 52428800
       STORAGE_BACKEND: file
       GLOBAL_S3_BUCKET: ${GLOBAL_S3_BUCKET}
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
       TENANT_ID: ${STORAGE_TENANT_ID}
       REGION: ${REGION}
-      ENABLE_IMAGE_TRANSFORMATION: "true"
+      ENABLE_IMAGE_TRANSFORMATION: 'true'
       IMGPROXY_URL: http://imgproxy:5001
       S3_PROTOCOL_ACCESS_KEY_ID: ${S3_PROTOCOL_ACCESS_KEY_ID}
       S3_PROTOCOL_ACCESS_KEY_SECRET: ${S3_PROTOCOL_ACCESS_KEY_SECRET}
     volumes:
-      - storage-data:/var/lib/storage:z
-
+    - storage-data:/var/lib/storage:z
   imgproxy:
     container_name: supabase_imgproxy_xapxap
     image: supabase/imgproxy:v3.8.0
     restart: unless-stopped
     volumes:
-      - storage-data:/var/lib/storage:z
+    - storage-data:/var/lib/storage:z
     healthcheck:
-      test: ["CMD", "imgproxy", "health"]
+      test:
+      - CMD
+      - imgproxy
+      - health
       timeout: 5s
       interval: 5s
       retries: 3
     environment:
-      IMGPROXY_BIND: ":5001"
+      IMGPROXY_BIND: :5001
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
-      IMGPROXY_USE_ETAG: "true"
+      IMGPROXY_USE_ETAG: 'true'
       IMGPROXY_AUTO_WEBP: ${IMGPROXY_AUTO_WEBP}
       IMGPROXY_MAX_SRC_RESOLUTION: 16.8
-
   meta:
     container_name: supabase_meta_xapxap
     image: supabase/postgres-meta:v0.96.6
@@ -212,17 +227,15 @@ services:
       PG_META_DB_USER: postgres
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
       CRYPTO_KEY: ${PG_META_CRYPTO_KEY}
-
   studio:
     container_name: supabase_studio_xapxap
     image: supabase/studio:2026.07.06-sha-66cf431
     restart: unless-stopped
     healthcheck:
       test:
-        [
-          "CMD-SHELL",
-          "node -e \"fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})\""
-        ]
+      - CMD-SHELL
+      - node -e "fetch('http://localhost:3000/api/platform/profile').then((r) => {if
+        (r.status !== 200) throw new Error(r.status)})"
       timeout: 10s
       interval: 5s
       retries: 3
@@ -233,7 +246,7 @@ services:
       rest:
         condition: service_healthy
     environment:
-      HOSTNAME: "0.0.0.0"
+      HOSTNAME: 0.0.0.0
       STUDIO_PG_META_URL: http://meta:8080
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_HOST: ${POSTGRES_HOST}
@@ -253,8 +266,7 @@ services:
       SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
       AUTH_JWT_SECRET: ${JWT_SECRET}
     ports:
-      - "54323:3000"
-
+    - 54323:3000
   kong:
     container_name: supabase_kong_xapxap
     image: kong/kong:3.9.1
@@ -262,9 +274,12 @@ services:
     networks:
       default:
         aliases:
-          - api-gw
+        - api-gw
     healthcheck:
-      test: ["CMD", "kong", "health"]
+      test:
+      - CMD
+      - kong
+      - health
       interval: 5s
       timeout: 5s
       retries: 5
@@ -272,12 +287,12 @@ services:
       studio:
         condition: service_healthy
     ports:
-      - "54321:8000/tcp"
+    - 54321:8000/tcp
     volumes:
-      - ./apps/supabase/volumes/api/kong.yml:/home/kong/temp.yml:ro,z
-      - ./apps/supabase/volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro,z
+    - ./apps/supabase/volumes/api/kong.yml:/home/kong/temp.yml:ro,z
+    - ./apps/supabase/volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro,z
     environment:
-      KONG_DATABASE: "off"
+      KONG_DATABASE: 'off'
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
       KONG_ROUTER_FLAVOR: expressions
       KONG_DNS_ORDER: LAST,A,CNAME
@@ -290,20 +305,23 @@ services:
       SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
       DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
       DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
-    entrypoint: ["/bin/sh", "/home/kong/kong-entrypoint.sh"]
-
+    entrypoint:
+    - /bin/sh
+    - /home/kong/kong-entrypoint.sh
   functions:
     container_name: supabase_functions_xapxap
     image: supabase/edge-runtime:v1.74.2
     restart: unless-stopped
     volumes:
-      - ./apps/supabase/volumes/functions:/home/deno/functions:z
-      - deno-cache:/root/.cache/deno
+    - ./apps/supabase/volumes/functions:/home/deno/functions:z
+    - deno-cache:/root/.cache/deno
     depends_on:
       kong:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/127.0.0.1/9000'"]
+      test:
+      - CMD-SHELL
+      - timeout 1 bash -c '</dev/tcp/127.0.0.1/9000'
       interval: 5s
       timeout: 5s
       retries: 3
@@ -314,21 +332,17 @@ services:
       SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
       SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-      VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
+      VERIFY_JWT: ${FUNCTIONS_VERIFY_JWT}
     command:
-      [
-        "start",
-        "--main-service",
-        "/home/deno/functions/main"
-      ]
-
+    - start
+    - --main-service
+    - /home/deno/functions/main
   mailpit:
     container_name: supabase_mail_xapxap
     image: supabase/mailpit:v1.30.2
     restart: unless-stopped
     ports:
-      - "54324:8025"
-
+    - 54324:8025
   vector:
     container_name: supabase_vector_xapxap
     image: supabase/vector:0.53.0-alpine
@@ -337,8 +351,8 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./apps/supabase/volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
-      - /home/karume/.docker/desktop/docker.sock:/var/run/docker.sock:ro
+    - ./apps/supabase/volumes/logs/vector.yml:/etc/vector/vector.yml:ro,z
+    - /home/karume/.docker/desktop/docker.sock:/var/run/docker.sock:ro
     environment:
       VECTOR_CONFIG: /etc/vector/vector.yml
       DATABASE_HOST: ${POSTGRES_HOST}
@@ -347,7 +361,6 @@ services:
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       LOGFLARE_PUBLIC_ACCESS_TOKEN: ${LOGFLARE_PUBLIC_ACCESS_TOKEN}
       LOGFLARE_PRIVATE_ACCESS_TOKEN: ${LOGFLARE_PRIVATE_ACCESS_TOKEN}
-
   logflare:
     container_name: supabase_logflare_xapxap
     image: supabase/logflare:1.46.0
@@ -356,22 +369,21 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "54327:4000"
+    - 54327:4000
     environment:
       LOGFLARE_API_KEY: super-secret-jwt-token-with-at-least-32-characters-long
-      LOGFLARE_SINGLE_TENANT: "true"
-      LOGFLARE_SUPABASE_MODE: "true"
+      LOGFLARE_SINGLE_TENANT: 'true'
+      LOGFLARE_SUPABASE_MODE: 'true'
       PUBLIC_ACCESS_TOKEN: super-secret-jwt-token-with-at-least-32-characters-long
       PRIVATE_ACCESS_TOKEN: super-secret-jwt-token-with-at-least-32-characters-long
       DB_USERNAME: postgres
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_HOSTNAME: ${POSTGRES_HOST}
-      DB_PORT: "${POSTGRES_PORT}"
+      DB_PORT: ${POSTGRES_PORT}
       DB_DATABASE: ${POSTGRES_DB}
-      FLAG_OTEL_COLLECTOR_METRICS_ENABLED: "false"
-
+      FLAG_OTEL_COLLECTOR_METRICS_ENABLED: 'false'
 volumes:
-  db-data:
-  db-config:
-  storage-data:
-  deno-cache:
+  db-data: null
+  db-config: null
+  storage-data: null
+  deno-cache: null

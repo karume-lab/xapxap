@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "paths": {
+      "npm:@supabase/supabase-js@2": ["../../../node_modules/@supabase/supabase-js"]
+    }
+  }
+}

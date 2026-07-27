@@ -1,5 +1,11 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
+import { createClient } from "@supabase/supabase-js";
+
+declare const Deno: {
+  serve: (handler: (req: Request) => Response | Promise<Response>) => void;
+  env: {
+    get: (key: string) => string | undefined;
+  };
+};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,7 +13,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -41,7 +47,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const postIds = (posts ?? []).map((p) => p.id);
+    const postIds = (posts ?? []).map((p: { id: string }) => p.id);
 
     const { data: fameData } = await supabase
       .from("fame_heuristics")
@@ -53,10 +59,10 @@ Deno.serve(async (req) => {
       .select("*, poll_options(*, poll_votes(*))")
       .in("post_id", postIds);
 
-    const fameMap = new Map((fameData ?? []).map((f) => [f.post_id, f]));
-    const pollMap = new Map((pollData ?? []).map((p) => [p.post_id, p]));
+    const fameMap = new Map((fameData ?? []).map((f: { post_id: string }) => [f.post_id, f]));
+    const pollMap = new Map((pollData ?? []).map((p: { post_id: string }) => [p.post_id, p]));
 
-    const enriched = (posts ?? []).map((post) => ({
+    const enriched = (posts ?? []).map((post: { id: string; [key: string]: any }) => ({
       ...post,
       fame: fameMap.get(post.id) ?? null,
       poll: pollMap.get(post.id) ?? null,
@@ -73,3 +79,4 @@ Deno.serve(async (req) => {
     );
   }
 });
+
