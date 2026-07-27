@@ -1,11 +1,12 @@
-import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 import { env } from "./src/env";
 
-export default {
+export default defineConfig({
   schema: "./src/index.ts",
   out: "../../apps/supabase/migrations",
-  driver: "pg",
+  dialect: "postgresql",
+  schemaFilter: ["public"],
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    url: env.DATABASE_URL,
   },
-} satisfies Config;
+});

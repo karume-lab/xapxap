@@ -1,10 +1,359 @@
 {
-  "id": "f328120d-ab13-48a6-af38-c28da1025a23",
+  "id": "6c0d4dd9-d403-418e-8fcc-e0cd10c71003",
   "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "fame_heuristics": {
+    "public.fleet_posts": {
+      "name": "fleet_posts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "author_id": {
+          "name": "author_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_id": {
+          "name": "parent_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "media_url": {
+          "name": "media_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "media_type": {
+          "name": "media_type",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "checksum": {
+          "name": "checksum",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolution": {
+          "name": "resolution",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "fleet_posts_author_id_profiles_id_fk": {
+          "name": "fleet_posts_author_id_profiles_id_fk",
+          "tableFrom": "fleet_posts",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "fleet_posts_parent_id_fleet_posts_id_fk": {
+          "name": "fleet_posts_parent_id_fleet_posts_id_fk",
+          "tableFrom": "fleet_posts",
+          "tableTo": "fleet_posts",
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.poll_options": {
+      "name": "poll_options",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "poll_id": {
+          "name": "poll_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "option_text": {
+          "name": "option_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "poll_options_poll_id_polls_id_fk": {
+          "name": "poll_options_poll_id_polls_id_fk",
+          "tableFrom": "poll_options",
+          "tableTo": "polls",
+          "columnsFrom": [
+            "poll_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.poll_votes": {
+      "name": "poll_votes",
+      "schema": "",
+      "columns": {
+        "option_id": {
+          "name": "option_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "poll_votes_option_id_poll_options_id_fk": {
+          "name": "poll_votes_option_id_poll_options_id_fk",
+          "tableFrom": "poll_votes",
+          "tableTo": "poll_options",
+          "columnsFrom": [
+            "option_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "poll_votes_user_id_profiles_id_fk": {
+          "name": "poll_votes_user_id_profiles_id_fk",
+          "tableFrom": "poll_votes",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "poll_votes_option_id_user_id_pk": {
+          "name": "poll_votes_option_id_user_id_pk",
+          "columns": [
+            "option_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.polls": {
+      "name": "polls",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "polls_post_id_fleet_posts_id_fk": {
+          "name": "polls_post_id_fleet_posts_id_fk",
+          "tableFrom": "polls",
+          "tableTo": "fleet_posts",
+          "columnsFrom": [
+            "post_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.post_interactions": {
+      "name": "post_interactions",
+      "schema": "",
+      "columns": {
+        "post_id": {
+          "name": "post_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "post_interactions_post_id_fleet_posts_id_fk": {
+          "name": "post_interactions_post_id_fleet_posts_id_fk",
+          "tableFrom": "post_interactions",
+          "tableTo": "fleet_posts",
+          "columnsFrom": [
+            "post_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "post_interactions_user_id_profiles_id_fk": {
+          "name": "post_interactions_user_id_profiles_id_fk",
+          "tableFrom": "post_interactions",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "post_interactions_post_id_user_id_type_pk": {
+          "name": "post_interactions_post_id_user_id_type_pk",
+          "columns": [
+            "post_id",
+            "user_id",
+            "type"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.fame_heuristics": {
       "name": "fame_heuristics",
       "schema": "",
       "columns": {
@@ -17,6 +366,7 @@
         "status": {
           "name": "status",
           "type": "fame_status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
           "default": "'evaluating'"
@@ -118,197 +468,12 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "fleet_posts": {
-      "name": "fleet_posts",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "author_id": {
-          "name": "author_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "parent_id": {
-          "name": "parent_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "content": {
-          "name": "content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "media_url": {
-          "name": "media_url",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "media_type": {
-          "name": "media_type",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "checksum": {
-          "name": "checksum",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "resolution": {
-          "name": "resolution",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "fleet_posts_author_id_profiles_id_fk": {
-          "name": "fleet_posts_author_id_profiles_id_fk",
-          "tableFrom": "fleet_posts",
-          "tableTo": "profiles",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "fleet_posts_parent_id_fleet_posts_id_fk": {
-          "name": "fleet_posts_parent_id_fleet_posts_id_fk",
-          "tableFrom": "fleet_posts",
-          "tableTo": "fleet_posts",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "gem_transactions": {
-      "name": "gem_transactions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "sender_id": {
-          "name": "sender_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "receiver_id": {
-          "name": "receiver_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "amount": {
-          "name": "amount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type": {
-          "name": "type",
-          "type": "transaction_type",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "transaction_status",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'completed'"
-        },
-        "reference_id": {
-          "name": "reference_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "gem_transactions_sender_id_profiles_id_fk": {
-          "name": "gem_transactions_sender_id_profiles_id_fk",
-          "tableFrom": "gem_transactions",
-          "tableTo": "profiles",
-          "columnsFrom": [
-            "sender_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "gem_transactions_receiver_id_profiles_id_fk": {
-          "name": "gem_transactions_receiver_id_profiles_id_fk",
-          "tableFrom": "gem_transactions",
-          "tableTo": "profiles",
-          "columnsFrom": [
-            "receiver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "live_streams": {
+    "public.live_streams": {
       "name": "live_streams",
       "schema": "",
       "columns": {
@@ -334,6 +499,7 @@
         "quality": {
           "name": "quality",
           "type": "stream_quality",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
           "default": "'drift_expo'"
@@ -402,157 +568,29 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "payout_requests": {
-      "name": "payout_requests",
+    "public.stream_tickets": {
+      "name": "stream_tickets",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
+        "stream_id": {
+          "name": "stream_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "gem_amount": {
-          "name": "gem_amount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "fiat_amount": {
-          "name": "fiat_amount",
-          "type": "numeric(10, 2)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "fiat_currency": {
-          "name": "fiat_currency",
-          "type": "varchar(3)",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'KES'"
-        },
-        "mobile_money_number": {
-          "name": "mobile_money_number",
-          "type": "varchar(20)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "provider": {
-          "name": "provider",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "transaction_status",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'pending'"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "processed_at": {
-          "name": "processed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "payout_requests_user_id_profiles_id_fk": {
-          "name": "payout_requests_user_id_profiles_id_fk",
-          "tableFrom": "payout_requests",
-          "tableTo": "profiles",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "poll_options": {
-      "name": "poll_options",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "poll_id": {
-          "name": "poll_id",
+        "viewer_id": {
+          "name": "viewer_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "option_text": {
-          "name": "option_text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "poll_options_poll_id_polls_id_fk": {
-          "name": "poll_options_poll_id_polls_id_fk",
-          "tableFrom": "poll_options",
-          "tableTo": "polls",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "poll_votes": {
-      "name": "poll_votes",
-      "schema": "",
-      "columns": {
-        "option_id": {
-          "name": "option_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
+        "purchased_at": {
+          "name": "purchased_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false,
@@ -561,12 +599,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "poll_votes_option_id_poll_options_id_fk": {
-          "name": "poll_votes_option_id_poll_options_id_fk",
-          "tableFrom": "poll_votes",
-          "tableTo": "poll_options",
+        "stream_tickets_stream_id_live_streams_id_fk": {
+          "name": "stream_tickets_stream_id_live_streams_id_fk",
+          "tableFrom": "stream_tickets",
+          "tableTo": "live_streams",
           "columnsFrom": [
-            "option_id"
+            "stream_id"
           ],
           "columnsTo": [
             "id"
@@ -574,12 +612,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "poll_votes_user_id_profiles_id_fk": {
-          "name": "poll_votes_user_id_profiles_id_fk",
-          "tableFrom": "poll_votes",
+        "stream_tickets_viewer_id_profiles_id_fk": {
+          "name": "stream_tickets_viewer_id_profiles_id_fk",
+          "tableFrom": "stream_tickets",
           "tableTo": "profiles",
           "columnsFrom": [
-            "user_id"
+            "viewer_id"
           ],
           "columnsTo": [
             "id"
@@ -589,73 +627,20 @@
         }
       },
       "compositePrimaryKeys": {
-        "poll_votes_option_id_user_id_pk": {
-          "name": "poll_votes_option_id_user_id_pk",
+        "stream_tickets_stream_id_viewer_id_pk": {
+          "name": "stream_tickets_stream_id_viewer_id_pk",
           "columns": [
-            "option_id",
-            "user_id"
+            "stream_id",
+            "viewer_id"
           ]
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "polls": {
-      "name": "polls",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "post_id": {
-          "name": "post_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "question": {
-          "name": "question",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "polls_post_id_fleet_posts_id_fk": {
-          "name": "polls_post_id_fleet_posts_id_fk",
-          "tableFrom": "polls",
-          "tableTo": "fleet_posts",
-          "columnsFrom": [
-            "post_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "profiles": {
+    "public.profiles": {
       "name": "profiles",
       "schema": "",
       "columns": {
@@ -735,26 +720,63 @@
             "username"
           ]
         }
-      }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "stream_tickets": {
-      "name": "stream_tickets",
+    "public.gem_transactions": {
+      "name": "gem_transactions",
       "schema": "",
       "columns": {
-        "stream_id": {
-          "name": "stream_id",
+        "id": {
+          "name": "id",
           "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sender_id": {
+          "name": "sender_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "receiver_id": {
+          "name": "receiver_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "viewer_id": {
-          "name": "viewer_id",
-          "type": "uuid",
+        "type": {
+          "name": "type",
+          "type": "transaction_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "purchased_at": {
-          "name": "purchased_at",
+        "status": {
+          "name": "status",
+          "type": "transaction_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'completed'"
+        },
+        "reference_id": {
+          "name": "reference_id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false,
@@ -763,25 +785,117 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "stream_tickets_stream_id_live_streams_id_fk": {
-          "name": "stream_tickets_stream_id_live_streams_id_fk",
-          "tableFrom": "stream_tickets",
-          "tableTo": "live_streams",
-          "columnsFrom": [
-            "stream_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "stream_tickets_viewer_id_profiles_id_fk": {
-          "name": "stream_tickets_viewer_id_profiles_id_fk",
-          "tableFrom": "stream_tickets",
+        "gem_transactions_sender_id_profiles_id_fk": {
+          "name": "gem_transactions_sender_id_profiles_id_fk",
+          "tableFrom": "gem_transactions",
           "tableTo": "profiles",
           "columnsFrom": [
-            "viewer_id"
+            "sender_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "gem_transactions_receiver_id_profiles_id_fk": {
+          "name": "gem_transactions_receiver_id_profiles_id_fk",
+          "tableFrom": "gem_transactions",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "receiver_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payout_requests": {
+      "name": "payout_requests",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gem_amount": {
+          "name": "gem_amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fiat_amount": {
+          "name": "fiat_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fiat_currency": {
+          "name": "fiat_currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'KES'"
+        },
+        "mobile_money_number": {
+          "name": "mobile_money_number",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "transaction_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'pending'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "processed_at": {
+          "name": "processed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payout_requests_user_id_profiles_id_fk": {
+          "name": "payout_requests_user_id_profiles_id_fk",
+          "tableFrom": "payout_requests",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -790,18 +904,13 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "stream_tickets_stream_id_viewer_id_pk": {
-          "name": "stream_tickets_stream_id_viewer_id_pk",
-          "columns": [
-            "stream_id",
-            "viewer_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "wallets": {
+    "public.wallets": {
       "name": "wallets",
       "schema": "",
       "columns": {
@@ -843,46 +952,57 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
-    "fame_status": {
+    "public.fame_status": {
       "name": "fame_status",
-      "values": {
-        "evaluating": "evaluating",
-        "fame_burst": "fame_burst",
-        "trend_deck": "trend_deck",
-        "rejected": "rejected"
-      }
+      "schema": "public",
+      "values": [
+        "evaluating",
+        "fame_burst",
+        "trend_deck",
+        "rejected"
+      ]
     },
-    "stream_quality": {
+    "public.stream_quality": {
       "name": "stream_quality",
-      "values": {
-        "drift_expo": "drift_expo",
-        "aqua_premium": "aqua_premium"
-      }
+      "schema": "public",
+      "values": [
+        "drift_expo",
+        "aqua_premium"
+      ]
     },
-    "transaction_status": {
+    "public.transaction_status": {
       "name": "transaction_status",
-      "values": {
-        "pending": "pending",
-        "completed": "completed",
-        "failed": "failed",
-        "fraud_flagged": "fraud_flagged"
-      }
+      "schema": "public",
+      "values": [
+        "pending",
+        "completed",
+        "failed",
+        "fraud_flagged"
+      ]
     },
-    "transaction_type": {
+    "public.transaction_type": {
       "name": "transaction_type",
-      "values": {
-        "tip": "tip",
-        "deposit": "deposit",
-        "withdrawal": "withdrawal",
-        "stream_entry": "stream_entry"
-      }
+      "schema": "public",
+      "values": [
+        "tip",
+        "deposit",
+        "withdrawal",
+        "stream_entry"
+      ]
     }
   },
   "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

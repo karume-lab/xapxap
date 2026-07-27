@@ -7,7 +7,7 @@ import * as wallets from "@db/wallets/schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-const queryClient = postgres(env.DATABASE_URL, {
+export const queryClient = postgres(env.DATABASE_URL, {
   max: 15,
   idle_timeout: 30,
   prepare: false,

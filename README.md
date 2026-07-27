@@ -45,7 +45,7 @@ docker compose --env-file apps/supabase/.env up -d
 Once the stack is up, you can access:
 - **Supabase Studio (Dashboard):** [http://localhost:54323](http://localhost:54323)
 - **REST API:** [http://localhost:54321](http://localhost:54321)
-- **Postgres Database:** `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+- **Postgres Database:** `postgresql://postgres:your-super-secret-and-long-postgres-password@127.0.0.1:54322/postgres`
 
 
 ### 3. Database Migrations
@@ -53,8 +53,6 @@ Once the stack is up, you can access:
 We use Drizzle ORM to manage our database schemas. To apply the latest schema changes to your local database:
 
 ```bash
-cd packages/db
-
 # Generate missing migrations if schemas have changed
 bun run db:generate
 
@@ -66,10 +64,9 @@ bun run db:migrate
 
 We have a robust, domain-driven seeding system that inserts placeholder users, content, wallets, streams, and uploads media assets directly into the Supabase local storage bucket.
 
-To completely wipe your local database and re-seed it from scratch:
+To completely wipe your local database and re-seed it from scratch, simply run from the project root:
 
 ```bash
-cd packages/db
 bun run db:seed:fresh
 ```
 

@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "dependencies": {
-    "@xapxap/db": "workspace:*",
-    "drizzle-orm": "^0.30.0"
+    "@xapxap/db": "workspace:*"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.45.0"
   }
 }

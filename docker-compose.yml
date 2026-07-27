@@ -5,10 +5,10 @@ services:
     image: supabase/postgres:17.6.1.143
     restart: unless-stopped
     volumes:
+    - ./apps/supabase/volumes/db/initial-schemas.sql:/docker-entrypoint-initdb.d/init-scripts/99-schemas.sql:Z
     - ./apps/supabase/volumes/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
     - ./apps/supabase/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
     - ./apps/supabase/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
-    - ./apps/supabase/migrations:/docker-entrypoint-initdb.d/migrations:Z
     - db-data:/var/lib/postgresql/data:Z
     - db-config:/etc/postgresql-custom
     ports:

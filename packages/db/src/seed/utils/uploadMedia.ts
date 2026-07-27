@@ -7,6 +7,15 @@ import mime from "mime-types";
 // Initialize a Supabase client with the service role key to bypass RLS during seeding
 export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
+export const ensureBucket = async (bucket: string): Promise<void> => {
+  const { data: existing } = await supabase.storage.getBucket(bucket);
+  if (!existing) {
+    const { error } = await supabase.storage.createBucket(bucket, { public: true });
+    if (error) throw new Error(`Failed to create bucket "${bucket}": ${error.message}`);
+    console.log(`  Created storage bucket: ${bucket}`);
+  }
+};
+
 export const uploadMediaFile = async (
   bucket: string,
   storagePath: string,

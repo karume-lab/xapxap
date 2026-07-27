@@ -3,6 +3,7 @@ import { db } from "@db/client";
 import { seedContent } from "@db/content/seed";
 import { seedFame } from "@db/fame/seed";
 import { env } from "@db/seed/env";
+import { ensureBucket } from "@db/seed/utils/uploadMedia";
 import { seedStreams } from "@db/streams/seed";
 import { seedUsers } from "@db/users/seed";
 import { seedWallets } from "@db/wallets/seed";
@@ -123,6 +124,8 @@ const main = async () => {
   } else {
     console.log(`Seeding: ${requestedEntities.join(", ")}\n`);
   }
+
+  await ensureBucket("media");
 
   for (const step of SEED_ORDER) {
     if (seedAll || requestedEntities.includes(step.flag)) {
