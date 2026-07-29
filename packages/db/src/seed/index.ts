@@ -2,6 +2,7 @@ import { createInterface } from "node:readline";
 import { db } from "@db/client";
 import { seedContent } from "@db/content/seed";
 import { seedFame } from "@db/fame/seed";
+import { seedNotifications } from "@db/notifications/seed";
 import { env } from "@db/seed/env";
 import { ensureBucket } from "@db/seed/utils/uploadMedia";
 import { seedStreams } from "@db/streams/seed";
@@ -9,7 +10,7 @@ import { seedUsers } from "@db/users/seed";
 import { seedWallets } from "@db/wallets/seed";
 import { sql } from "drizzle-orm";
 
-const ENTITY_FLAGS = ["users", "wallets", "content", "fame", "streams"] as const;
+const ENTITY_FLAGS = ["users", "wallets", "content", "fame", "streams", "notifications"] as const;
 
 type Entity = (typeof ENTITY_FLAGS)[number];
 
@@ -46,11 +47,14 @@ const clearAllData = async () => {
     "stream_tickets",
     "live_streams",
     "fame_heuristics",
+    "post_tags",
+    "tags",
     "poll_votes",
     "poll_options",
     "polls",
     "post_interactions",
     "fleet_posts",
+    "notifications",
     "payout_requests",
     "gem_transactions",
     "wallets",
@@ -67,6 +71,7 @@ const SEED_ORDER: { flag: Entity; label: string; fn: () => Promise<void> }[] = [
   { flag: "content", label: "content", fn: seedContent },
   { flag: "fame", label: "fame", fn: seedFame },
   { flag: "streams", label: "streams", fn: seedStreams },
+  { flag: "notifications", label: "notifications", fn: seedNotifications },
 ];
 
 const main = async () => {

@@ -77,3 +77,24 @@ export const postInteractions = pgTable(
     pk: primaryKey({ columns: [t.postId, t.userId, t.type] }),
   })
 );
+
+export const tags = pgTable("tags", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tag: varchar("tag", { length: 50 }).unique().notNull(),
+  count: integer("count").default(0),
+});
+
+export const postTags = pgTable(
+  "post_tags",
+  {
+    postId: uuid("post_id")
+      .references(() => fleetPosts.id, { onDelete: "cascade" })
+      .notNull(),
+    tagId: uuid("tag_id")
+      .references(() => tags.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.postId, t.tagId] }),
+  })
+);

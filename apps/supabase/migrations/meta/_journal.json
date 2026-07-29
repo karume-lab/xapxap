@@ -8,6 +8,13 @@
       "when": 1785173347472,
       "tag": "0000_young_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785336922597,
+      "tag": "0001_lethal_pride",
+      "breakpoints": true
     }
   ]
 }

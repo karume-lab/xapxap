@@ -10,6 +10,7 @@
     "./schemas/content": "./src/content/schema/index.ts",
     "./schemas/fame": "./src/fame/schema/index.ts",
     "./schemas/streams": "./src/streams/schema/index.ts",
+    "./schemas/notifications": "./src/notifications/schema/index.ts",
     "./seed": "./src/seed/index.ts"
   },
   "scripts": {

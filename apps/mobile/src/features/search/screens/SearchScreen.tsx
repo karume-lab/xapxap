@@ -11,31 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-
-const mockTrendingWaves = [
-  { id: "1", author: "anax", content: "Hello guys, this is my first post on XapXap 🌊🚀", buzz: 4 },
-  {
-    id: "2",
-    author: "founder",
-    content: "A great recommendation for building mesh node connections off-grid!",
-    buzz: 3,
-  },
-  {
-    id: "3",
-    author: "drift_queen",
-    content: "Hello from the other side of the ocean! 🐋💨",
-    buzz: 3,
-  },
-];
-
-const mockPopularTags = [
-  { id: "1", tag: "#XapXap", count: 120 },
-  { id: "2", tag: "#MeshNetwork", count: 85 },
-  { id: "3", tag: "#SolarPower", count: 42 },
-];
-
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
+import { usePopularTags, useTrendingWaves } from "../api/queries";
 
 export function SearchScreen() {
   const colors = useColors();
@@ -44,10 +22,11 @@ export function SearchScreen() {
   const { session, showAuthModal } = useAuth();
   const [query, setQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [trendingWaves, _setTrendingWaves] = useState(mockTrendingWaves);
-  const [popularTags] = useState(mockPopularTags);
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+
+  const { data: trendingWaves = [], isLoading: isLoadingWaves } = useTrendingWaves();
+  const { data: popularTags = [], isLoading: isLoadingTags } = usePopularTags();
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -101,26 +80,30 @@ export function SearchScreen() {
             <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">
               Popular Tags
             </Text>
-            <View className="flex-row flex-wrap gap-2.5">
-              {popularTags.map((tag) => (
-                <Button
-                  key={tag.id}
-                  variant="ghost"
-                  onPress={() => {
-                    setQuery(tag.tag);
-                    setIsSearching(true);
-                    setTimeout(() => setIsSearching(false), 600);
-                  }}
-                  className="bg-muted border border-border rounded-full active:bg-secondary p-0 min-w-0 min-h-0 h-auto w-auto">
-                  <View className="flex-row items-center gap-1.5 px-4 py-2.5">
-                    <Text className="text-foreground text-sm font-semibold">{tag.tag}</Text>
-                    <Text className="text-muted-foreground text-[10px] font-medium">
-                      • {tag.count} drops
-                    </Text>
-                  </View>
-                </Button>
-              ))}
-            </View>
+            {isLoadingTags ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              <View className="flex-row flex-wrap gap-2.5">
+                {popularTags.map((tag) => (
+                  <Button
+                    key={tag.id}
+                    variant="ghost"
+                    onPress={() => {
+                      setQuery(tag.tag);
+                      setIsSearching(true);
+                      setTimeout(() => setIsSearching(false), 600);
+                    }}
+                    className="bg-muted border border-border rounded-full active:bg-secondary p-0 min-w-0 min-h-0 h-auto w-auto">
+                    <View className="flex-row items-center gap-1.5 px-4 py-2.5">
+                      <Text className="text-foreground text-sm font-semibold">{tag.tag}</Text>
+                      <Text className="text-muted-foreground text-[10px] font-medium">
+                        • {tag.count} drops
+                      </Text>
+                    </View>
+                  </Button>
+                ))}
+              </View>
+            )}
           </View>
         </View>
 
@@ -132,7 +115,7 @@ export function SearchScreen() {
             </Text>
           </View>
 
-          {isSearching ? (
+          {isSearching || isLoadingWaves ? (
             <View className="h-40 items-center justify-center">
               <ActivityIndicator color={colors.primary} />
             </View>

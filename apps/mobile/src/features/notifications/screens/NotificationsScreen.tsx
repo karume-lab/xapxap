@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { ArrowLeft, Bell, Heart, MessageCircle, SparklesIcon } from "lucide-react-native";
 import { useState } from "react";
-import { FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -10,80 +10,7 @@ import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
-
-interface NotificationItem {
-  id: string;
-  type: "like" | "comment" | "gift" | "system";
-  user?: {
-    username: string;
-    avatarUrl: string | null;
-    isPremium: boolean;
-  };
-  content: string;
-  time: string;
-  unread: boolean;
-  amount?: number; // for gems
-}
-
-const MOCK_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: "1",
-    type: "gift",
-    user: {
-      username: "dave_wave",
-      avatarUrl: null,
-      isPremium: true,
-    },
-    content: "tipped you 50 Gems on your Wave",
-    time: "2m ago",
-    unread: true,
-    amount: 50,
-  },
-  {
-    id: "2",
-    type: "comment",
-    user: {
-      username: "sarah_k",
-      avatarUrl: null,
-      isPremium: false,
-    },
-    content: "commented: 'This looks so beautiful! Cannot wait for the next Drop.'",
-    time: "15m ago",
-    unread: true,
-  },
-  {
-    id: "3",
-    type: "like",
-    user: {
-      username: "james_drop",
-      avatarUrl: null,
-      isPremium: false,
-    },
-    content: "liked your Wave",
-    time: "2h ago",
-    unread: false,
-  },
-  {
-    id: "4",
-    type: "gift",
-    user: {
-      username: "elena_r",
-      avatarUrl: null,
-      isPremium: true,
-    },
-    content: "tipped you 100 Gems on your Wave",
-    time: "5h ago",
-    unread: false,
-    amount: 100,
-  },
-  {
-    id: "5",
-    type: "system",
-    content: "Welcome to XapXap! Start dropping your waves and start earning Gems today.",
-    time: "1d ago",
-    unread: false,
-  },
-];
+import { type NotificationItem, useNotifications } from "../api/queries";
 
 type FilterType = "all" | "gems" | "comments" | "likes";
 
@@ -94,7 +21,9 @@ export default function NotificationsScreen() {
   const { session, showAuthModal } = useAuth();
   const [filter, setFilter] = useState<FilterType>("all");
 
-  const filteredNotifications = MOCK_NOTIFICATIONS.filter((item) => {
+  const { data: notifications = [], isLoading } = useNotifications(session?.user?.id || null);
+
+  const filteredNotifications = notifications.filter((item) => {
     if (filter === "all") return true;
     if (filter === "gems") return item.type === "gift";
     if (filter === "comments") return item.type === "comment";
@@ -185,13 +114,13 @@ export default function NotificationsScreen() {
           <Text className="text-foreground font-bold text-2xl text-center mb-2 font-[Inter_700Bold]">
             Your Notifications
           </Text>
-          <Text className="text-muted-foreground text-center text-sm leading-6 max-w-[280px] mb-8 font-[Inter_400Regular]">
+          <Text className="text-muted-foreground text-center text-sm leading-6 max-w-70 mb-8 font-[Inter_400Regular]">
             Sign in to track likes, gems tipped by fans, comments on your waves, and account
             updates!
           </Text>
           <Button
             onPress={showAuthModal}
-            className="w-full max-w-[240px] h-16 rounded-[28px] bg-primary">
+            className="w-full max-w-60 h-16 rounded-[28px] bg-primary">
             <Text className="text-primary-foreground font-bold text-lg font-[Inter_700Bold]">
               Sign in to XapXap
             </Text>
@@ -249,14 +178,20 @@ export default function NotificationsScreen() {
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
         ListEmptyComponent={
-          <View className="flex-1 items-center justify-center p-12 py-32">
-            <View className="w-16 h-16 rounded-full bg-muted items-center justify-center mb-4">
-              <Icon as={Bell} size={28} className="text-muted-foreground" />
+          isLoading ? (
+            <View className="flex-1 items-center justify-center p-12 py-32">
+              <ActivityIndicator color={colors.primary} />
             </View>
-            <Text className="text-muted-foreground text-center text-sm leading-6">
-              No notifications yet in this category.
-            </Text>
-          </View>
+          ) : (
+            <View className="flex-1 items-center justify-center p-12 py-32">
+              <View className="w-16 h-16 rounded-full bg-muted items-center justify-center mb-4">
+                <Icon as={Bell} size={28} className="text-muted-foreground" />
+              </View>
+              <Text className="text-muted-foreground text-center text-sm leading-6">
+                No notifications yet in this category.
+              </Text>
+            </View>
+          )
         }
       />
     </View>

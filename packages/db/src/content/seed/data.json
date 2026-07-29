@@ -3,14 +3,14 @@
     {
       "id": "11111111-1111-1111-1111-111111111111",
       "authorId": "00000000-0000-0000-0000-000000000001",
-      "content": "Check out this bunny video!",
+      "content": "Testing the mesh limits out here in the desert. 100km connection stable. The vibes are immaculate #meshnetwork #offgrid #vibes",
       "mediaFile": "bunny.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "11111111-1111-1111-1111-111111111112",
       "authorId": "00000000-0000-0000-0000-000000000002",
-      "content": "Here is a cool doc.",
+      "content": "Here is a cool doc. #productivity",
       "mediaFile": "doc.pdf",
       "mediaType": "application/pdf"
     }
