@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import { useCreateFleetPost } from "@/features/fleet/api/queries";
+import { useCreateFleetPost } from "@/features/fleet/services/queries";
 import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
 

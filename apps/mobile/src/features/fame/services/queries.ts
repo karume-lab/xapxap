@@ -1,9 +1,4 @@
-import {
-  infiniteQueryOptions,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FameBurstItem } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
@@ -12,9 +7,14 @@ export type { FameBurstItem };
 
 const PAGE_SIZE = 5;
 
-export const fameBurstOptions = (userId: string | null) =>
-  infiniteQueryOptions({
-    queryKey: ["fame-burst", userId],
+export const fameKeys = {
+  all: ["fame"] as const,
+  fameBurst: (userId: string | null) => [...fameKeys.all, "burst", userId] as const,
+};
+
+export function useFameBurst(userId: string | null) {
+  return useInfiniteQuery({
+    queryKey: fameKeys.fameBurst(userId),
     queryFn: async ({ pageParam = 0 }) => {
       const start = pageParam * PAGE_SIZE;
       const end = start + PAGE_SIZE - 1;
@@ -89,11 +89,8 @@ export const fameBurstOptions = (userId: string | null) =>
       };
     },
     initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
+    getNextPageParam: (lastPage: { nextPage?: number }) => lastPage.nextPage,
   });
-
-export function useFameBurst(userId: string | null) {
-  return useInfiniteQuery(fameBurstOptions(userId));
 }
 
 export function useToggleFameInteraction(userId: string | null) {
@@ -134,7 +131,7 @@ export function useToggleFameInteraction(userId: string | null) {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+      queryClient.invalidateQueries({ queryKey: fameKeys.all });
     },
   });
 }

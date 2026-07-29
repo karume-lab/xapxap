@@ -27,7 +27,7 @@ import {
   type FameBurstItem,
   useFameBurst,
   useToggleFameInteraction,
-} from "@/features/fame/api/queries";
+} from "@/features/fame/services/queries";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";

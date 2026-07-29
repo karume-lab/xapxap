@@ -42,7 +42,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const profileCacheRef = useRef<string | null>(null);
 
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
-    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .maybeSingle();
 
     if (error) {
       console.warn("Failed to fetch profile:", error.message);

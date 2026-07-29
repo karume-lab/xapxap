@@ -29,7 +29,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { type LiveStreamWithAuthor, useLiveStreams } from "@/features/streaming/api/queries";
+import { type LiveStreamWithAuthor, useLiveStreams } from "@/features/streaming/services/queries";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { cn } from "@/lib/utils";

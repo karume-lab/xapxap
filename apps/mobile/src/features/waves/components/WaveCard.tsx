@@ -15,7 +15,7 @@ import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
-import { useToggleFleetInteraction } from "@/features/fleet/api/queries";
+import { useToggleFleetInteraction } from "@/features/fleet/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 interface WaveCardProps {

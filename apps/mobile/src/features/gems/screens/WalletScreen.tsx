@@ -20,16 +20,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import { useGemActivity, useWalletBalance } from "@/features/gems/api/queries";
+import { useGemActivity, useWalletBalance } from "@/features/gems/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 export function WalletScreen() {
   const insets = useSafeAreaInsets();
   const { session } = useAuth();
-  const { data: wallet } = useWalletBalance(session?.user?.id || null);
-  const { data: activity } = useGemActivity(session?.user?.id || null);
+  const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
+  const { data: activity, isLoading: isActivityLoading } = useGemActivity(
+    session?.user?.id || null
+  );
   const colors = useColors();
   const router = useRouter();
 
@@ -89,16 +92,24 @@ export function WalletScreen() {
             </Text>
 
             <View className="my-2 items-center">
-              <Text className="text-foreground text-7xl font-bold">{wallet?.balance ?? 1250}</Text>
+              {isWalletLoading ? (
+                <Skeleton className="h-16 w-32" />
+              ) : (
+                <Text className="text-foreground text-7xl font-bold">{wallet?.balance ?? 0}</Text>
+              )}
               <Text className="text-muted-foreground text-base font-medium mt-1">gems</Text>
             </View>
 
             <Glass radius={20} className="px-4 py-2 mt-4 border border-border">
               <View className="flex-row items-center">
                 <Text className="text-xs mr-2">🇰🇪</Text>
-                <Text className="text-foreground text-xs font-bold">
-                  ≈ KSh{((wallet?.balance ?? 1250) * 1.3).toFixed(0)}
-                </Text>
+                {isWalletLoading ? (
+                  <Skeleton className="h-4 w-12" />
+                ) : (
+                  <Text className="text-foreground text-xs font-bold">
+                    ≈ KSh{((wallet?.balance ?? 0) * 1.3).toFixed(0)}
+                  </Text>
+                )}
               </View>
             </Glass>
           </View>
@@ -133,35 +144,41 @@ export function WalletScreen() {
           </Text>
 
           <View className="gap-3">
-            {(activity || []).map((item) => {
-              const isReceived = item.type === "received";
-              const iconColor = isReceived ? "text-primary" : "text-destructive";
-              const bgColor = isReceived ? "bg-primary/10" : "bg-destructive/10";
+            {isActivityLoading ? (
+              <Skeleton className="h-20 w-full rounded-[24px]" />
+            ) : activity?.length === 0 ? (
+              <Text className="text-muted-foreground text-center py-4">No recent activity.</Text>
+            ) : (
+              (activity || []).map((item) => {
+                const isReceived = item.type === "received";
+                const iconColor = isReceived ? "text-primary" : "text-destructive";
+                const bgColor = isReceived ? "bg-primary/10" : "bg-destructive/10";
 
-              return (
-                <Glass
-                  key={item.id}
-                  radius={24}
-                  className="p-4 flex-row items-center border border-border">
-                  <View
-                    className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${bgColor}`}>
-                    <Icon
-                      as={isReceived ? ArrowDownLeftIcon : ArrowUpRightIcon}
-                      size={20}
-                      className={iconColor}
-                    />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-foreground font-bold text-sm">{item.label}</Text>
-                    <Text className="text-muted-foreground text-xs">{item.sublabel}</Text>
-                  </View>
-                  <Text
-                    className={`font-bold text-base ${isReceived ? "text-primary" : "text-destructive"}`}>
-                    {item.amount}
-                  </Text>
-                </Glass>
-              );
-            })}
+                return (
+                  <Glass
+                    key={item.id}
+                    radius={24}
+                    className="p-4 flex-row items-center border border-border">
+                    <View
+                      className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${bgColor}`}>
+                      <Icon
+                        as={isReceived ? ArrowDownLeftIcon : ArrowUpRightIcon}
+                        size={20}
+                        className={iconColor}
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-foreground font-bold text-sm">{item.label}</Text>
+                      <Text className="text-muted-foreground text-xs">{item.sublabel}</Text>
+                    </View>
+                    <Text
+                      className={`font-bold text-base ${isReceived ? "text-primary" : "text-destructive"}`}>
+                      {item.amount}
+                    </Text>
+                  </Glass>
+                );
+              })
+            )}
           </View>
         </View>
       </ScrollView>

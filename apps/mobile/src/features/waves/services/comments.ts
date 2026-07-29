@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetPostWithAuthor } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
@@ -58,10 +58,16 @@ async function enrichComments(
   });
 }
 
-export const commentsOptions = (postId: string | null, userId: string | null = null) => {
+export const commentsKeys = {
+  all: ["comments"] as const,
+  postComments: (postId: string | null, userId: string | null) =>
+    [...commentsKeys.all, postId, userId] as const,
+};
+
+export function useComments(postId: string | null, userId: string | null = null) {
   const realPostId = postId ? postId.split("-p")[0] : null;
-  return queryOptions({
-    queryKey: ["comments", realPostId, userId],
+  return useQuery({
+    queryKey: commentsKeys.postComments(realPostId, userId),
     queryFn: async (): Promise<FleetPostWithAuthor[]> => {
       if (!realPostId) return [];
 
@@ -85,10 +91,6 @@ export const commentsOptions = (postId: string | null, userId: string | null = n
     },
     enabled: !!realPostId,
   });
-};
-
-export function useComments(postId: string | null, userId: string | null = null) {
-  return useQuery(commentsOptions(postId, userId));
 }
 
 export function useAddComment() {
@@ -121,7 +123,7 @@ export function useAddComment() {
       return { newComment: transformRow<FleetPostWithAuthor>(data), postId };
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: commentsOptions(res.postId).queryKey });
+      queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(res.postId, null) });
       queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
     },
   });
@@ -160,7 +162,7 @@ export function useToggleCommentLike(userId: string | null) {
       return { postId: realPostId };
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["comments", res.postId] });
+      queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(res.postId, null) });
     },
   });
 }

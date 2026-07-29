@@ -11,9 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
+import { usePopularTags, useTrendingWaves } from "@/features/search/services/queries";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
-import { usePopularTags, useTrendingWaves } from "../api/queries";
 
 export function SearchScreen() {
   const colors = useColors();
@@ -138,7 +138,7 @@ export function SearchScreen() {
                         e.stopPropagation();
                         router.push({
                           pathname: "/profile/[id]",
-                          params: { id: item.author, username: item.author },
+                          params: { id: item.authorId, username: item.author },
                         });
                       }}
                       className="flex-row items-center mb-4 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">

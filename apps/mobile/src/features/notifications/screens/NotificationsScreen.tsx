@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
+import { type NotificationItem, useNotifications } from "@/features/notifications/services/queries";
 import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
-import { type NotificationItem, useNotifications } from "../api/queries";
 
 type FilterType = "all" | "gems" | "comments" | "likes";
 

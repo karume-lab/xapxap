@@ -3,7 +3,7 @@ import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import { usePoll } from "@/features/fleet/api/queries";
+import { usePoll } from "@/features/fleet/services/queries";
 
 interface PollUIProps {
   pollId: string;

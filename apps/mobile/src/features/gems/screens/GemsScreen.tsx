@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import { useTipMutation, useWalletBalance } from "@/features/gems/api/queries";
+import { useTipMutation, useWalletBalance } from "@/features/gems/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 const TIP_AMOUNTS = [10, 50, 100, 500, 1000];

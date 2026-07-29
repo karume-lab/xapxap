@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
@@ -51,9 +51,17 @@ async function fetchInteractions(
   return { counts, userInteractions };
 }
 
-export const fleetThreadsOptions = (userId: string | null) =>
-  queryOptions({
-    queryKey: ["fleet-threads", userId],
+export const fleetKeys = {
+  all: ["fleet"] as const,
+  threads: (userId: string | null) => [...fleetKeys.all, "threads", userId] as const,
+  decks: () => [...fleetKeys.all, "decks"] as const,
+  poll: (pollId: string, userId: string | null) =>
+    [...fleetKeys.all, "poll", pollId, userId] as const,
+};
+
+export function useFleetThreads(userId: string | null) {
+  return useQuery({
+    queryKey: fleetKeys.threads(userId),
     queryFn: async () => {
       const { data: posts, error } = await supabase
         .from("fleet_posts")
@@ -82,28 +90,24 @@ export const fleetThreadsOptions = (userId: string | null) =>
       });
     },
   });
-
-export function useFleetThreads(userId: string | null) {
-  return useQuery(fleetThreadsOptions(userId));
 }
 
-export const fleetDecksOptions = () =>
-  queryOptions({
-    queryKey: ["fleet-decks"],
+export function useFleets() {
+  return useQuery({
+    queryKey: fleetKeys.decks(),
     queryFn: async () => {
       const { data, error } = await supabase.from("fleet_decks").select("*");
       if (error) return [];
       return data || [];
     },
   });
-
-export function useFleets() {
-  return useQuery(fleetDecksOptions());
 }
 
-export const pollOptions = (pollId: string, userId: string | null) =>
-  queryOptions({
-    queryKey: ["poll", pollId, userId],
+export function usePoll(pollId: string, userId: string | null) {
+  const queryClient = useQueryClient();
+
+  const query = useQuery({
+    queryKey: fleetKeys.poll(pollId, userId),
     queryFn: async (): Promise<PollWithDetails | null> => {
       const { data: poll, error } = await supabase
         .from("polls")
@@ -141,11 +145,6 @@ export const pollOptions = (pollId: string, userId: string | null) =>
     },
   });
 
-export function usePoll(pollId: string, userId: string | null) {
-  const queryClient = useQueryClient();
-
-  const query = useQuery(pollOptions(pollId, userId));
-
   const voteMutation = useMutation({
     mutationFn: async (optionId: string) => {
       if (!userId) throw new Error("Not authenticated");
@@ -167,8 +166,7 @@ export function usePoll(pollId: string, userId: string | null) {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["poll", pollId] });
-      queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
     },
   });
 
@@ -212,8 +210,8 @@ export function useToggleFleetInteraction(userId: string | null) {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
     },
   });
 }
@@ -248,8 +246,8 @@ export function useCreateFleetPost() {
       return transformRow<FleetPostWithAuthor>(data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
     },
   });
 }

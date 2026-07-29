@@ -8,7 +8,7 @@ import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useLiveStreams } from "@/features/streaming/api/queries";
+import { useLiveStreams } from "@/features/streaming/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 export function LiveStreamScreen({ streamId }: { streamId: string }) {

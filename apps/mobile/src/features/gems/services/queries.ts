@@ -1,4 +1,4 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PayoutRequest } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
@@ -71,9 +71,15 @@ function toGemActivity(tx: Record<string, unknown>, userId: string): GemActivity
   };
 }
 
-export const walletBalanceOptions = (userId: string | null) =>
-  queryOptions({
-    queryKey: ["wallet-balance", userId],
+export const gemsKeys = {
+  all: ["gems"] as const,
+  walletBalance: (userId: string | null) => [...gemsKeys.all, "wallet-balance", userId] as const,
+  activity: (userId: string | null) => [...gemsKeys.all, "activity", userId] as const,
+};
+
+export function useWalletBalance(userId: string | null) {
+  return useQuery({
+    queryKey: gemsKeys.walletBalance(userId),
     queryFn: async () => {
       if (!userId) return { userId: "", balance: 0, updatedAt: new Date() };
       const { data, error } = await supabase
@@ -86,14 +92,11 @@ export const walletBalanceOptions = (userId: string | null) =>
       return transformRow<{ userId: string; balance: number; updatedAt: Date }>(data);
     },
   });
-
-export function useWalletBalance(userId: string | null) {
-  return useQuery(walletBalanceOptions(userId));
 }
 
-export const gemActivityOptions = (userId: string | null) =>
-  queryOptions({
-    queryKey: ["gem-activity", userId],
+export function useGemActivity(userId: string | null) {
+  return useQuery({
+    queryKey: gemsKeys.activity(userId),
     queryFn: async (): Promise<GemActivityItem[]> => {
       if (!userId) return [];
       const { data, error } = await supabase
@@ -107,9 +110,6 @@ export const gemActivityOptions = (userId: string | null) =>
       return data.map((row) => toGemActivity(transformRow(row), userId));
     },
   });
-
-export function useGemActivity(userId: string | null) {
-  return useQuery(gemActivityOptions(userId));
 }
 
 export function usePayoutMutation(userId: string | null) {
@@ -158,8 +158,8 @@ export function usePayoutMutation(userId: string | null) {
       return { success: true, ...request };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance", userId] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity", userId] });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.walletBalance(userId) });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.activity(userId) });
     },
   });
 }
@@ -211,8 +211,8 @@ export function useTipMutation(userId: string | null) {
       return { success: true };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance", userId] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity", userId] });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.walletBalance(userId) });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.activity(userId) });
     },
   });
 }

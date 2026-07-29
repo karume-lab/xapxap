@@ -19,10 +19,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useDataSaver } from "@/contexts/data-saver-context";
-import { useWalletBalance } from "@/features/gems/api/queries";
+import { useWalletBalance } from "@/features/gems/services/queries";
 import { useColors } from "@/hooks/use-colors";
 import { cn } from "@/lib/utils";
 
@@ -43,8 +44,8 @@ export function ProfileScreen() {
 
   const [currency, setCurrency] = useState("KES");
 
-  const { data: wallet } = useWalletBalance(session?.user?.id || null);
-  const gemsBalance = wallet?.balance ?? 1250;
+  const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
+  const gemsBalance = wallet?.balance ?? 0;
   const gemsValue = (gemsBalance / 100).toFixed(2);
 
   if (!session) {
@@ -93,18 +94,26 @@ export function ProfileScreen() {
               </View>
               <View className="flex-1">
                 <View className="flex-row items-center gap-2 mb-1">
-                  <Text className="text-xl font-bold text-foreground">
-                    @{profile?.username || "anax"}
-                  </Text>
-                  <View className="bg-muted px-2 py-0.5 rounded-full">
-                    <Text className="text-[10px] font-bold text-muted-foreground uppercase">
-                      Drifter
-                    </Text>
-                  </View>
+                  {profile ? (
+                    <Text className="text-xl font-bold text-foreground">@{profile.username}</Text>
+                  ) : (
+                    <Skeleton className="h-6 w-32" />
+                  )}
+                  {profile && (
+                    <View className="bg-muted px-2 py-0.5 rounded-full">
+                      <Text className="text-[10px] font-bold text-muted-foreground uppercase">
+                        Drifter
+                      </Text>
+                    </View>
+                  )}
                 </View>
-                <Text className="text-muted-foreground text-sm" numberOfLines={1}>
-                  {session?.user?.email || "anaxlee44@gmail.com"}
-                </Text>
+                {session?.user?.email ? (
+                  <Text className="text-muted-foreground text-sm" numberOfLines={1}>
+                    {session.user.email}
+                  </Text>
+                ) : (
+                  <Skeleton className="h-4 w-40 mt-1" />
+                )}
               </View>
               <View className="w-8 h-8 rounded-full bg-muted/50 items-center justify-center ml-2">
                 <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
@@ -175,7 +184,11 @@ export function ProfileScreen() {
                 <Text className="text-foreground font-bold text-base">My Gems</Text>
               </View>
               <View className="flex-row items-center gap-3">
-                <Text className="text-primary font-bold text-base">{gemsBalance}</Text>
+                {isWalletLoading ? (
+                  <Skeleton className="h-4 w-8" />
+                ) : (
+                  <Text className="text-primary font-bold text-base">{gemsBalance}</Text>
+                )}
                 <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
               </View>
             </Button>
@@ -264,9 +277,7 @@ export function ProfileScreen() {
               <View className="flex-1">
                 <Text className="text-foreground font-bold text-base">Date of birth</Text>
                 <Text className="text-muted-foreground text-xs">
-                  {profile?.dateOfBirth
-                    ? new Date(profile.dateOfBirth).toLocaleDateString()
-                    : "25/10/1970"}
+                  {profile?.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : ""}
                 </Text>
               </View>
             </Glass>

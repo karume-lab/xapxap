@@ -1,42 +1,45 @@
-import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { LiveStreamWithAuthor, Profile } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
 export type { LiveStreamWithAuthor };
 
-export const liveStreamsOptions = queryOptions({
-  queryKey: ["live-streams"],
-  queryFn: async () => {
-    const { data: streams, error } = await supabase
-      .from("live_streams")
-      .select("*, author:profiles(*)")
-      .eq("is_live", true)
-      .order("created_at", { ascending: false });
-
-    if (error || !streams || streams.length === 0) return [];
-
-    const streamIds = streams.map((s) => s.id);
-    const { data: tickets } = await supabase
-      .from("stream_tickets")
-      .select("stream_id")
-      .in("stream_id", streamIds);
-
-    const viewerCounts = new Map<string, number>();
-    for (const t of tickets || []) {
-      viewerCounts.set(t.stream_id, (viewerCounts.get(t.stream_id) || 0) + 1);
-    }
-
-    return streams.map((stream) => {
-      const transformed = transformRow<Record<string, unknown>>(stream);
-      transformed.viewerCount = viewerCounts.get(stream.id) || 0;
-      return transformed as LiveStreamWithAuthor;
-    });
-  },
-});
+export const streamingKeys = {
+  all: ["streaming"] as const,
+  liveStreams: () => [...streamingKeys.all, "live-streams"] as const,
+};
 
 export function useLiveStreams() {
-  return useQuery(liveStreamsOptions);
+  return useQuery({
+    queryKey: streamingKeys.liveStreams(),
+    queryFn: async () => {
+      const { data: streams, error } = await supabase
+        .from("live_streams")
+        .select("*, author:profiles(*)")
+        .eq("is_live", true)
+        .order("created_at", { ascending: false });
+
+      if (error || !streams || streams.length === 0) return [];
+
+      const streamIds = streams.map((s) => s.id);
+      const { data: tickets } = await supabase
+        .from("stream_tickets")
+        .select("stream_id")
+        .in("stream_id", streamIds);
+
+      const viewerCounts = new Map<string, number>();
+      for (const t of tickets || []) {
+        viewerCounts.set(t.stream_id, (viewerCounts.get(t.stream_id) || 0) + 1);
+      }
+
+      return streams.map((stream) => {
+        const transformed = transformRow<Record<string, unknown>>(stream);
+        transformed.viewerCount = viewerCounts.get(stream.id) || 0;
+        return transformed as LiveStreamWithAuthor;
+      });
+    },
+  });
 }
 
 export function useJoinStreamMutation(userId: string | null) {
@@ -76,7 +79,7 @@ export function useJoinStreamMutation(userId: string | null) {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: liveStreamsOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: streamingKeys.liveStreams() });
       queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
       queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
     },
@@ -122,7 +125,7 @@ export function useStartStreamMutation(userId: string | null) {
       return transformed as LiveStreamWithAuthor;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: liveStreamsOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: streamingKeys.liveStreams() });
     },
   });
 }

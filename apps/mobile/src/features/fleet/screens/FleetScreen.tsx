@@ -12,7 +12,7 @@ import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { useFleets } from "@/features/fleet/api/queries";
+import { useFleets } from "@/features/fleet/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 export function FleetScreen() {
