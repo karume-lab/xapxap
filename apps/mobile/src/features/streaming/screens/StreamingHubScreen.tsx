@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 
 function StreamCard({ item, onPress }: { item: LiveStreamWithAuthor; onPress: () => void }) {
   const isPremium = item.quality === "aqua_premium";
-  const [isUnlocked, setIsUnlocked] = useState(!item.isGated || (item.entryFeeGems || 0) === 0);
+  const [isUnlocked, setIsUnlocked] = useState(!item.isGated || (item.entryFeeGems ?? 0) === 0);
 
   const handleUnlock = () => {
     Alert.alert(

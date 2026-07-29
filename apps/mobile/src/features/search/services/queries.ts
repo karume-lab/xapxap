@@ -43,7 +43,7 @@ export function useTrendingWaves() {
       return (data || []).map((post: any) => ({
         id: post.id,
         content: post.content,
-        author: post.profiles?.username || "unknown",
+        author: post.profiles?.username ?? "",
         authorId: post.profiles?.id,
         buzz: post.post_interactions?.[0]?.count || 0,
       })) as TrendingWave[];

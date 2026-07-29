@@ -64,7 +64,7 @@ export function WaveCard({ post, children }: WaveCardProps) {
   );
 
   const isOwn = post.author.id === user?.id;
-  const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "Just now";
+  const dateStr = post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "";
 
   return (
     <Glass className="mx-4 mb-4 overflow-hidden rounded-2xl">

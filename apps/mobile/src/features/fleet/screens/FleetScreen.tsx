@@ -65,11 +65,13 @@ export function FleetScreen() {
             <Glass radius={24} className="p-6 border border-border mb-4">
               <View className="flex-row items-center justify-between mb-2">
                 <Text className="text-foreground font-bold text-lg">{deck.name}</Text>
-                <View className="bg-primary/10 px-2 py-1 rounded-full border border-primary/20">
-                  <Text className="text-primary text-xs font-bold capitalize">
-                    {deck.category || "General"}
-                  </Text>
-                </View>
+                {deck.category && (
+                  <View className="bg-primary/10 px-2 py-1 rounded-full border border-primary/20">
+                    <Text className="text-primary text-xs font-bold capitalize">
+                      {deck.category}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text className="text-muted-foreground text-sm mb-4 leading-5" numberOfLines={2}>
                 {deck.description}

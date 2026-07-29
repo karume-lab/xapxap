@@ -200,7 +200,7 @@ export function CreatePostScreen() {
                     <View className="items-center justify-center p-4">
                       <Icon as={FileText} size={48} className="text-magenta mb-2" />
                       <Text className="text-foreground font-bold text-center" numberOfLines={1}>
-                        {media.name || "Selected PDF"}
+                        {media.name ?? "Selected PDF"}
                       </Text>
                     </View>
                   )}

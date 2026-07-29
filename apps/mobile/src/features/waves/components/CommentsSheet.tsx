@@ -92,7 +92,7 @@ function CommentItem({
               )}
             </Button>
             <Text className="text-muted-foreground text-xs font-[Inter_400Regular]">
-              {formatTimeAgo(comment.createdAt ?? new Date())}
+              {comment.createdAt ? formatTimeAgo(comment.createdAt) : ""}
             </Text>
           </View>
 
@@ -297,7 +297,7 @@ export function CommentsSheet({ postId, onClose }: CommentsSheetProps) {
             className="border-t border-border px-6 py-4"
             style={{ paddingBottom: insets.bottom + 10 }}>
             <View className="flex-row items-center gap-3">
-              <Avatar username={profile?.username || "me"} url={profile?.avatarUrl} size={36} />
+              <Avatar username={profile?.username} url={profile?.avatarUrl} size={36} />
               <Button
                 variant="ghost"
                 onPress={() => {

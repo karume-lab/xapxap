@@ -35,7 +35,7 @@ export function useLiveStreams() {
 
       return streams.map((stream) => {
         const transformed = transformRow<Record<string, unknown>>(stream);
-        transformed.viewerCount = viewerCounts.get(stream.id) || 0;
+        transformed.viewerCount = viewerCounts.get(stream.id) ?? 0;
         return transformed as LiveStreamWithAuthor;
       });
     },

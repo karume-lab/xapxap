@@ -136,11 +136,11 @@ export function usePoll(pollId: string, userId: string | null) {
         options: (Array.isArray(poll.options) ? poll.options : []).map(
           (opt: Record<string, unknown>) => ({
             ...transformRow<Record<string, unknown>>(opt),
-            votes: votesByOption.get((opt.id as string) || "") || 0,
+            votes: votesByOption.get((opt.id as string) ?? "") ?? 0,
           })
         ),
-        totalVotes: votes?.length || 0,
-        userVotedId: userVote?.option_id || null,
+        totalVotes: votes?.length ?? 0,
+        userVotedId: userVote?.option_id ?? null,
       };
     },
   });
@@ -237,7 +237,7 @@ export function useCreateFleetPost() {
           author_id: authorProfile?.id,
           content,
           media_url: mediaUrl || null,
-          media_type: mediaType || "text",
+          media_type: mediaType,
         })
         .select("*, author:profiles(*)")
         .single();

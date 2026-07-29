@@ -44,8 +44,8 @@ export default function NotificationsScreen() {
           </View>
         ) : (
           <Avatar
-            username={item.user?.username || "user"}
-            url={item.user?.avatarUrl || null}
+            username={item.user?.username}
+            url={item.user?.avatarUrl}
             size={40}
             ring={item.user?.isPremium}
           />
@@ -54,8 +54,8 @@ export default function NotificationsScreen() {
         <View className="flex-1 gap-1">
           <View className="flex-row items-center justify-between">
             <Text className="text-foreground text-sm font-semibold leading-5 flex-1 pr-2">
-              {item.type !== "system" && (
-                <Text className="font-bold text-foreground">@{item.user?.username} </Text>
+              {item.type !== "system" && item.user?.username && (
+                <Text className="font-bold text-foreground">@{item.user.username} </Text>
               )}
               <Text className="text-foreground/80 font-normal">{item.content}</Text>
             </Text>

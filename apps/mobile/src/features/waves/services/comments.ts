@@ -35,7 +35,7 @@ async function enrichComments(
             : ix.type === "anchor"
               ? "anchors"
               : "hugs";
-      c[key] = (c[key] || 0) + 1;
+      c[key] = (c[key] ?? 0) + 1;
     }
     if (userId && ix.user_id === userId) {
       const u = userInt[ix.post_id];
@@ -47,8 +47,8 @@ async function enrichComments(
     const transformed = transformRow<FleetPostWithAuthor>(comment);
     return {
       ...transformed,
-      counts: counts[transformed.id] || { hugs: 0, echoes: 0, casts: 0, anchors: 0 },
-      myInteractions: userInt[transformed.id] || {
+      counts: counts[transformed.id] ?? { hugs: 0, echoes: 0, casts: 0, anchors: 0 },
+      myInteractions: userInt[transformed.id] ?? {
         hug: false,
         echo: false,
         cast: false,

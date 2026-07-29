@@ -119,15 +119,22 @@ export function usePayoutMutation(userId: string | null) {
     mutationFn: async (request: Partial<PayoutRequest>) => {
       if (!userId) throw new Error("Not authenticated");
 
-      const gemAmt = request.gemAmount || 0;
+      if (
+        !request.gemAmount ||
+        !request.fiatCurrency ||
+        !request.mobileMoneyNumber ||
+        !request.provider
+      ) {
+        throw new Error("Missing required payout fields");
+      }
 
       const { error: payoutError } = await supabase.from("payout_requests").insert({
         user_id: userId,
-        gem_amount: gemAmt,
-        fiat_amount: request.fiatAmount || 0,
-        fiat_currency: request.fiatCurrency || "KES",
-        mobile_money_number: request.mobileMoneyNumber || "",
-        provider: request.provider || "",
+        gem_amount: request.gemAmount,
+        fiat_amount: request.fiatAmount ?? 0,
+        fiat_currency: request.fiatCurrency,
+        mobile_money_number: request.mobileMoneyNumber,
+        provider: request.provider,
         status: "pending",
       });
       if (payoutError) throw payoutError;
@@ -138,19 +145,19 @@ export function usePayoutMutation(userId: string | null) {
         .eq("user_id", userId)
         .single();
 
-      if (!wallet || wallet.balance < gemAmt) {
+      if (!wallet || wallet.balance < request.gemAmount) {
         throw new Error("Insufficient balance");
       }
 
       const { error: walletError } = await supabase
         .from("wallets")
-        .update({ balance: wallet.balance - gemAmt })
+        .update({ balance: wallet.balance - request.gemAmount })
         .eq("user_id", userId);
       if (walletError) throw walletError;
 
       await supabase.from("gem_transactions").insert({
         sender_id: userId,
-        amount: gemAmt,
+        amount: request.gemAmount,
         type: "withdrawal",
         status: "completed",
       });
@@ -204,7 +211,7 @@ export function useTipMutation(userId: string | null) {
       await supabase
         .from("wallets")
         .upsert(
-          { user_id: creatorId, balance: (receiverWallet?.balance || 0) + amount },
+          { user_id: creatorId, balance: (receiverWallet?.balance ?? 0) + amount },
           { onConflict: "user_id" }
         );
 

@@ -19,7 +19,7 @@ export function LiveStreamScreen({ streamId }: { streamId: string }) {
 
   const stream = streams?.find((s) => s.id === streamId);
 
-  const player = useVideoPlayer(stream?.playbackUrl || "", (player) => {
+  const player = useVideoPlayer(stream?.playbackUrl ?? "", (player) => {
     player.loop = true;
     player.play();
   });

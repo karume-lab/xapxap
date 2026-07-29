@@ -73,11 +73,11 @@ export function UserProfileScreen() {
 
             {isStatsLoading ? (
               <Skeleton className="h-4 w-24 mt-2" />
-            ) : (
+            ) : statsData?.profile?.role ? (
               <Text className="text-muted-foreground text-xs font-bold uppercase tracking-widest mt-2">
-                {statsData?.profile?.role || "Drifter"}
+                {statsData.profile.role}
               </Text>
-            )}
+            ) : null}
 
             {/* Stats Grid */}
             <View className="flex-row flex-wrap gap-3 mt-8 justify-center">
@@ -91,7 +91,7 @@ export function UserProfileScreen() {
                     <Skeleton className="h-6 w-8 mb-1" />
                   ) : (
                     <Text className="text-foreground font-bold text-lg">
-                      {statsData?.stats[s.label.toLowerCase() as keyof typeof statsData.stats] || 0}
+                      {statsData?.stats[s.label.toLowerCase() as keyof typeof statsData.stats] ?? 0}
                     </Text>
                   )}
                   <Text className="text-muted-foreground text-[8px] font-bold tracking-widest">
@@ -124,17 +124,15 @@ export function UserProfileScreen() {
               wavesData?.map((wave: FleetPostWithAuthor) => (
                 <Glass key={wave.id} radius={32} className="p-6 border border-border">
                   <View className="flex-row items-center mb-4">
-                    <Avatar username={wave.author?.username || username} size={40} ring />
+                    <Avatar username={wave.author?.username} size={40} ring />
                     <View className="ml-3 flex-1">
                       <View className="flex-row items-center gap-1">
-                        <Text className="text-foreground font-bold">
-                          @{wave.author?.username || username}
-                        </Text>
+                        <Text className="text-foreground font-bold">@{wave.author?.username}</Text>
                         <Icon as={CircleCheck} size={14} className="text-cyan" />
                       </View>
                       <Text className="text-muted-foreground text-xs">
-                        {wave.createdAt ? new Date(wave.createdAt).toLocaleDateString() : ""} •{" "}
-                        {wave.mediaType || "text"}
+                        {wave.createdAt ? new Date(wave.createdAt).toLocaleDateString() : ""}
+                        {wave.mediaType ? ` • ${wave.mediaType}` : ""}
                       </Text>
                     </View>
                   </View>
@@ -151,7 +149,7 @@ export function UserProfileScreen() {
                       <View className="absolute bottom-3 left-3 bg-background/60 px-3 py-1.5 rounded-full flex-row items-center gap-2 border border-border">
                         <Icon as={CloudIcon} size={12} className="text-foreground" />
                         <Text className="text-foreground text-[10px] font-bold uppercase">
-                          {wave.mediaType || "Media"}
+                          {wave.mediaType}
                         </Text>
                       </View>
                     </View>

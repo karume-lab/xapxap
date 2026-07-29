@@ -85,7 +85,7 @@ export function ProfileScreen() {
               <View className="relative mr-4">
                 <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
                   <Text className="text-3xl font-bold text-foreground">
-                    {profile?.username?.[0]?.toUpperCase() || "A"}
+                    {profile?.username?.[0]?.toUpperCase() ?? ""}
                   </Text>
                 </View>
                 <View className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
@@ -99,10 +99,10 @@ export function ProfileScreen() {
                   ) : (
                     <Skeleton className="h-6 w-32" />
                   )}
-                  {profile && (
+                  {profile?.role && (
                     <View className="bg-muted px-2 py-0.5 rounded-full">
                       <Text className="text-[10px] font-bold text-muted-foreground uppercase">
-                        Drifter
+                        {profile.role}
                       </Text>
                     </View>
                   )}
