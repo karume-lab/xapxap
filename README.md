@@ -79,5 +79,5 @@ docker logs -f supabase_kong_xapxap
 docker logs -f supabase_rest_xapxap
 
 # View Edge Function logs
-docker logs -f supabase_functions_xapxap
+docker logs -f supabase_edge_runtime_xapxap
 ```
