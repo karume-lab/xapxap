@@ -16,7 +16,6 @@ Welcome to Xapxap! This repository contains a complete full-stack monorepo featu
 
 - [Docker](https://docs.docker.com/get-docker/) installed and running.
 - [Bun](https://bun.sh/) installed for package management and script execution.
-- [Supabase CLI](https://supabase.com/docs/guides/cli) installed (optional, but recommended).
 
 ### 1. Environment Setup
 
@@ -32,48 +31,53 @@ cp apps/mobile/.env.example apps/mobile/.env
 
 Ensure `packages/db/.env` contains your local Supabase credentials (including the Service Role Key if you intend to run the seed script for media uploads).
 
-### 2. Running the Supabase Containers
+### 2. Running the Supabase Backend (CLI)
 
-If you are using the local Supabase self-hosted Docker stack via `docker-compose.yml`, you must explicitly point Docker Compose to the `apps/supabase/.env` file so it can read the decentralized environment variables:
+We use the Supabase CLI to manage our local development environment. This automatically handles container orchestration, database schemas, and Edge Functions.
+
+Start the backend services from the root of the project:
 
 ```bash
-docker compose --env-file apps/supabase/.env up -d
+bun run start:supabase
 ```
 
-*(Note: To stop the stack, run `docker compose --env-file apps/supabase/.env down`)*
+*(Note: To stop the stack, run `cd apps/supabase && bunx supabase stop`)*
 
 Once the stack is up, you can access:
-- **Supabase Studio (Dashboard):** [http://localhost:54323](http://localhost:54323)
-- **REST API:** [http://localhost:54321](http://localhost:54321)
-- **Postgres Database:** `postgresql://postgres:your-super-secret-and-long-postgres-password@127.0.0.1:54322/postgres`
+- **Supabase Studio (Dashboard):** [http://127.0.0.1:54323](http://127.0.0.1:54323)
+- **REST API:** [http://127.0.0.1:54321](http://127.0.0.1:54321)
 
+### 3. Database Schema & Seeding
 
-### 3. Database Migrations
-
-We use Drizzle ORM to manage our database schemas. To apply the latest schema changes to your local database:
+We use Drizzle ORM to manage our database schemas. To sync your local database with your Drizzle schemas and seed it with dummy data:
 
 ```bash
-# Generate missing migrations if schemas have changed
-bun run db:generate
+# Push the latest schema to the local database
+bun run db:push
 
-# Push migrations to the database
-bun run db:migrate
-```
-
-### 4. Database Seeding
-
-We have a robust, domain-driven seeding system that inserts placeholder users, content, wallets, streams, and uploads media assets directly into the Supabase local storage bucket.
-
-To completely wipe your local database and re-seed it from scratch, simply run from the project root:
-
-```bash
-bun run db:seed:fresh
-```
-
-To seed specific domains without wiping the database, you can use individual flags:
-
-```bash
-bun run db:seed --users --content
+# Run the domain-driven seeding script
+bun run db:seed
 ```
 
 *(Run `bun run db:seed --help` to see all available seeding options).*
+
+### 4. Viewing Logs & Debugging
+
+**Option A: Supabase Studio (Recommended)**
+The easiest way to view API requests (GET/POST/etc.) and database query logs is through the local dashboard:
+1. Go to [http://127.0.0.1:54323](http://127.0.0.1:54323)
+2. Navigate to **Logs > API** (PostgREST) or **Logs > Postgres** to see a visual, real-time feed of requests.
+
+**Option B: Terminal / Docker Logs**
+If you prefer the raw terminal view, you can attach directly to the Docker containers spawned by the CLI. (Check `docker ps` to confirm the exact container names):
+
+```bash
+# View API Gateway logs (All HTTP requests like GET, POST, etc.)
+docker logs -f supabase_kong_xapxap
+
+# View Database API Engine logs (PostgREST)
+docker logs -f supabase_rest_xapxap
+
+# View Edge Function logs
+docker logs -f supabase_functions_xapxap
+```
