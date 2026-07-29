@@ -2,7 +2,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Heart, MessageCircle, Play, Share2 } from "lucide-react-native";
+import { Heart, MessageCircle, Play, Share2, SparklesIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -332,6 +332,23 @@ export function FameFeedScreen() {
             isFetchingNextPage ? (
               <View className="py-10">
                 <ActivityIndicator color={colors.primary} />
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            !isLoading && !isFetchingNextPage ? (
+              <View
+                style={{ height: SCREEN_HEIGHT, paddingTop: insets.top + 100 }}
+                className="items-center px-6">
+                <Glass radius={32} className="p-8 items-center border border-border w-full">
+                  <Icon as={SparklesIcon} size={48} className="text-muted-foreground mb-4" />
+                  <Text className="text-foreground font-bold text-xl mb-2 text-center">
+                    No Fame Pulses
+                  </Text>
+                  <Text className="text-muted-foreground text-center">
+                    There are currently no waves riding the fame burst. Check back later!
+                  </Text>
+                </Glass>
               </View>
             ) : null
           }

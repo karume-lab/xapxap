@@ -2,49 +2,114 @@
   "fleetPosts": [
     {
       "id": "11111111-1111-1111-1111-111111111111",
-      "authorId": "00000000-0000-0000-0000-000000000001",
-      "content": "Testing the mesh limits out here in the desert. 100km connection stable. The vibes are immaculate #meshnetwork #offgrid #vibes",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Just caught an incredible sunset! 🌅",
+      "mediaFile": "img1.jpg",
+      "mediaType": "image/jpeg"
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "content": "Going live later tonight to discuss the new crypto regulations. Tune in! 📈",
+      "mediaType": "text"
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "Check out my new beat drop! 🎧",
       "mediaFile": "bunny.mp4",
       "mediaType": "video/mp4"
     },
     {
-      "id": "11111111-1111-1111-1111-111111111112",
-      "authorId": "00000000-0000-0000-0000-000000000002",
-      "content": "Here is a cool doc. #productivity",
-      "mediaFile": "doc.pdf",
-      "mediaType": "application/pdf"
+      "id": "44444444-4444-4444-4444-444444444444",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Who else is hyped for the weekend?",
+      "mediaType": "text"
+    },
+    {
+      "id": "55555555-5555-5555-5555-555555555555",
+      "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "content": "Building XapXap has been an incredible journey so far! 🚀",
+      "mediaType": "text"
+    },
+    {
+      "id": "66666666-6666-6666-6666-666666666666",
+      "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "parentId": "11111111-1111-1111-1111-111111111111",
+      "content": "That looks amazing! Where is this?",
+      "mediaType": "text"
+    },
+    {
+      "id": "77777777-7777-7777-7777-777777777777",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "parentId": "11111111-1111-1111-1111-111111111111",
+      "content": "Out in Malibu!",
+      "mediaType": "text"
     }
   ],
   "polls": [
     {
-      "id": "22222222-2222-2222-2222-222222222222",
-      "postId": "11111111-1111-1111-1111-111111111111",
-      "question": "Do you like this post?",
+      "id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+      "postId": "44444444-4444-4444-4444-444444444444",
+      "question": "Are you ready for the weekend?",
       "expiresAt": "2099-12-31T23:59:59.000Z"
     }
   ],
   "pollOptions": [
     {
-      "id": "33333333-3333-3333-3333-333333333331",
-      "pollId": "22222222-2222-2222-2222-222222222222",
-      "optionText": "Yes"
+      "id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+      "pollId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+      "optionText": "Yes!"
     },
     {
-      "id": "33333333-3333-3333-3333-333333333332",
-      "pollId": "22222222-2222-2222-2222-222222222222",
-      "optionText": "No"
+      "id": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+      "pollId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+      "optionText": "No, working :("
     }
   ],
   "pollVotes": [
     {
-      "optionId": "33333333-3333-3333-3333-333333333331",
-      "userId": "00000000-0000-0000-0000-000000000002"
+      "optionId": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+      "userId": "21e76024-c504-498a-8c15-e51042b2555a"
+    },
+    {
+      "optionId": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b"
+    },
+    {
+      "optionId": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+      "userId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c"
     }
   ],
   "postInteractions": [
     {
       "postId": "11111111-1111-1111-1111-111111111111",
-      "userId": "00000000-0000-0000-0000-000000000002",
+      "userId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "type": "hug"
+    },
+    {
+      "postId": "11111111-1111-1111-1111-111111111111",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "type": "echo"
+    },
+    {
+      "postId": "22222222-2222-2222-2222-222222222222",
+      "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "type": "anchor"
+    },
+    {
+      "postId": "33333333-3333-3333-3333-333333333333",
+      "userId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "type": "cast"
+    },
+    {
+      "postId": "55555555-5555-5555-5555-555555555555",
+      "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "type": "hug"
+    },
+    {
+      "postId": "55555555-5555-5555-5555-555555555555",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
       "type": "hug"
     }
   ]

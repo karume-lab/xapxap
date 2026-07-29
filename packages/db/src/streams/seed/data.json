@@ -1,17 +1,30 @@
 {
   "liveStreams": [
     {
-      "id": "44444444-4444-4444-4444-444444444444",
-      "broadcasterId": "00000000-0000-0000-0000-000000000001",
-      "title": "My first stream",
+      "id": "10101010-1010-1010-1010-101010101010",
+      "broadcasterId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "title": "Crypto Market Analysis Live",
+      "quality": "aqua_premium",
+      "isLive": true,
+      "playbackUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "isGated": true,
+      "entryFeeGems": 50
+    },
+    {
+      "id": "20202020-2020-2020-2020-202020202020",
+      "broadcasterId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "title": "Beat Making Session (Past Stream)",
       "quality": "drift_expo",
-      "isLive": true
+      "isLive": false,
+      "playbackUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "isGated": false,
+      "entryFeeGems": 0
     }
   ],
   "streamTickets": [
     {
-      "streamId": "44444444-4444-4444-4444-444444444444",
-      "viewerId": "00000000-0000-0000-0000-000000000002"
+      "streamId": "10101010-1010-1010-1010-101010101010",
+      "viewerId": "21e76024-c504-498a-8c15-e51042b2555a"
     }
   ]
 }

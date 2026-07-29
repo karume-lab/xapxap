@@ -1,7 +1,27 @@
 [
   {
     "postId": "11111111-1111-1111-1111-111111111111",
+    "status": "fame_burst",
+    "viewsCount": 1500
+  },
+  {
+    "postId": "22222222-2222-2222-2222-222222222222",
+    "status": "trend_deck",
+    "viewsCount": 300
+  },
+  {
+    "postId": "33333333-3333-3333-3333-333333333333",
     "status": "evaluating",
-    "viewsCount": 100
+    "viewsCount": 10
+  },
+  {
+    "postId": "44444444-4444-4444-4444-444444444444",
+    "status": "rejected",
+    "viewsCount": 50
+  },
+  {
+    "postId": "55555555-5555-5555-5555-555555555555",
+    "status": "fame_burst",
+    "viewsCount": 5000
   }
 ]

@@ -1,17 +1,33 @@
 [
   {
-    "id": "00000000-0000-0000-0000-000000000001",
-    "username": "testuser1",
-    "displayName": "Test User 1",
-    "bio": "Test user 1 bio",
+    "id": "21e76024-c504-498a-8c15-e51042b2555a",
+    "username": "rumzkurama",
+    "displayName": "Rumz",
+    "bio": "Creator of XapXap.",
     "role": "admin",
     "avatarFile": "img1.jpg"
   },
   {
-    "id": "00000000-0000-0000-0000-000000000002",
-    "username": "testuser2",
-    "displayName": "Test User 2",
-    "bio": "Test user 2 bio",
+    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    "username": "neon_rider",
+    "displayName": "Neon Rider",
+    "bio": "Drifting through the digital waves. 🌊",
+    "role": "user",
+    "avatarFile": "img2.jpg"
+  },
+  {
+    "id": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+    "username": "cyber_punk",
+    "displayName": "Cyber Punk",
+    "bio": "Tech enthusiast & streamer.",
+    "role": "user",
+    "avatarFile": "img1.jpg"
+  },
+  {
+    "id": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+    "username": "starlight",
+    "displayName": "Starlight",
+    "bio": "Music producer & crypto trader",
     "role": "user",
     "avatarFile": "img2.jpg"
   }

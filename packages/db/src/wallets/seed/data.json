@@ -1,26 +1,69 @@
 {
   "wallets": [
-    { "userId": "00000000-0000-0000-0000-000000000001", "balance": 5000 },
-    { "userId": "00000000-0000-0000-0000-000000000002", "balance": 1000 }
+    { "userId": "21e76024-c504-498a-8c15-e51042b2555a", "balance": 10000 },
+    { "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479", "balance": 500 },
+    { "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b", "balance": 1200 },
+    { "userId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c", "balance": 50 }
   ],
   "gemTransactions": [
     {
-      "senderId": "00000000-0000-0000-0000-000000000001",
-      "receiverId": "00000000-0000-0000-0000-000000000002",
-      "amount": 500,
+      "id": "30303030-3030-3030-3030-303030303030",
+      "senderId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "receiverId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "amount": 50,
+      "type": "stream_entry",
+      "status": "completed"
+    },
+    {
+      "id": "40404040-4040-4040-4040-404040404040",
+      "senderId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "receiverId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "amount": 100,
       "type": "tip",
       "status": "completed"
+    },
+    {
+      "id": "60606060-6060-6060-6060-606060606060",
+      "senderId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "amount": 200,
+      "type": "withdrawal",
+      "status": "pending"
+    },
+    {
+      "id": "70707070-7070-7070-7070-707070707070",
+      "senderId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "receiverId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "amount": 500,
+      "type": "tip",
+      "status": "fraud_flagged"
+    },
+    {
+      "id": "80808080-8080-8080-8080-808080808080",
+      "senderId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "receiverId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "amount": 10,
+      "type": "tip",
+      "status": "failed"
     }
   ],
   "payoutRequests": [
     {
-      "userId": "00000000-0000-0000-0000-000000000001",
-      "gemAmount": 1000,
-      "fiatAmount": "10.00",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "gemAmount": 200,
+      "fiatAmount": "2000.00",
       "fiatCurrency": "KES",
-      "mobileMoneyNumber": "0700000000",
+      "mobileMoneyNumber": "+254700000000",
       "provider": "MPESA",
       "status": "pending"
+    },
+    {
+      "userId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "gemAmount": 500,
+      "fiatAmount": "5000.00",
+      "fiatCurrency": "KES",
+      "mobileMoneyNumber": "+254711111111",
+      "provider": "MPESA",
+      "status": "completed"
     }
   ]
 }
