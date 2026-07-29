@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Bell, Wifi } from "lucide-react-native";
+import { Search, Wifi } from "lucide-react-native";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -21,12 +21,12 @@ export function XapXapHeader() {
 
       {/* Right Actions */}
       <View className="flex-row items-center gap-3">
-        {/* Notification Bell */}
+        {/* Search */}
         <Button
           variant="ghost"
-          onPress={() => router.push("/notifications")}
+          onPress={() => router.push("/hunt")}
           className="w-10 h-10 rounded-full bg-muted items-center justify-center border border-border active:scale-95 p-0 min-w-0 min-h-0 active:bg-transparent">
-          <Icon as={Bell} size={18} className="text-foreground" />
+          <Icon as={Search} size={18} className="text-foreground" />
         </Button>
 
         {/* Data Saver / Signal */}

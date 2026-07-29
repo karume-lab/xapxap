@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { Plus, Radio, Search, User, Video } from "lucide-react-native";
+import { Bell, Plus, Radio, User, Video } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColors } from "@/hooks/use-colors";
@@ -45,10 +45,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="hunt"
+        name="notifications"
         options={{
-          title: "Hunt",
-          tabBarIcon: ({ color }) => <Search size={24} color={color} strokeWidth={2.5} />,
+          title: "Notifications",
+          tabBarIcon: ({ color }) => <Bell size={24} color={color} strokeWidth={2.5} />,
         }}
       />
       <Tabs.Screen
