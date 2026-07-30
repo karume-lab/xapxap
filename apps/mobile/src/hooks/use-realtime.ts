@@ -10,11 +10,11 @@ export function useRealtimeFleetPosts() {
       .channel("public:fleet_posts")
       .on("postgres_changes", { event: "*", schema: "public", table: "fleet_posts" }, () => {
         queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
-        queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+        queryClient.invalidateQueries({ queryKey: ["fame"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "post_interactions" }, () => {
         queryClient.invalidateQueries({ queryKey: ["fleet-threads"] });
-        queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+        queryClient.invalidateQueries({ queryKey: ["fame"] });
       })
       .subscribe();
 

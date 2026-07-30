@@ -26,7 +26,11 @@ export function useFameBurst(userId: string | null) {
         .order("created_at", { ascending: false })
         .range(start, end);
 
-      if (error || !posts || posts.length === 0) {
+      if (error) {
+        console.error("[useFameBurst] Query error:", error.message, error.code, error.details);
+        return { data: [], nextPage: undefined };
+      }
+      if (!posts || posts.length === 0) {
         return { data: [], nextPage: undefined };
       }
 

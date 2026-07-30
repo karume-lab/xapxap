@@ -35,7 +35,7 @@ export function useAddComment() {
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(res.postId, null) });
-      queryClient.invalidateQueries({ queryKey: ["fame-burst"] });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
     },
   });
 }
