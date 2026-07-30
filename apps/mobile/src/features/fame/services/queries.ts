@@ -136,7 +136,7 @@ export function useToggleFameInteraction(userId: string | null) {
     },
     onMutate: async ({ postId, type }) => {
       await queryClient.cancelQueries({ queryKey: fameKeys.all });
-      const previous = queryClient.getQueryData(fameKeys.all);
+      const previous = queryClient.getQueriesData({ queryKey: fameKeys.all });
 
       queryClient.setQueriesData(
         { queryKey: fameKeys.all },
@@ -173,7 +173,9 @@ export function useToggleFameInteraction(userId: string | null) {
     },
     onError: (_err, _vars, context) => {
       if (context?.previous) {
-        queryClient.setQueriesData({ queryKey: fameKeys.all }, context.previous);
+        for (const [key, data] of context.previous) {
+          queryClient.setQueryData(key, data);
+        }
       }
     },
     onSettled: () => {

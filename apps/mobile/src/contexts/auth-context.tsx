@@ -55,11 +55,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return data as Profile;
   }, []);
 
+  const ensureProfile = useCallback(
+    async (userId: string, username?: string): Promise<Profile | null> => {
+      const existing = await fetchProfile(userId);
+      if (existing) return existing;
+
+      const { error } = await supabase.from("profiles").insert({
+        id: userId,
+        username: username || `user_${userId.slice(0, 8)}`,
+      });
+
+      if (error) {
+        console.warn("Failed to create profile:", error.message);
+        return null;
+      }
+
+      return fetchProfile(userId);
+    },
+    [fetchProfile]
+  );
+
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session: initial } }) => {
       setSession(initial);
       if (initial?.user?.id) {
-        const p = await fetchProfile(initial.user.id);
+        const p = await ensureProfile(
+          initial.user.id,
+          initial.user.user_metadata?.username as string | undefined
+        );
         setProfile(p);
         profileCacheRef.current = initial.user.id;
       }
@@ -72,7 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(newSession);
 
       if (newSession?.user?.id) {
-        const p = await fetchProfile(newSession.user.id);
+        const p = await ensureProfile(
+          newSession.user.id,
+          newSession.user.user_metadata?.username as string | undefined
+        );
         setProfile(p);
         profileCacheRef.current = newSession.user.id;
       } else {
@@ -82,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchProfile]);
+  }, [ensureProfile]);
 
   useEffect(() => {
     AsyncStorage.getItem(HAS_SEEN_ONBOARDING_KEY)

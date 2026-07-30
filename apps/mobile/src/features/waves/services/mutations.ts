@@ -74,11 +74,12 @@ export function useToggleCommentLike(userId: string | null) {
     },
     onMutate: async ({ commentId, postId }) => {
       const realPostId = postId.split("-p")[0];
-      await queryClient.cancelQueries({ queryKey: commentsKeys.postComments(realPostId, userId) });
-      const previous = queryClient.getQueryData(commentsKeys.postComments(realPostId, userId));
+      const commentKey = ["comments", realPostId] as const;
+      await queryClient.cancelQueries({ queryKey: commentKey });
+      const previous = queryClient.getQueriesData({ queryKey: commentKey });
 
-      queryClient.setQueryData(
-        commentsKeys.postComments(realPostId, userId),
+      queryClient.setQueriesData(
+        { queryKey: commentKey },
         (oldData: FleetPostWithAuthor[] | undefined) => {
           if (!oldData || !Array.isArray(oldData)) return oldData;
           return oldData.map((comment) => {
@@ -104,18 +105,16 @@ export function useToggleCommentLike(userId: string | null) {
       return { previous, realPostId };
     },
     onError: (_err, _vars, context) => {
-      if (context?.previous && context?.realPostId) {
-        queryClient.setQueryData(
-          commentsKeys.postComments(context.realPostId, userId),
-          context.previous
-        );
+      if (context?.previous) {
+        for (const [key, data] of context.previous) {
+          queryClient.setQueryData(key, data);
+        }
       }
     },
     onSettled: (res, _err, _vars, context) => {
       const pId = res?.postId || context?.realPostId;
       if (pId) {
-        queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(pId, userId) });
-        queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(pId, null) });
+        queryClient.invalidateQueries({ queryKey: ["comments", pId] });
       }
     },
   });
