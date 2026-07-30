@@ -1,3 +1,8 @@
+import BottomSheet, {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import type { LiveStreamWithAuthor } from "@xapxap/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,12 +17,11 @@ import {
   VideoIcon,
   X,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Modal,
   Pressable,
   Switch,
   TextInput,
@@ -140,19 +144,31 @@ export function StreamingHubScreen() {
   const { isOnline } = useNetwork();
   const { data: streams, isLoading } = useLiveStreams();
 
-  const [createVisible, setCreateVisible] = useState(false);
   const [streamTitle, setStreamTitle] = useState("");
   const [streamKind, setStreamKind] = useState<"drift" | "aqua">("drift");
   const [tokenCost, setTokenCost] = useState("0");
   const [inviteOnly, setInviteOnly] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   const handleStartStream = () => {
     if (!streamTitle.trim()) return;
     setIsStarting(true);
     setTimeout(() => {
       setIsStarting(false);
-      setCreateVisible(false);
+      bottomSheetRef.current?.close();
       Alert.alert("🎥 You're Live!", "Your stream is now active on the XapXap ocean.");
     }, 1500);
   };
@@ -209,7 +225,7 @@ export function StreamingHubScreen() {
         </Text>
 
         <Button
-          onPress={() => setCreateVisible(true)}
+          onPress={() => bottomSheetRef.current?.expand()}
           className="rounded-full bg-background/50 border border-border h-12 flex-row items-center justify-center">
           <View className="w-2 h-2 rounded-full bg-destructive mr-2" />
           <Text className="text-foreground font-bold">Start Broadcasting</Text>
@@ -251,150 +267,154 @@ export function StreamingHubScreen() {
           />
         )}
 
-        {/* Go Live Modal */}
-        <Modal
-          visible={createVisible}
-          transparent
-          animationType="slide"
-          onRequestClose={() => setCreateVisible(false)}>
-          <View className="flex-1 justify-end bg-background/60">
-            <Glass
-              intensity={95}
-              className="rounded-t-[40px] p-8 border-t border-border"
-              style={{ paddingBottom: insets.bottom + 40 }}>
-              <View className="flex-row justify-between items-center mb-8">
-                <View>
-                  <Text variant="h2" className="text-foreground">
-                    Go Live
-                  </Text>
-                  <Text className="text-muted-foreground text-sm">
-                    Broadcast to the global tide
-                  </Text>
-                </View>
-                <Button
-                  variant="ghost"
-                  onPress={() => setCreateVisible(false)}
-                  className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
-                  <Icon as={X} className="text-foreground" size={20} />
-                </Button>
+        {/* Go Live Bottom Sheet */}
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          enableDynamicSizing
+          enablePanDownToClose
+          backdropComponent={renderBackdrop}
+          backgroundStyle={{
+            backgroundColor: colors.background,
+            borderRadius: 32,
+          }}
+          handleIndicatorStyle={{ backgroundColor: colors.mutedForeground }}>
+          <BottomSheetScrollView
+            contentContainerStyle={{
+              padding: 32,
+              paddingBottom: insets.bottom + 40,
+            }}
+            showsVerticalScrollIndicator={false}>
+            <View className="flex-row justify-between items-center mb-8">
+              <View>
+                <Text variant="h2" className="text-foreground">
+                  Go Live
+                </Text>
+                <Text className="text-muted-foreground text-sm">Broadcast to the global tide</Text>
+              </View>
+              <Button
+                variant="ghost"
+                onPress={() => bottomSheetRef.current?.close()}
+                className="w-10 h-10 rounded-full bg-muted items-center justify-center p-0 min-w-0 min-h-0 active:bg-transparent">
+                <Icon as={X} className="text-foreground" size={20} />
+              </Button>
+            </View>
+
+            <View className="gap-6">
+              <View>
+                <Text className="text-[10px] font-bold uppercase text-muted-foreground mb-2 ml-1 tracking-widest">
+                  Stream Title
+                </Text>
+                <TextInput
+                  value={streamTitle}
+                  onChangeText={setStreamTitle}
+                  placeholder="What's happening?"
+                  placeholderTextColor={colors.mutedForeground}
+                  className="h-14 bg-muted border border-border rounded-2xl px-4 text-foreground font-medium"
+                  maxLength={80}
+                />
               </View>
 
-              <View className="gap-6">
+              <View>
+                <Text className="text-[10px] font-bold uppercase text-muted-foreground mb-3 ml-1 tracking-widest">
+                  Select Quality
+                </Text>
+                <View className="flex-row gap-3">
+                  <Button
+                    variant="ghost"
+                    onPress={() => setStreamKind("drift")}
+                    className={cn(
+                      "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
+                      streamKind === "drift"
+                        ? "bg-primary/20 border-primary"
+                        : "bg-muted border-border"
+                    )}>
+                    <View className="flex-row items-center gap-2 p-4">
+                      <Icon
+                        as={GlobeIcon}
+                        size={16}
+                        className={
+                          streamKind === "drift" ? "text-primary" : "text-muted-foreground"
+                        }
+                      />
+                      <Text
+                        className={cn(
+                          "font-bold",
+                          streamKind === "drift" ? "text-primary" : "text-muted-foreground"
+                        )}>
+                        Drift (Free)
+                      </Text>
+                    </View>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onPress={() => setStreamKind("aqua")}
+                    className={cn(
+                      "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
+                      streamKind === "aqua" ? "bg-cyan/20 border-cyan" : "bg-muted border-border"
+                    )}>
+                    <View className="flex-row items-center gap-2 p-4">
+                      <Icon
+                        as={Lock}
+                        size={16}
+                        className={streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"}
+                      />
+                      <Text
+                        className={cn(
+                          "font-bold",
+                          streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"
+                        )}>
+                        Aqua HD
+                      </Text>
+                    </View>
+                  </Button>
+                </View>
+              </View>
+
+              {streamKind === "aqua" && (
                 <View>
                   <Text className="text-[10px] font-bold uppercase text-muted-foreground mb-2 ml-1 tracking-widest">
-                    Stream Title
+                    Entry Fee (Gems)
                   </Text>
                   <TextInput
-                    value={streamTitle}
-                    onChangeText={setStreamTitle}
-                    placeholder="What's happening?"
+                    value={tokenCost}
+                    onChangeText={setTokenCost}
+                    placeholder="e.g. 50"
                     placeholderTextColor={colors.mutedForeground}
                     className="h-14 bg-muted border border-border rounded-2xl px-4 text-foreground font-medium"
-                    maxLength={80}
+                    keyboardType="numeric"
                   />
                 </View>
+              )}
 
-                <View>
-                  <Text className="text-[10px] font-bold uppercase text-muted-foreground mb-3 ml-1 tracking-widest">
-                    Select Quality
-                  </Text>
-                  <View className="flex-row gap-3">
-                    <Button
-                      variant="ghost"
-                      onPress={() => setStreamKind("drift")}
-                      className={cn(
-                        "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
-                        streamKind === "drift"
-                          ? "bg-primary/20 border-primary"
-                          : "bg-muted border-border"
-                      )}>
-                      <View className="flex-row items-center gap-2 p-4">
-                        <Icon
-                          as={GlobeIcon}
-                          size={16}
-                          className={
-                            streamKind === "drift" ? "text-primary" : "text-muted-foreground"
-                          }
-                        />
-                        <Text
-                          className={cn(
-                            "font-bold",
-                            streamKind === "drift" ? "text-primary" : "text-muted-foreground"
-                          )}>
-                          Drift (Free)
-                        </Text>
-                      </View>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onPress={() => setStreamKind("aqua")}
-                      className={cn(
-                        "flex-1 rounded-2xl border flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent bg-transparent",
-                        streamKind === "aqua" ? "bg-cyan/20 border-cyan" : "bg-muted border-border"
-                      )}>
-                      <View className="flex-row items-center gap-2 p-4">
-                        <Icon
-                          as={Lock}
-                          size={16}
-                          className={streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"}
-                        />
-                        <Text
-                          className={cn(
-                            "font-bold",
-                            streamKind === "aqua" ? "text-cyan" : "text-muted-foreground"
-                          )}>
-                          Aqua HD
-                        </Text>
-                      </View>
-                    </Button>
-                  </View>
+              <View className="flex-row items-center justify-between py-2">
+                <View className="flex-row items-center gap-3">
+                  <Icon as={Users} size={18} className="text-muted-foreground" />
+                  <Text className="text-foreground font-bold">Invite Only</Text>
                 </View>
-
-                {streamKind === "aqua" && (
-                  <View>
-                    <Text className="text-[10px] font-bold uppercase text-muted-foreground mb-2 ml-1 tracking-widest">
-                      Entry Fee (Gems)
-                    </Text>
-                    <TextInput
-                      value={tokenCost}
-                      onChangeText={setTokenCost}
-                      placeholder="e.g. 50"
-                      placeholderTextColor={colors.mutedForeground}
-                      className="h-14 bg-muted border border-border rounded-2xl px-4 text-foreground font-medium"
-                      keyboardType="numeric"
-                    />
-                  </View>
-                )}
-
-                <View className="flex-row items-center justify-between py-2">
-                  <View className="flex-row items-center gap-3">
-                    <Icon as={Users} size={18} className="text-muted-foreground" />
-                    <Text className="text-foreground font-bold">Invite Only</Text>
-                  </View>
-                  <Switch
-                    value={inviteOnly}
-                    onValueChange={setInviteOnly}
-                    trackColor={{ true: colors.primary, false: colors.muted }}
-                    thumbColor={colors.foreground}
-                  />
-                </View>
-
-                <Button
-                  onPress={handleStartStream}
-                  isLoading={isStarting}
-                  disabled={!streamTitle.trim()}
-                  className="h-16 rounded-2xl bg-destructive mt-2">
-                  <View className="flex-row items-center gap-2">
-                    <Icon as={VideoIcon} size={20} className="text-destructive-foreground" />
-                    <Text className="text-destructive-foreground font-bold text-lg">
-                      Start Broadcast
-                    </Text>
-                  </View>
-                </Button>
+                <Switch
+                  value={inviteOnly}
+                  onValueChange={setInviteOnly}
+                  trackColor={{ true: colors.primary, false: colors.muted }}
+                  thumbColor={colors.foreground}
+                />
               </View>
-            </Glass>
-          </View>
-        </Modal>
+
+              <Button
+                onPress={handleStartStream}
+                isLoading={isStarting}
+                disabled={!streamTitle.trim()}
+                className="h-16 rounded-2xl bg-destructive mt-2">
+                <View className="flex-row items-center gap-2">
+                  <Icon as={VideoIcon} size={20} className="text-destructive-foreground" />
+                  <Text className="text-destructive-foreground font-bold text-lg">
+                    Start Broadcast
+                  </Text>
+                </View>
+              </Button>
+            </View>
+          </BottomSheetScrollView>
+        </BottomSheet>
       </View>
     </ErrorBoundary>
   );
