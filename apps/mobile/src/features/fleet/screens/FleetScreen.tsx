@@ -61,7 +61,7 @@ export function FleetScreen() {
           <TouchableOpacity
             key={deck.id}
             activeOpacity={0.7}
-            onPress={() => bottomSheetRef.current?.expand()}>
+            onPress={() => router.push(`/fleet/${deck.id}`)}>
             <Glass radius={24} className="p-6 border border-border mb-4">
               <View className="flex-row items-center justify-between mb-2">
                 <Text className="text-foreground font-bold text-lg">{deck.name}</Text>

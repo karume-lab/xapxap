@@ -15,6 +15,20 @@
       "when": 1785336922597,
       "tag": "0001_lethal_pride",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785416625045,
+      "tag": "0002_cynical_marvel_apes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1785416761460,
+      "tag": "0003_fixed_pyro",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,8 @@
 import path from "node:path";
 import { db } from "@db/client";
 import {
+  fleetDeckMembers,
+  fleetDecks,
   fleetPosts,
   pollOptions,
   polls,
@@ -13,6 +15,23 @@ import { uploadMediaFile } from "@db/seed/utils/uploadMedia";
 import data from "./data.json";
 
 export const seedContent = async () => {
+  const hasDecks = data.fleetDecks && data.fleetDecks.length > 0;
+  if (hasDecks) {
+    console.log("  Inserting fleet decks...");
+    await db
+      .insert(fleetDecks)
+      .values(data.fleetDecks as (typeof fleetDecks.$inferInsert)[])
+      .onConflictDoNothing();
+
+    if (data.fleetDeckMembers && data.fleetDeckMembers.length > 0) {
+      console.log("  Inserting fleet deck members...");
+      await db
+        .insert(fleetDeckMembers)
+        .values(data.fleetDeckMembers as (typeof fleetDeckMembers.$inferInsert)[])
+        .onConflictDoNothing();
+    }
+  }
+
   console.log("  Uploading post media...");
 
   const postsToInsert = await Promise.all(

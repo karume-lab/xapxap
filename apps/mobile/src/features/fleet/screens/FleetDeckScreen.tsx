@@ -1,25 +1,28 @@
-import { WifiOff, Zap } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { ArrowLeft, Users, WifiOff, Zap } from "lucide-react-native";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
-import { XapXapHeader } from "@/components/layout/XapXapHeader";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { PollUI } from "@/features/fleet/components/PollUI";
-import { useFleetThreads } from "@/features/fleet/services/queries";
+import { useFleetDeck, useFleetDeckPosts } from "@/features/fleet/services/queries";
 import { WaveCard } from "@/features/waves/components/WaveCard";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { useRealtimeFleetPosts } from "@/hooks/use-realtime";
 
-export function FleetDeckScreen() {
+export function FleetDeckScreen({ deckId }: { deckId?: string }) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   useRealtimeFleetPosts();
   const { isOnline } = useNetwork();
   const { session, showAuthModal } = useAuth();
-  const { data: posts, isLoading, refetch } = useFleetThreads(session?.user?.id || null);
+  const userId = session?.user?.id || null;
+  const { data: deck } = useFleetDeck(deckId || "");
+  const { data: posts, isLoading, refetch } = useFleetDeckPosts(deckId || "", userId);
   const colors = useColors();
 
   if (isLoading) {
@@ -33,13 +36,34 @@ export function FleetDeckScreen() {
   return (
     <ErrorBoundary>
       <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
-        <XapXapHeader />
-
-        <View className="px-6 py-2">
-          <Text variant="h2" className="text-primary">
-            Fleet Hub
-          </Text>
-          <Text className="text-xs text-muted-foreground">Community Decks • Active</Text>
+        <View className="px-6 flex-row items-center pt-4 pb-4">
+          <Button
+            variant="ghost"
+            onPress={() => router.back()}
+            className="w-10 h-10 rounded-full bg-muted items-center justify-center mr-4 p-0 min-w-0 min-h-0 active:bg-transparent">
+            <Icon as={ArrowLeft} size={20} className="text-foreground" />
+          </Button>
+          <View className="flex-1">
+            <Text
+              className="text-foreground font-bold text-xl font-[Inter_700Bold]"
+              numberOfLines={1}>
+              {deck?.name || "Fleet Deck"}
+            </Text>
+            {deck && (
+              <View className="flex-row items-center gap-1 mt-0.5">
+                <Icon as={Users} size={12} className="text-muted-foreground" />
+                <Text className="text-muted-foreground text-xs">{deck.memberCount} members</Text>
+                {deck.category && (
+                  <>
+                    <Text className="text-muted-foreground text-xs mx-1">·</Text>
+                    <Text className="text-muted-foreground text-xs capitalize">
+                      {deck.category}
+                    </Text>
+                  </>
+                )}
+              </View>
+            )}
+          </View>
         </View>
 
         {!isOnline && (
@@ -56,28 +80,17 @@ export function FleetDeckScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingVertical: 20, paddingBottom: 100 }}
           renderItem={({ item }) => (
-            <WaveCard post={item}>
-              {item.pollId && <PollUI pollId={item.pollId} />}
-
-              {/* Nested Threading Indicator (Visual only for now) */}
-              <View className="mt-4 pt-4 border-t border-border flex-row items-center gap-2">
-                <View className="w-1 h-4 bg-primary/40 rounded-full" />
-                <Text className="text-[10px] text-muted-foreground font-medium">
-                  3 nested replies in this thread
-                </Text>
-              </View>
-            </WaveCard>
+            <WaveCard post={item}>{item.pollId && <PollUI pollId={item.pollId} />}</WaveCard>
           )}
           refreshing={isLoading}
           onRefresh={refetch}
           ListEmptyComponent={
             <View className="p-10 items-center">
-              <Text className="text-muted-foreground">No fleets floating by...</Text>
+              <Text className="text-muted-foreground">No posts in this deck yet.</Text>
             </View>
           }
         />
 
-        {/* Floating Action for Low-Bandwidth Drop */}
         <View className="absolute right-6" style={{ bottom: insets.bottom + 120 }}>
           <Button
             size="icon"

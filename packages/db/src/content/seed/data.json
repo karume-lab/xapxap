@@ -1,50 +1,133 @@
 {
+  "fleetDecks": [
+    {
+      "id": "a1000000-0000-0000-0000-000000000001",
+      "captainId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "name": "XapXap Builders",
+      "description": "Alpha testers and early contributors building the future of decentralized social.",
+      "category": "tech",
+      "isOpen": true,
+      "memberCount": 4
+    },
+    {
+      "id": "a1000000-0000-0000-0000-000000000002",
+      "captainId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "name": "Sunset Chasers",
+      "description": "A visual collective sharing the most stunning sunsets from around the world.",
+      "category": "photos",
+      "isOpen": true,
+      "memberCount": 3
+    },
+    {
+      "id": "a1000000-0000-0000-0000-000000000003",
+      "captainId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "name": "Beats & Brews",
+      "description": "Music producers and DJs sharing original tracks over coffee.",
+      "category": "music",
+      "isOpen": false,
+      "memberCount": 2
+    }
+  ],
+  "fleetDeckMembers": [
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000001",
+      "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "role": "captain"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000001",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "role": "member"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000001",
+      "userId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "role": "member"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000001",
+      "userId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "role": "member"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000002",
+      "userId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "role": "captain"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000002",
+      "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "role": "member"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000002",
+      "userId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "role": "member"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000003",
+      "userId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "role": "captain"
+    },
+    {
+      "deckId": "a1000000-0000-0000-0000-000000000003",
+      "userId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "role": "member"
+    }
+  ],
   "fleetPosts": [
     {
       "id": "11111111-1111-1111-1111-111111111111",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Just caught an incredible sunset! 🌅",
       "mediaFile": "img1.jpg",
-      "mediaType": "image/jpeg"
+      "mediaType": "image/jpeg",
+      "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
       "id": "22222222-2222-2222-2222-222222222222",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
       "content": "Going live later tonight to discuss the new crypto regulations. Tune in! 📈",
-      "mediaType": "text"
+      "mediaType": "text",
+      "deckId": "a1000000-0000-0000-0000-000000000001"
     },
     {
       "id": "33333333-3333-3333-3333-333333333333",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
       "content": "Check out my new beat drop! 🎧",
       "mediaFile": "bunny.mp4",
-      "mediaType": "video/mp4"
+      "mediaType": "video/mp4",
+      "deckId": "a1000000-0000-0000-0000-000000000003"
     },
     {
       "id": "44444444-4444-4444-4444-444444444444",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Who else is hyped for the weekend?",
-      "mediaType": "text"
+      "mediaType": "text",
+      "deckId": "a1000000-0000-0000-0000-000000000001"
     },
     {
       "id": "55555555-5555-5555-5555-555555555555",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
       "content": "Building XapXap has been an incredible journey so far! 🚀",
-      "mediaType": "text"
+      "mediaType": "text",
+      "deckId": "a1000000-0000-0000-0000-000000000001"
     },
     {
       "id": "66666666-6666-6666-6666-666666666666",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
       "parentId": "11111111-1111-1111-1111-111111111111",
       "content": "That looks amazing! Where is this?",
-      "mediaType": "text"
+      "mediaType": "text",
+      "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
       "id": "77777777-7777-7777-7777-777777777777",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "parentId": "11111111-1111-1111-1111-111111111111",
       "content": "Out in Malibu!",
-      "mediaType": "text"
+      "mediaType": "text",
+      "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
       "id": "ced42878-6c23-44f7-8fc0-3a841407a916",
@@ -156,21 +239,24 @@
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Extra post 0",
       "mediaFile": "img1.jpg",
-      "mediaType": "image/jpeg"
+      "mediaType": "image/jpeg",
+      "deckId": "a1000000-0000-0000-0000-000000000001"
     },
     {
       "id": "4763bfd6-7a66-44d3-baaf-ea27a94b0d09",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
       "content": "Extra post 1",
       "mediaFile": "img2.jpg",
-      "mediaType": "image/jpeg"
+      "mediaType": "image/jpeg",
+      "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
       "id": "e09372d7-2838-430e-833c-e104a03ca737",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Extra post 2",
       "mediaFile": "bunny.mp4",
-      "mediaType": "video/mp4"
+      "mediaType": "video/mp4",
+      "deckId": "a1000000-0000-0000-0000-000000000003"
     }
   ],
   "polls": [

@@ -66,8 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (error) {
-        console.warn("Failed to create profile:", error.message);
-        return null;
+        return fetchProfile(userId);
       }
 
       return fetchProfile(userId);

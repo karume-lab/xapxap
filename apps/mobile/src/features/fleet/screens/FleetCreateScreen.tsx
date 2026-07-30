@@ -11,12 +11,14 @@ import {
   TrendingUp,
 } from "lucide-react-native";
 import { useState } from "react";
-import { ScrollView, Switch, TextInput, View } from "react-native";
+import { ActivityIndicator, ScrollView, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
+import { useCreateFleetDeck } from "@/features/fleet/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 const CATEGORIES = [
@@ -33,6 +35,8 @@ const CATEGORIES = [
 export function FleetCreateScreen() {
   const router = useRouter();
   const colors = useColors();
+  const { profile } = useAuth();
+  const createDeck = useCreateFleetDeck();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -151,13 +155,29 @@ export function FleetCreateScreen() {
         {/* Launch Button */}
         <Button
           className="w-full h-16 rounded-full bg-primary mb-12 shadow-lg shadow-primary/20"
+          disabled={!name.trim() || createDeck.isPending || !profile?.id}
           onPress={() => {
-            // Placeholder action
-            router.back();
+            if (!profile?.id || !name.trim()) return;
+            createDeck.mutate(
+              {
+                name: name.trim(),
+                description: description.trim(),
+                category: selectedCategory,
+                isOpen: isOpenFleet,
+                profileId: profile.id,
+              },
+              { onSuccess: () => router.back() }
+            );
           }}>
           <View className="flex-row items-center justify-center gap-3">
-            <Icon as={AnchorIcon} size={20} className="text-primary-foreground" />
-            <Text className="text-primary-foreground font-bold text-lg">Launch Fleet Deck</Text>
+            {createDeck.isPending ? (
+              <ActivityIndicator size="small" className="text-primary-foreground" />
+            ) : (
+              <Icon as={AnchorIcon} size={20} className="text-primary-foreground" />
+            )}
+            <Text className="text-primary-foreground font-bold text-lg">
+              {createDeck.isPending ? "Creating..." : "Launch Fleet Deck"}
+            </Text>
           </View>
         </Button>
       </ScrollView>

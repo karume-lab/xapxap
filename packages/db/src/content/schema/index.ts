@@ -1,6 +1,7 @@
 import { profiles } from "@db/users/schema";
 import {
   type AnyPgColumn,
+  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -10,6 +11,36 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
+export const fleetDecks = pgTable("fleet_decks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  captainId: uuid("captain_id")
+    .references(() => profiles.id, { onDelete: "cascade" })
+    .notNull(),
+  name: varchar("name", { length: 60 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 50 }),
+  isOpen: boolean("is_open").default(true),
+  memberCount: integer("member_count").default(0).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+});
+
+export const fleetDeckMembers = pgTable(
+  "fleet_deck_members",
+  {
+    deckId: uuid("deck_id")
+      .references(() => fleetDecks.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid("user_id")
+      .references(() => profiles.id, { onDelete: "cascade" })
+      .notNull(),
+    role: varchar("role", { length: 20 }).default("member"),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.deckId, t.userId] }),
+  })
+);
+
 export const fleetPosts = pgTable("fleet_posts", {
   id: uuid("id").primaryKey().defaultRandom(),
   authorId: uuid("author_id")
@@ -17,6 +48,9 @@ export const fleetPosts = pgTable("fleet_posts", {
     .notNull(),
   parentId: uuid("parent_id").references((): AnyPgColumn => fleetPosts.id, {
     onDelete: "cascade",
+  }),
+  deckId: uuid("deck_id").references(() => fleetDecks.id, {
+    onDelete: "set null",
   }),
   content: text("content"),
   mediaUrl: text("media_url"),

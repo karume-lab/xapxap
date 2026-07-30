@@ -1,0 +1,1 @@
+ALTER TABLE "fleet_decks" ALTER COLUMN "member_count" SET NOT NULL;

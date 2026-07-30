@@ -54,6 +54,8 @@ const clearAllData = async () => {
     "polls",
     "post_interactions",
     "fleet_posts",
+    "fleet_deck_members",
+    "fleet_decks",
     "notifications",
     "payout_requests",
     "gem_transactions",

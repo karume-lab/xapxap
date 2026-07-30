@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
+import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
@@ -94,9 +94,139 @@ export function useFleets() {
   return useQuery({
     queryKey: fleetKeys.decks(),
     queryFn: async () => {
-      const { data, error } = await supabase.from("fleet_decks").select("*");
-      if (error) return [];
-      return data || [];
+      const { data, error } = await supabase
+        .from("fleet_decks")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error || !data) return [];
+      return data.map((d) => transformRow<FleetDeck>(d));
+    },
+  });
+}
+
+export function useFleetDeck(deckId: string) {
+  return useQuery({
+    queryKey: [...fleetKeys.all, "deck", deckId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("fleet_decks")
+        .select("*")
+        .eq("id", deckId)
+        .single();
+      if (error || !data) return null;
+      return transformRow<FleetDeck>(data);
+    },
+  });
+}
+
+export function useFleetDeckPosts(deckId: string, userId: string | null) {
+  return useQuery({
+    queryKey: [...fleetKeys.all, "deck", deckId, "posts", userId],
+    queryFn: async () => {
+      const { data: posts, error } = await supabase
+        .from("fleet_posts")
+        .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
+        .eq("deck_id", deckId)
+        .order("created_at", { ascending: false });
+
+      if (error || !posts || posts.length === 0) return [];
+
+      const postIds = posts.map((p) => p.id);
+
+      const [{ counts, userInteractions }, { data: polls }] = await Promise.all([
+        fetchInteractions(postIds, userId),
+        supabase.from("polls").select("id, post_id").in("post_id", postIds),
+      ]);
+
+      const pollMap = new Map(polls?.map((p) => [p.post_id, p.id]) || []);
+
+      return posts.map((post) => {
+        const transformed = transformRow<FleetPostWithAuthor>(post);
+        return {
+          ...transformed,
+          pollId: pollMap.get(post.id) || null,
+          counts: counts[post.id],
+          myInteractions: userInteractions[post.id],
+        };
+      });
+    },
+  });
+}
+
+export function useCreateFleetDeck() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      name,
+      description,
+      category,
+      isOpen,
+      profileId,
+    }: {
+      name: string;
+      description: string;
+      category: string | null;
+      isOpen: boolean;
+      profileId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("fleet_decks")
+        .insert({
+          captain_id: profileId,
+          name,
+          description: description || null,
+          category,
+          is_open: isOpen,
+          member_count: 1,
+        })
+        .select("*")
+        .single();
+
+      if (error || !data) throw error || new Error("Failed to create fleet deck");
+      const deck = transformRow<FleetDeck>(data);
+
+      const { error: memberError } = await supabase
+        .from("fleet_deck_members")
+        .insert({ deck_id: deck.id, user_id: profileId, role: "captain" });
+
+      if (memberError) {
+        await supabase.from("fleet_decks").delete().eq("id", deck.id);
+        throw memberError;
+      }
+
+      return deck;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+    },
+  });
+}
+
+export function useJoinFleetDeck() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ deckId, profileId }: { deckId: string; profileId: string }) => {
+      const { error } = await supabase
+        .from("fleet_deck_members")
+        .insert({ deck_id: deckId, user_id: profileId, role: "member" });
+
+      if (error) throw error;
+
+      const { data: deck } = await supabase
+        .from("fleet_decks")
+        .select("member_count")
+        .eq("id", deckId)
+        .single();
+
+      await supabase
+        .from("fleet_decks")
+        .update({ member_count: (deck?.member_count ?? 1) + 1 })
+        .eq("id", deckId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
     },
   });
 }
@@ -300,11 +430,13 @@ export function useCreateFleetPost() {
       authorProfile,
       mediaUrl,
       mediaType,
+      deckId,
     }: {
       content: string;
       authorProfile: Profile | null;
       mediaUrl?: string;
       mediaType?: "image" | "video" | "pdf";
+      deckId?: string;
     }) => {
       const { data, error } = await supabase
         .from("fleet_posts")
@@ -313,6 +445,7 @@ export function useCreateFleetPost() {
           content,
           media_url: mediaUrl || null,
           media_type: mediaType,
+          deck_id: deckId || null,
         })
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .single();
