@@ -18,6 +18,7 @@ import { Pressable, ScrollView, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
+import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
@@ -43,6 +44,7 @@ export function ProfileScreen() {
   const router = useRouter();
 
   const [currency, setCurrency] = useState("KES");
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
   const gemsBalance = wallet?.balance ?? 0;
@@ -177,7 +179,7 @@ export function ProfileScreen() {
             {/* My Gems */}
             <Button
               variant="ghost"
-              onPress={() => router.push("/wallet")}
+              onPress={() => setComingSoonOpen(true)}
               className="flex-row items-center justify-between p-5 border-b border-border/30 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
               <View className="flex-row items-center gap-4">
                 <Icon as={Zap} size={20} className="text-primary" />
@@ -332,6 +334,7 @@ export function ProfileScreen() {
           </View>
         )}
       </ScrollView>
+      <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
     </View>
   );
 }

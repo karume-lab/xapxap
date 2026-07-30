@@ -1,11 +1,12 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Diamond, Send, X } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -18,7 +19,7 @@ export default function GemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const colors = useColors();
-  const { creatorId, username, avatarUrl } = useLocalSearchParams<{
+  const { username, avatarUrl } = useLocalSearchParams<{
     creatorId: string;
     username: string;
     avatarUrl: string;
@@ -26,24 +27,12 @@ export default function GemsScreen() {
 
   const { session } = useAuth();
   const { data: wallet } = useWalletBalance(session?.user?.id || null);
-  const { mutate: tip, isPending } = useTipMutation(session?.user?.id || null);
+  const { isPending } = useTipMutation(session?.user?.id || null);
   const [selectedAmount, setSelectedAmount] = useState(50);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   const handleTip = () => {
-    if ((wallet?.balance ?? 0) < selectedAmount) {
-      Alert.alert("Insufficient Gems", "Top up your wallet to send this gift.");
-      return;
-    }
-
-    tip(
-      { creatorId: creatorId as string, amount: selectedAmount },
-      {
-        onSuccess: () => {
-          Alert.alert("Success!", `You sent ${selectedAmount} Gems to ${username}.`);
-          router.back();
-        },
-      }
-    );
+    setComingSoonOpen(true);
   };
 
   return (
@@ -131,6 +120,7 @@ export default function GemsScreen() {
           </View>
         </Button>
       </Glass>
+      <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
     </View>
   );
 }

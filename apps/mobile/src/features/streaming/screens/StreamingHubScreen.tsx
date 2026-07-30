@@ -18,20 +18,13 @@ import {
   X,
 } from "lucide-react-native";
 import { useCallback, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Pressable,
-  Switch,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Pressable, Switch, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useLiveStreams } from "@/features/streaming/services/queries";
@@ -39,12 +32,20 @@ import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { cn } from "@/lib/utils";
 
-function StreamCard({ item, onPress }: { item: LiveStreamWithAuthor; onPress: () => void }) {
+function StreamCard({
+  item,
+  onPress,
+  onUnlock,
+}: {
+  item: LiveStreamWithAuthor;
+  onPress: () => void;
+  onUnlock: () => void;
+}) {
   const isPremium = item.quality === "aqua_premium";
   const [isUnlocked, _setIsUnlocked] = useState(!item.isGated || (item.entryFeeGems ?? 0) === 0);
 
   const handleUnlock = () => {
-    Alert.alert("Coming Soon", "Gem payments are launching soon. Stay tuned!");
+    onUnlock();
   };
 
   return (
@@ -135,7 +136,8 @@ export function StreamingHubScreen() {
   const [streamKind, setStreamKind] = useState<"drift" | "aqua">("drift");
   const [tokenCost, setTokenCost] = useState("0");
   const [inviteOnly, setInviteOnly] = useState(false);
-  const [isStarting, setIsStarting] = useState(false);
+  const [isStarting, _setIsStarting] = useState(false);
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const renderBackdrop = useCallback(
@@ -152,12 +154,8 @@ export function StreamingHubScreen() {
 
   const handleStartStream = () => {
     if (!streamTitle.trim()) return;
-    setIsStarting(true);
-    setTimeout(() => {
-      setIsStarting(false);
-      bottomSheetRef.current?.close();
-      Alert.alert("🎥 You're Live!", "Your stream is now active on the XapXap ocean.");
-    }, 1500);
+    bottomSheetRef.current?.close();
+    setComingSoonOpen(true);
   };
 
   if (!isOnline) {
@@ -243,7 +241,11 @@ export function StreamingHubScreen() {
             ListHeaderComponent={renderHeader}
             renderItem={({ item }) => (
               <View className="px-6">
-                <StreamCard item={item} onPress={() => router.push(`/stream/${item.id}`)} />
+                <StreamCard
+                  item={item}
+                  onPress={() => router.push(`/stream/${item.id}`)}
+                  onUnlock={() => setComingSoonOpen(true)}
+                />
               </View>
             )}
             ListEmptyComponent={
@@ -402,6 +404,7 @@ export function StreamingHubScreen() {
             </View>
           </BottomSheetScrollView>
         </BottomSheet>
+        <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
       </View>
     </ErrorBoundary>
   );

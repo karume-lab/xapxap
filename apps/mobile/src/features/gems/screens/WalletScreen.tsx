@@ -1,24 +1,19 @@
-import BottomSheet, {
-  BottomSheetBackdrop,
-  type BottomSheetBackdropProps,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
   ArrowDownLeftIcon,
   ArrowLeft,
   ArrowUpRightIcon,
-  Clock,
   DownloadIcon,
   PlusCircleIcon,
   Zap,
 } from "lucide-react-native";
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
+import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
@@ -36,25 +31,13 @@ export function WalletScreen() {
   const colors = useColors();
   const router = useRouter();
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const [sheetType, setSheetType] = useState<"buy" | "withdraw">("buy");
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
 
   const openSheet = (type: "buy" | "withdraw") => {
     setSheetType(type);
-    bottomSheetRef.current?.expand();
+    setComingSoonOpen(true);
   };
-
-  const renderBackdrop = useCallback(
-    (props: BottomSheetBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-        pressBehavior="close"
-      />
-    ),
-    []
-  );
 
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
@@ -183,33 +166,11 @@ export function WalletScreen() {
         </View>
       </ScrollView>
 
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        enableDynamicSizing
-        enablePanDownToClose
-        backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: colors.background, borderRadius: 32 }}
-        handleIndicatorStyle={{ backgroundColor: colors.mutedForeground }}>
-        <BottomSheetView className="px-8 pt-4 pb-10 items-center">
-          <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center border border-primary/20 mb-6">
-            <Icon as={Clock} size={28} className="text-primary" />
-          </View>
-          <Text className="text-foreground font-bold text-2xl mb-2">Coming Soon</Text>
-          <Text className="text-primary font-bold text-xs uppercase tracking-widest mb-4">
-            {sheetType === "buy" ? "BUY GEMS" : "WITHDRAW EARNINGS"}
-          </Text>
-          <Text className="text-muted-foreground text-center text-base px-2 mb-8 font-[Inter_400Regular]">
-            We're polishing this experience for launch. You'll be the first to know when it goes
-            live.
-          </Text>
-          <Button
-            onPress={() => bottomSheetRef.current?.close()}
-            className="w-full h-14 rounded-full bg-primary">
-            <Text className="text-primary-foreground font-bold text-lg">Okay</Text>
-          </Button>
-        </BottomSheetView>
-      </BottomSheet>
+      <ComingSoonDialog
+        open={comingSoonOpen}
+        onOpenChange={setComingSoonOpen}
+        title={sheetType === "buy" ? "Buy Gems" : "Withdraw Earnings"}
+      />
     </View>
   );
 }
