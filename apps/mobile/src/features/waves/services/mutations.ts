@@ -77,14 +77,9 @@ export function useToggleCommentLike(userId: string | null) {
       await queryClient.cancelQueries({ queryKey: commentsKeys.postComments(realPostId, userId) });
       const previous = queryClient.getQueryData(commentsKeys.postComments(realPostId, userId));
 
-      type CommentType = {
-        id: string;
-        myInteractions?: { hug?: boolean };
-        counts?: { hugs?: number };
-      } & Record<string, unknown>;
       queryClient.setQueryData(
         commentsKeys.postComments(realPostId, userId),
-        (oldData: CommentType[] | undefined) => {
+        (oldData: FleetPostWithAuthor[] | undefined) => {
           if (!oldData || !Array.isArray(oldData)) return oldData;
           return oldData.map((comment) => {
             if (comment.id === commentId) {

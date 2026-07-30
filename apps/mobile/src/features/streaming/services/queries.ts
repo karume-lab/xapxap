@@ -3,8 +3,6 @@ import type { LiveStreamWithAuthor, Profile } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
-export type { LiveStreamWithAuthor };
-
 export const streamingKeys = {
   all: ["streaming"] as const,
   liveStreams: () => [...streamingKeys.all, "live-streams"] as const,

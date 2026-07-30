@@ -1,4 +1,5 @@
 import { FlashList } from "@shopify/flash-list";
+import type { FameBurstItem } from "@xapxap/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -23,11 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import {
-  type FameBurstItem,
-  useFameBurst,
-  useToggleFameInteraction,
-} from "@/features/fame/services/queries";
+import { useFameBurst, useToggleFameInteraction } from "@/features/fame/services/queries";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";

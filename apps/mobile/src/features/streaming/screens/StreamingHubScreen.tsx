@@ -1,3 +1,4 @@
+import type { LiveStreamWithAuthor } from "@xapxap/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -29,7 +30,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { type LiveStreamWithAuthor, useLiveStreams } from "@/features/streaming/services/queries";
+import { useLiveStreams } from "@/features/streaming/services/queries";
 import { useColors } from "@/hooks/use-colors";
 import { useNetwork } from "@/hooks/use-network";
 import { cn } from "@/lib/utils";

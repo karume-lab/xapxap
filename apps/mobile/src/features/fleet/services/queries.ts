@@ -3,8 +3,6 @@ import type { FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/type
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
-export type { FleetPostWithAuthor, PollWithDetails };
-
 async function fetchInteractions(
   postIds: string[],
   userId: string | null
