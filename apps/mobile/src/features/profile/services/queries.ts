@@ -42,7 +42,7 @@ export function useUserWaves(userId: string | null) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("fleet_posts")
-        .select("*, author:profiles(*)")
+        .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .eq("author_id", userId)
         .order("created_at", { ascending: false });
 

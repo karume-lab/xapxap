@@ -17,11 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
-import {
-  useAddComment,
-  useComments,
-  useToggleCommentLike,
-} from "@/features/waves/services/comments";
+import { useAddComment, useToggleCommentLike } from "@/features/waves/services/mutations";
+import { useComments } from "@/features/waves/services/queries";
 import { useColors } from "@/hooks/use-colors";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");

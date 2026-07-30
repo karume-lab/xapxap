@@ -16,7 +16,7 @@ export function useLiveStreams() {
     queryFn: async () => {
       const { data: streams, error } = await supabase
         .from("live_streams")
-        .select("*, author:profiles(*)")
+        .select("*, author:profiles!live_streams_broadcaster_id_profiles_id_fk(*)")
         .eq("is_live", true)
         .order("created_at", { ascending: false });
 
@@ -115,7 +115,7 @@ export function useStartStreamMutation(userId: string | null) {
           entry_fee_gems: isGated ? entryFeeGems : 0,
           started_at: new Date().toISOString(),
         })
-        .select("*, author:profiles(*)")
+        .select("*, author:profiles!live_streams_broadcaster_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;

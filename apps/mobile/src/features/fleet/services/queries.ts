@@ -65,7 +65,7 @@ export function useFleetThreads(userId: string | null) {
     queryFn: async () => {
       const { data: posts, error } = await supabase
         .from("fleet_posts")
-        .select("*, author:profiles(*)")
+        .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .order("created_at", { ascending: false });
 
       if (error || !posts || posts.length === 0) return [];
@@ -239,7 +239,7 @@ export function useCreateFleetPost() {
           media_url: mediaUrl || null,
           media_type: mediaType,
         })
-        .select("*, author:profiles(*)")
+        .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;

@@ -21,7 +21,9 @@ export function useFameBurst(userId: string | null) {
 
       const { data: posts, error } = await supabase
         .from("fleet_posts")
-        .select("*, author:profiles(*), fame_heuristics!inner(*)")
+        .select(
+          "*, author:profiles!fleet_posts_author_id_profiles_id_fk(*), fame_heuristics!inner(*)"
+        )
         .eq("fame_heuristics.status", "fame_burst")
         .order("created_at", { ascending: false })
         .range(start, end);
