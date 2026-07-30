@@ -56,8 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: initial } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: initial } }) => {
       setSession(initial);
+      if (initial?.user?.id) {
+        const p = await fetchProfile(initial.user.id);
+        setProfile(p);
+        profileCacheRef.current = initial.user.id;
+      }
       setLoading(false);
     });
 

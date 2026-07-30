@@ -132,7 +132,49 @@ export function useToggleFameInteraction(userId: string | null) {
         if (error) throw error;
       }
     },
-    onSuccess: () => {
+    onMutate: async ({ postId, type }) => {
+      await queryClient.cancelQueries({ queryKey: fameKeys.all });
+      const previous = queryClient.getQueryData(fameKeys.all);
+
+      queryClient.setQueriesData(
+        { queryKey: fameKeys.all },
+        (oldData: { pages: { data: FameBurstItem[] }[] } | undefined) => {
+          if (!oldData?.pages) return oldData;
+          const realPostId = postId.split("-p")[0];
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              data: page.data.map((post) => {
+                if (post.id === realPostId) {
+                  const isActive = post.myInteractions?.[type as keyof typeof post.myInteractions];
+                  const countKey = `${type}s` as keyof typeof post.counts;
+                  return {
+                    ...post,
+                    myInteractions: {
+                      ...post.myInteractions,
+                      [type]: !isActive,
+                    },
+                    counts: {
+                      ...post.counts,
+                      [countKey]: Math.max(0, (post.counts?.[countKey] || 0) + (isActive ? -1 : 1)),
+                    },
+                  };
+                }
+                return post;
+              }),
+            })),
+          };
+        }
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueriesData({ queryKey: fameKeys.all }, context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: fameKeys.all });
     },
   });

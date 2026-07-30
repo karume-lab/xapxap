@@ -209,7 +209,84 @@ export function useToggleFleetInteraction(userId: string | null) {
         if (error) throw error;
       }
     },
-    onSuccess: () => {
+    onMutate: async ({ postId, type }) => {
+      await queryClient.cancelQueries({ queryKey: fleetKeys.all });
+      const previous = queryClient.getQueryData(fleetKeys.all);
+
+      type PostType = FleetPostWithAuthor & {
+        counts?: Record<string, number>;
+        myInteractions?: Record<string, boolean>;
+      };
+      queryClient.setQueriesData(
+        { queryKey: fleetKeys.all },
+        (oldData: PostType[] | { pages: { data: PostType[] }[] } | undefined) => {
+          if (!oldData) return oldData;
+
+          // If data is array (normal query)
+          if (Array.isArray(oldData)) {
+            return oldData.map((post) => {
+              if (post.id === postId) {
+                const isActive = post.myInteractions?.[type as keyof typeof post.myInteractions];
+                const countKey = `${type}s`;
+                return {
+                  ...post,
+                  myInteractions: {
+                    ...post.myInteractions,
+                    [type]: !isActive,
+                  },
+                  counts: {
+                    ...post.counts,
+                    [countKey]: Math.max(0, (post.counts?.[countKey] || 0) + (isActive ? -1 : 1)),
+                  },
+                };
+              }
+              return post;
+            });
+          }
+
+          // If data is paginated (infinite query)
+          if ("pages" in oldData) {
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: page.data.map((post) => {
+                  if (post.id === postId) {
+                    const isActive =
+                      post.myInteractions?.[type as keyof typeof post.myInteractions];
+                    const countKey = `${type}s`;
+                    return {
+                      ...post,
+                      myInteractions: {
+                        ...post.myInteractions,
+                        [type]: !isActive,
+                      },
+                      counts: {
+                        ...post.counts,
+                        [countKey]: Math.max(
+                          0,
+                          (post.counts?.[countKey] || 0) + (isActive ? -1 : 1)
+                        ),
+                      },
+                    };
+                  }
+                  return post;
+                }),
+              })),
+            };
+          }
+
+          return oldData;
+        }
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueriesData({ queryKey: fleetKeys.all }, context.previous);
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });
       queryClient.invalidateQueries({ queryKey: ["fame"] });
     },

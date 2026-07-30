@@ -72,8 +72,56 @@ export function useToggleCommentLike(userId: string | null) {
 
       return { postId: realPostId };
     },
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(res.postId, null) });
+    onMutate: async ({ commentId, postId }) => {
+      const realPostId = postId.split("-p")[0];
+      await queryClient.cancelQueries({ queryKey: commentsKeys.postComments(realPostId, userId) });
+      const previous = queryClient.getQueryData(commentsKeys.postComments(realPostId, userId));
+
+      type CommentType = {
+        id: string;
+        myInteractions?: { hug?: boolean };
+        counts?: { hugs?: number };
+      } & Record<string, unknown>;
+      queryClient.setQueryData(
+        commentsKeys.postComments(realPostId, userId),
+        (oldData: CommentType[] | undefined) => {
+          if (!oldData || !Array.isArray(oldData)) return oldData;
+          return oldData.map((comment) => {
+            if (comment.id === commentId) {
+              const isActive = comment.myInteractions?.hug;
+              return {
+                ...comment,
+                myInteractions: {
+                  ...comment.myInteractions,
+                  hug: !isActive,
+                },
+                counts: {
+                  ...comment.counts,
+                  hugs: Math.max(0, (comment.counts?.hugs || 0) + (isActive ? -1 : 1)),
+                },
+              };
+            }
+            return comment;
+          });
+        }
+      );
+
+      return { previous, realPostId };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous && context?.realPostId) {
+        queryClient.setQueryData(
+          commentsKeys.postComments(context.realPostId, userId),
+          context.previous
+        );
+      }
+    },
+    onSettled: (res, _err, _vars, context) => {
+      const pId = res?.postId || context?.realPostId;
+      if (pId) {
+        queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(pId, userId) });
+        queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(pId, null) });
+      }
     },
   });
 }

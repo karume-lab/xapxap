@@ -16,6 +16,11 @@ export function transformRow<T>(row: Record<string, unknown>): T {
       result[camelKey] = transformRow(value as Record<string, unknown>);
     } else if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
       result[camelKey] = new Date(value);
+    } else if (typeof value === "string" && value.includes("127.0.0.1:54321")) {
+      result[camelKey] = value.replace(
+        "http://127.0.0.1:54321",
+        process.env.EXPO_PUBLIC_SUPABASE_URL || ""
+      );
     } else {
       result[camelKey] = value;
     }
