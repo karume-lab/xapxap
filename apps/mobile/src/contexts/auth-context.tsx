@@ -75,29 +75,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session: initial } }) => {
-      setSession(initial);
-      if (initial?.user?.id) {
-        const p = await ensureProfile(
-          initial.user.id,
-          initial.user.user_metadata?.username as string | undefined
-        );
-        setProfile(p);
-        profileCacheRef.current = initial.user.id;
-      }
-      setLoading(false);
-    });
+    let mounted = true;
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (!mounted) return;
+
       setSession(newSession);
 
       if (newSession?.user?.id) {
+        if (newSession.user.id === profileCacheRef.current) return;
+
         const p = await ensureProfile(
           newSession.user.id,
           newSession.user.user_metadata?.username as string | undefined
         );
+        if (!mounted) return;
         setProfile(p);
         profileCacheRef.current = newSession.user.id;
       } else {
@@ -106,7 +100,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    supabase.auth.getSession().then(async ({ data: { session: initial } }) => {
+      if (!mounted) return;
+      setSession(initial);
+
+      if (initial?.user?.id && initial.user.id !== profileCacheRef.current) {
+        const p = await ensureProfile(
+          initial.user.id,
+          initial.user.user_metadata?.username as string | undefined
+        );
+        if (!mounted) return;
+        setProfile(p);
+        profileCacheRef.current = initial.user.id;
+      }
+
+      if (mounted) setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, [ensureProfile]);
 
   useEffect(() => {
