@@ -41,23 +41,10 @@ import { cn } from "@/lib/utils";
 
 function StreamCard({ item, onPress }: { item: LiveStreamWithAuthor; onPress: () => void }) {
   const isPremium = item.quality === "aqua_premium";
-  const [isUnlocked, setIsUnlocked] = useState(!item.isGated || (item.entryFeeGems ?? 0) === 0);
+  const [isUnlocked, _setIsUnlocked] = useState(!item.isGated || (item.entryFeeGems ?? 0) === 0);
 
   const handleUnlock = () => {
-    Alert.alert(
-      "Aqua Premium Entry",
-      `Unlock this high-definition stream for ${item.entryFeeGems} GEMS?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Pay & Enter",
-          onPress: () => {
-            setIsUnlocked(true);
-            Alert.alert("Unlocked", "Enjoy the Aqua Premium experience.");
-          },
-        },
-      ]
-    );
+    Alert.alert("Coming Soon", "Gem payments are launching soon. Stay tuned!");
   };
 
   return (
@@ -282,7 +269,7 @@ export function StreamingHubScreen() {
           <BottomSheetScrollView
             contentContainerStyle={{
               padding: 32,
-              paddingBottom: insets.bottom + 40,
+              paddingBottom: insets.bottom + 140,
             }}
             showsVerticalScrollIndicator={false}>
             <View className="flex-row justify-between items-center mb-8">
