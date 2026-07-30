@@ -3,7 +3,7 @@ import type { FameBurstItem } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
 
 export const fameKeys = {
   all: ["fame"] as const,
