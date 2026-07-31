@@ -4,7 +4,7 @@ import { seedContent } from "@db/content/seed";
 import { seedFame } from "@db/fame/seed";
 import { seedNotifications } from "@db/notifications/seed";
 import { env } from "@db/seed/env";
-import { ensureBucket } from "@db/seed/utils/uploadMedia";
+import { emptyBucket, ensureBucket } from "@db/seed/utils/uploadMedia";
 import { seedStreams } from "@db/streams/seed";
 import { seedUsers } from "@db/users/seed";
 import { seedWallets } from "@db/wallets/seed";
@@ -65,6 +65,12 @@ const clearAllData = async () => {
   for (const table of tables) {
     await db.execute(sql.raw(`DELETE FROM "${table}"`));
   }
+
+  // Delete Supabase auth users
+  await db.execute(sql.raw(`DELETE FROM auth.users`));
+
+  // Also empty the media bucket if we're clearing everything
+  await emptyBucket("media");
 };
 
 const SEED_ORDER: { flag: Entity; label: string; fn: () => Promise<void> }[] = [

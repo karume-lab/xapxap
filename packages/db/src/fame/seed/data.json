@@ -1,117 +1,102 @@
 [
   {
-    "postId": "11111111-1111-1111-1111-111111111111",
+    "postId": "b3c56a3b-ee0f-495d-9955-24155f62d257",
     "status": "fame_burst",
     "viewsCount": 1500
   },
   {
-    "postId": "22222222-2222-2222-2222-222222222222",
-    "status": "trend_deck",
-    "viewsCount": 300
-  },
-  {
-    "postId": "33333333-3333-3333-3333-333333333333",
-    "status": "evaluating",
-    "viewsCount": 10
-  },
-  {
-    "postId": "44444444-4444-4444-4444-444444444444",
-    "status": "rejected",
-    "viewsCount": 50
-  },
-  {
-    "postId": "55555555-5555-5555-5555-555555555555",
+    "postId": "065de822-faae-4f55-9ca3-1f482efff074",
     "status": "fame_burst",
-    "viewsCount": 5000
+    "viewsCount": 1750
   },
   {
-    "postId": "ced42878-6c23-44f7-8fc0-3a841407a916",
-    "status": "fame_burst",
-    "viewsCount": 1000
-  },
-  {
-    "postId": "940e6f2b-a1c2-4e85-a00e-63f32e4ef2b5",
-    "status": "fame_burst",
-    "viewsCount": 1100
-  },
-  {
-    "postId": "23d86e31-bcba-40a7-a554-fcb853aa39a0",
-    "status": "fame_burst",
-    "viewsCount": 1200
-  },
-  {
-    "postId": "544df6e7-5d81-4fc1-8409-e6bc288800d2",
-    "status": "fame_burst",
-    "viewsCount": 1300
-  },
-  {
-    "postId": "a0e0164d-2e34-44bb-aa96-07d45fcfa70f",
-    "status": "fame_burst",
-    "viewsCount": 1400
-  },
-  {
-    "postId": "1e724519-ca2d-4c18-a1c6-71467b28aea7",
-    "status": "fame_burst",
-    "viewsCount": 1500
-  },
-  {
-    "postId": "385e0c7a-dd17-4429-8c83-784cd574cd11",
-    "status": "fame_burst",
-    "viewsCount": 1600
-  },
-  {
-    "postId": "ccb9e1ac-78a6-4ca7-a827-173475dfd177",
-    "status": "fame_burst",
-    "viewsCount": 1700
-  },
-  {
-    "postId": "e9d2f810-4c48-415a-9b89-262e1ae7e740",
-    "status": "fame_burst",
-    "viewsCount": 1800
-  },
-  {
-    "postId": "7569c979-3d3f-4692-a9fb-0fa039f95bbe",
-    "status": "fame_burst",
-    "viewsCount": 1900
-  },
-  {
-    "postId": "cb6c698a-69df-4b2c-9046-68487b0874f1",
+    "postId": "b52b2665-3a13-4160-9596-38c26036f22b",
     "status": "fame_burst",
     "viewsCount": 2000
   },
   {
-    "postId": "384f15a6-db69-4fa2-8edb-da4191d7e70f",
+    "postId": "59a6a7f2-c73b-4c0f-a9db-1de53aa388a8",
     "status": "fame_burst",
-    "viewsCount": 2100
+    "viewsCount": 2250
   },
   {
-    "postId": "ba9b93de-6828-4c92-adc7-781e479b02b6",
+    "postId": "a53c5e7f-9e6d-4ed3-a129-c5005686b7e3",
     "status": "fame_burst",
-    "viewsCount": 2200
+    "viewsCount": 2500
   },
   {
-    "postId": "4df4e2c1-9863-49a4-8a7a-5330e1fa98a8",
+    "postId": "a302cfb6-50b2-4bc9-9a2e-fc2e2bc715df",
     "status": "fame_burst",
-    "viewsCount": 2300
+    "viewsCount": 2750
   },
   {
-    "postId": "14a6aab7-4173-4119-bc96-37a8d0bbefd1",
+    "postId": "31837a49-2121-485e-a0fa-b0563ea429c2",
     "status": "fame_burst",
-    "viewsCount": 2400
+    "viewsCount": 3000
   },
   {
-    "postId": "b7aa1843-0cf7-4113-9dbe-37ace4969534",
+    "postId": "78d25fb1-9db7-467b-8ef0-2a5cd91804e4",
     "status": "fame_burst",
-    "viewsCount": 500
+    "viewsCount": 3250
   },
   {
-    "postId": "4763bfd6-7a66-44d3-baaf-ea27a94b0d09",
+    "postId": "780e0163-6473-408e-bdaa-f3d5b1cad66c",
     "status": "fame_burst",
-    "viewsCount": 500
+    "viewsCount": 3500
   },
   {
-    "postId": "e09372d7-2838-430e-833c-e104a03ca737",
+    "postId": "dfcede4a-f683-464b-b8f2-8250ba4d9e89",
     "status": "fame_burst",
-    "viewsCount": 500
+    "viewsCount": 3750
+  },
+  {
+    "postId": "6ffa4eeb-36d2-4792-ae3a-316dac00c03a",
+    "status": "fame_burst",
+    "viewsCount": 4000
+  },
+  {
+    "postId": "9a52aa64-0706-4c21-91a9-ad7aaa31549c",
+    "status": "fame_burst",
+    "viewsCount": 4250
+  },
+  {
+    "postId": "548ecfa7-5c8e-4996-bc64-0a6af33c581b",
+    "status": "fame_burst",
+    "viewsCount": 4500
+  },
+  {
+    "postId": "904592fd-5e41-4a30-94f8-9f6424ac7ada",
+    "status": "fame_burst",
+    "viewsCount": 4750
+  },
+  {
+    "postId": "dc224352-5e2a-4d4f-8afb-74aa47f9e93d",
+    "status": "fame_burst",
+    "viewsCount": 5000
+  },
+  {
+    "postId": "8db9e907-e745-4900-b46f-9b1d8981b62f",
+    "status": "fame_burst",
+    "viewsCount": 5250
+  },
+  {
+    "postId": "bd988aaf-26b6-4aac-94c0-0cd3162b07d2",
+    "status": "fame_burst",
+    "viewsCount": 5500
+  },
+  {
+    "postId": "43045c7c-4f0b-4d65-b91a-0ecf550234a9",
+    "status": "fame_burst",
+    "viewsCount": 5750
+  },
+  {
+    "postId": "cbb3aeca-68ac-43ed-a207-1ca502264b7e",
+    "status": "fame_burst",
+    "viewsCount": 6000
+  },
+  {
+    "postId": "a41e019f-b829-4eb8-aa74-2559381dbb17",
+    "status": "fame_burst",
+    "viewsCount": 6250
   }
 ]

@@ -1,0 +1,1 @@
+ALTER TABLE "fleet_posts" ALTER COLUMN "media_type" SET DATA TYPE varchar(100);

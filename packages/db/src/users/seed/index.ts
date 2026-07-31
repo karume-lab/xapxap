@@ -31,7 +31,7 @@ export const seedUsers = async () => {
 
       let avatarUrl = null;
       if (avatarFile) {
-        const localPath = path.resolve(`../../apps/mobile/assets/fame/${avatarFile}`);
+        const localPath = path.resolve(__dirname, `../../seed/assets/${avatarFile}`);
         avatarUrl = await uploadMediaFile("media", `avatars/${rest.id}/${avatarFile}`, localPath);
       }
       return { ...rest, avatarUrl };

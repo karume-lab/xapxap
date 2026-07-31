@@ -35,15 +35,20 @@ export const seedContent = async () => {
   console.log("  Uploading post media...");
 
   const postsToInsert = await Promise.all(
-    data.fleetPosts.map(async (post) => {
-      const { mediaFile, mediaType, ...rest } = post;
-      let mediaUrl = null;
-      if (mediaFile) {
-        const localPath = path.resolve(`../../apps/mobile/assets/fame/${mediaFile}`);
-        mediaUrl = await uploadMediaFile("media", `posts/${rest.id}/${mediaFile}`, localPath);
-      }
-      return { ...rest, mediaUrl, mediaType: mediaType || null };
-    })
+    [...data.fleetPosts]
+      .sort(() => Math.random() - 0.5)
+      .map(async (post, index) => {
+        const { mediaFile, mediaType, ...rest } = post;
+
+        // Stagger createdAt by 1 minute for each post so they are ordered randomly in feeds
+        const createdAt = new Date(Date.now() - index * 60000);
+        let mediaUrl = null;
+        if (mediaFile) {
+          const localPath = path.resolve(__dirname, `../../seed/assets/${mediaFile}`);
+          mediaUrl = await uploadMediaFile("media", `posts/${rest.id}/${mediaFile}`, localPath);
+        }
+        return { ...rest, mediaUrl, mediaType: mediaType || null, createdAt };
+      })
   );
 
   console.log("  Inserting fleet posts...");

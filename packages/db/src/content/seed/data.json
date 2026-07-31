@@ -130,133 +130,144 @@
       "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
-      "id": "ced42878-6c23-44f7-8fc0-3a841407a916",
+      "id": "b3c56a3b-ee0f-495d-9955-24155f62d257",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Generated post 1 for fame burst testing! #trending",
-      "mediaFile": "img1.jpg",
+      "content": "Just arrived in the city, the skyline is breathtaking tonight! 🏙️ #travel",
+      "mediaFile": "img1_city.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "940e6f2b-a1c2-4e85-a00e-63f32e4ef2b5",
+      "id": "065de822-faae-4f55-9ca3-1f482efff074",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Generated post 2 for fame burst testing! #trending",
-      "mediaFile": "img2.jpg",
+      "content": "Took a long hike this weekend to clear my mind. Nature is the best therapy. 🌲 #hiking #nature",
+      "mediaFile": "img2_nature.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "23d86e31-bcba-40a7-a554-fcb853aa39a0",
+      "id": "b52b2665-3a13-4160-9596-38c26036f22b",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Generated post 3 for fame burst testing! #trending",
-      "mediaFile": "bunny.mp4",
-      "mediaType": "video/mp4"
+      "content": "My new workstation setup is finally complete! Ready to write some code. 💻 #setup #tech",
+      "mediaFile": "img3_tech.jpg",
+      "mediaType": "image/jpeg"
     },
     {
-      "id": "544df6e7-5d81-4fc1-8409-e6bc288800d2",
+      "id": "59a6a7f2-c73b-4c0f-a9db-1de53aa388a8",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Generated post 4 for fame burst testing! #trending",
-      "mediaFile": "img1.jpg",
+      "content": "Starting the day right with a fresh pour-over coffee. ☕ #morning",
+      "mediaFile": "img4_coffee.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "a0e0164d-2e34-44bb-aa96-07d45fcfa70f",
+      "id": "a53c5e7f-9e6d-4ed3-a129-c5005686b7e3",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Generated post 5 for fame burst testing! #trending",
-      "mediaFile": "img2.jpg",
+      "content": "Went to the modern art gallery today. This abstract piece really stood out to me. 🎨 #art",
+      "mediaFile": "img5_abstract.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "1e724519-ca2d-4c18-a1c6-71467b28aea7",
+      "id": "a302cfb6-50b2-4bc9-9a2e-fc2e2bc715df",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Generated post 6 for fame burst testing! #trending",
-      "mediaFile": "bunny.mp4",
-      "mediaType": "video/mp4"
-    },
-    {
-      "id": "385e0c7a-dd17-4429-8c83-784cd574cd11",
-      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Generated post 7 for fame burst testing! #trending",
-      "mediaFile": "img1.jpg",
+      "content": "Fascinated by brutalist architecture. So imposing yet elegant. 🏢 #architecture",
+      "mediaFile": "img6_architecture.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "ccb9e1ac-78a6-4ca7-a827-173475dfd177",
+      "id": "31837a49-2121-485e-a0fa-b0563ea429c2",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "A quick portrait I shot on film last week. Loving the grainy texture! 📸 #photography",
+      "mediaFile": "img7_portrait.jpg",
+      "mediaType": "image/jpeg"
+    },
+    {
+      "id": "78d25fb1-9db7-467b-8ef0-2a5cd91804e4",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Generated post 8 for fame burst testing! #trending",
-      "mediaFile": "img2.jpg",
+      "content": "Tried making homemade pasta for the first time. It was a massive success! 🍝 #cooking",
+      "mediaFile": "img8_food.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "e9d2f810-4c48-415a-9b89-262e1ae7e740",
+      "id": "780e0163-6473-408e-bdaa-f3d5b1cad66c",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Generated post 9 for fame burst testing! #trending",
-      "mediaFile": "bunny.mp4",
+      "content": "Found a hidden gem of a street while wandering through Europe. 🗺️ #wanderlust",
+      "mediaFile": "img9_travel.jpg",
+      "mediaType": "image/jpeg"
+    },
+    {
+      "id": "dfcede4a-f683-464b-b8f2-8250ba4d9e89",
+      "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
+      "content": "The James Webb telescope images never cease to amaze me. 🌌 #space #astronomy",
+      "mediaFile": "img10_space.jpg",
+      "mediaType": "image/jpeg"
+    },
+    {
+      "id": "6ffa4eeb-36d2-4792-ae3a-316dac00c03a",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "Big Buck Bunny is an absolute classic of open source animation! 🐰 #blender",
+      "mediaFile": "vid1_bunny.mp4",
       "mediaType": "video/mp4"
     },
     {
-      "id": "7569c979-3d3f-4692-a9fb-0fa039f95bbe",
-      "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Generated post 10 for fame burst testing! #trending",
-      "mediaFile": "img1.jpg",
-      "mediaType": "image/jpeg"
-    },
-    {
-      "id": "cb6c698a-69df-4b2c-9046-68487b0874f1",
-      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Generated post 11 for fame burst testing! #trending",
-      "mediaFile": "img2.jpg",
-      "mediaType": "image/jpeg"
-    },
-    {
-      "id": "384f15a6-db69-4fa2-8edb-da4191d7e70f",
+      "id": "9a52aa64-0706-4c21-91a9-ad7aaa31549c",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Generated post 12 for fame burst testing! #trending",
-      "mediaFile": "bunny.mp4",
+      "content": "Elephants Dream was the first ever open movie project. Such history! 🐘 #history",
+      "mediaFile": "vid2_elephants.mp4",
       "mediaType": "video/mp4"
     },
     {
-      "id": "ba9b93de-6828-4c92-adc7-781e479b02b6",
+      "id": "548ecfa7-5c8e-4996-bc64-0a6af33c581b",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Generated post 13 for fame burst testing! #trending",
-      "mediaFile": "img1.jpg",
-      "mediaType": "image/jpeg"
+      "content": "Testing the For Bigger Blazes encoding - the quality is actually quite good! 🔥 #testing",
+      "mediaFile": "vid3_blazes.mp4",
+      "mediaType": "video/mp4"
     },
     {
-      "id": "4df4e2c1-9863-49a4-8a7a-5330e1fa98a8",
+      "id": "904592fd-5e41-4a30-94f8-9f6424ac7ada",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Generated post 14 for fame burst testing! #trending",
-      "mediaFile": "img2.jpg",
-      "mediaType": "image/jpeg"
+      "content": "Great escapes! The action sequences here are really well choreographed. 🎬 #action",
+      "mediaFile": "vid4_escapes.mp4",
+      "mediaType": "video/mp4"
     },
     {
-      "id": "14a6aab7-4173-4119-bc96-37a8d0bbefd1",
+      "id": "dc224352-5e2a-4d4f-8afb-74aa47f9e93d",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Generated post 15 for fame burst testing! #trending",
-      "mediaFile": "bunny.mp4",
+      "content": "For bigger fun! Always good to have some test footage to play with. 😄 #devlife",
+      "mediaFile": "vid5_fun.mp4",
       "mediaType": "video/mp4"
     },
     {
-      "id": "b7aa1843-0cf7-4113-9dbe-37ace4969534",
-      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Extra post 0",
-      "mediaFile": "img1.jpg",
-      "mediaType": "image/jpeg",
-      "deckId": "a1000000-0000-0000-0000-000000000001"
+      "id": "8db9e907-e745-4900-b46f-9b1d8981b62f",
+      "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "content": "Joyrides! Makes me want to go on a road trip immediately. 🚗 #roadtrip",
+      "mediaFile": "vid6_joyrides.mp4",
+      "mediaType": "video/mp4"
     },
     {
-      "id": "4763bfd6-7a66-44d3-baaf-ea27a94b0d09",
+      "id": "bd988aaf-26b6-4aac-94c0-0cd3162b07d2",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Sintel still holds up so well after all these years. Beautiful rendering. 🐉 #animation",
+      "mediaFile": "vid7_sintel.mp4",
+      "mediaType": "video/mp4"
+    },
+    {
+      "id": "43045c7c-4f0b-4d65-b91a-0ecf550234a9",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Extra post 1",
-      "mediaFile": "img2.jpg",
-      "mediaType": "image/jpeg",
-      "deckId": "a1000000-0000-0000-0000-000000000002"
+      "content": "Tears of Steel shows off what Blender can do with live action VFX. 🦾 #vfx",
+      "mediaFile": "vid8_tears.mp4",
+      "mediaType": "video/mp4"
     },
     {
-      "id": "e09372d7-2838-430e-833c-e104a03ca737",
-      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Extra post 2",
-      "mediaFile": "bunny.mp4",
-      "mediaType": "video/mp4",
-      "deckId": "a1000000-0000-0000-0000-000000000003"
+      "id": "cbb3aeca-68ac-43ed-a207-1ca502264b7e",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "The original Bitcoin whitepaper by Satoshi Nakamoto. A revolutionary piece of history. 📄 #crypto #bitcoin",
+      "mediaFile": "doc1_bitcoin.pdf",
+      "mediaType": "application/pdf"
+    },
+    {
+      "id": "a41e019f-b829-4eb8-aa74-2559381dbb17",
+      "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "content": "Check out this sample DOCX file I generated. It has real content inside! 📝 #testing #docs",
+      "mediaFile": "doc2_real.docx",
+      "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     }
   ],
   "polls": [

@@ -54,7 +54,7 @@ export const fleetPosts = pgTable("fleet_posts", {
   }),
   content: text("content"),
   mediaUrl: text("media_url"),
-  mediaType: varchar("media_type", { length: 20 }),
+  mediaType: varchar("media_type", { length: 100 }),
   checksum: text("checksum"),
   resolution: integer("resolution"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -87,6 +88,24 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
         );
       }
 
+      if (
+        item.mediaType === "application/pdf" ||
+        item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        const uri = typeof item.mediaUrl === "string" ? item.mediaUrl : "";
+        const googleDocsUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(uri)}`;
+
+        return (
+          <View style={StyleSheet.absoluteFill} className="bg-zinc-950 pt-20">
+            <WebView
+              source={{ uri: googleDocsUrl }}
+              style={{ flex: 1, backgroundColor: "transparent" }}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        );
+      }
+
       // Active state for images (no play button)
       return (
         <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
@@ -95,7 +114,18 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
       );
     }
 
-    // Lightweight poster image
+    // Lightweight poster image (For docs and unrendered items)
+    if (
+      item.mediaType === "application/pdf" ||
+      item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      return (
+        <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
+          <Text className="text-white text-lg font-bold">Document Preview</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={StyleSheet.absoluteFill} className="bg-zinc-900">
         <Image

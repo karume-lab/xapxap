@@ -16,6 +16,15 @@ export const ensureBucket = async (bucket: string): Promise<void> => {
   }
 };
 
+export const emptyBucket = async (bucket: string): Promise<void> => {
+  const { error } = await supabase.storage.emptyBucket(bucket);
+  if (error) {
+    console.error(`  Failed to empty bucket "${bucket}": ${error.message}`);
+  } else {
+    console.log(`  Emptied storage bucket: ${bucket}`);
+  }
+};
+
 export const uploadMediaFile = async (
   bucket: string,
   storagePath: string,
@@ -27,13 +36,31 @@ export const uploadMediaFile = async (
   // Use mime-types or fallback to octet-stream
   const contentType = mime.lookup(absolutePath) || "application/octet-stream";
 
-  const { error } = await supabase.storage.from(bucket).upload(storagePath, fileBuffer, {
-    upsert: true,
-    contentType,
-  });
+  const { data: existingList } = await supabase.storage
+    .from(bucket)
+    .list(storagePath.split("/").slice(0, -1).join("/"), {
+      search: storagePath.split("/").pop(),
+    });
 
-  if (error) {
-    throw new Error(`Failed to upload ${localFilePath}: ${error.message}`);
+  const isVideo = contentType.startsWith("video/");
+
+  if (
+    !isVideo &&
+    existingList &&
+    existingList.length > 0 &&
+    existingList[0].name === storagePath.split("/").pop()
+  ) {
+    console.log(`  Skipping upload for ${localFilePath}, already exists.`);
+  } else {
+    console.log(`  Uploading ${localFilePath} (isVideo: ${isVideo})...`);
+    const { error } = await supabase.storage.from(bucket).upload(storagePath, fileBuffer, {
+      upsert: true,
+      contentType,
+    });
+
+    if (error) {
+      throw new Error(`Failed to upload ${localFilePath}: ${error.message}`);
+    }
   }
 
   const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(storagePath);
