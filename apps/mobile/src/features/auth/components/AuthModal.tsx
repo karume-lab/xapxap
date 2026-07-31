@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
 } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
@@ -59,7 +58,6 @@ export function AuthModal() {
   return (
     <Dialog open={isAuthModalVisible} onOpenChange={(open) => !open && hideAuthModal()}>
       <DialogContent className="max-w-sm p-0 gap-0 overflow-hidden">
-        <DialogOverlay />
         <View className="p-6 relative">
           <LinearGradient
             colors={[colors.primary, "transparent"]}
