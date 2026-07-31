@@ -3,7 +3,8 @@ import type { FameBurstItem } from "@xapxap/types";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Heart, MessageCircle, Play, Share2, SparklesIcon } from "lucide-react-native";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { Heart, MessageCircle, Share2, SparklesIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -46,6 +47,25 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   const { session, showAuthModal } = useAuth();
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
+  const videoSource =
+    item.mediaType === "video" && item.mediaUrl
+      ? typeof item.mediaUrl === "string"
+        ? item.mediaUrl
+        : (item.mediaUrl as { uri: string }).uri
+      : null;
+
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+  });
+
+  useEffect(() => {
+    if (isActive) {
+      player?.play();
+    } else {
+      player?.pause();
+    }
+  }, [isActive, player]);
+
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
       const end = new Date(item.fame_heuristics.burstEndedAt).getTime();
@@ -64,22 +84,9 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
 
     if (isActive) {
       if (item.mediaType === "video") {
-        // Mockup of a heavy video player UI
         return (
-          <View style={StyleSheet.absoluteFill} className="bg-zinc-950 justify-center items-center">
-            <Image
-              source={imageUrl}
-              style={StyleSheet.absoluteFill}
-              contentFit="cover"
-              className="opacity-40"
-            />
-            <View className="w-24 h-24 bg-black/40 rounded-full items-center justify-center backdrop-blur-md">
-              <Icon as={Play} size={48} className="text-white opacity-90 pl-1" />
-            </View>
-            {/* Mock Progress Bar */}
-            <View className="absolute bottom-0 w-full h-1 bg-white/20">
-              <View className="h-full bg-primary w-1/3" />
-            </View>
+          <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
+            <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
           </View>
         );
       }

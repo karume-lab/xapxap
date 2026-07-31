@@ -5,7 +5,10 @@
     "displayName": "Rumz",
     "bio": "Creator of XapXap.",
     "role": "admin",
-    "avatarFile": "img1.jpg"
+    "avatarFile": "img1.jpg",
+    "email": "rumz@xapxap.com",
+    "phone": "+12345678901",
+    "password": "hello123"
   },
   {
     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -13,7 +16,10 @@
     "displayName": "Neon Rider",
     "bio": "Drifting through the digital waves. 🌊",
     "role": "user",
-    "avatarFile": "img2.jpg"
+    "avatarFile": "img2.jpg",
+    "email": "neon@xapxap.com",
+    "phone": "+12345678902",
+    "password": "hello123"
   },
   {
     "id": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
@@ -21,7 +27,10 @@
     "displayName": "Cyber Punk",
     "bio": "Tech enthusiast & streamer.",
     "role": "user",
-    "avatarFile": "img1.jpg"
+    "avatarFile": "img1.jpg",
+    "email": "cyberpunk@xapxap.com",
+    "phone": "+12345678903",
+    "password": "hello123"
   },
   {
     "id": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
@@ -29,6 +38,9 @@
     "displayName": "Starlight",
     "bio": "Music producer & crypto trader",
     "role": "user",
-    "avatarFile": "img2.jpg"
+    "avatarFile": "img2.jpg",
+    "email": "starlight@xapxap.com",
+    "phone": "+12345678904",
+    "password": "hello123"
   }
 ]
