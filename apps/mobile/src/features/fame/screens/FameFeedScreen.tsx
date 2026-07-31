@@ -48,11 +48,7 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
   const videoSource =
-    item.mediaType === "video" && item.mediaUrl
-      ? typeof item.mediaUrl === "string"
-        ? item.mediaUrl
-        : (item.mediaUrl as { uri: string }).uri
-      : null;
+    item.mediaType?.startsWith("video/") && item.mediaUrl ? { uri: item.mediaUrl } : null;
 
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
@@ -83,7 +79,7 @@ function FameItem({ item, onShowComments, isActive }: FameItemProps) {
     const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
 
     if (isActive) {
-      if (item.mediaType === "video") {
+      if (item.mediaType?.startsWith("video/")) {
         return (
           <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
             <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
