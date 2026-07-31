@@ -13,6 +13,8 @@ export type TrendingWave = {
   author: string;
   authorId: string;
   buzz: number;
+  mediaUrl: string | null;
+  mediaType: string | null;
 };
 
 export type PopularTag = {
@@ -31,6 +33,8 @@ export function useTrendingWaves() {
         .select(`
           id,
           content,
+          media_url,
+          media_type,
           profiles!author_id(username),
           post_interactions(count)
         `)
@@ -46,6 +50,8 @@ export function useTrendingWaves() {
         author: post.profiles?.username ?? "",
         authorId: post.profiles?.id,
         buzz: post.post_interactions?.[0]?.count || 0,
+        mediaUrl: post.media_url ?? null,
+        mediaType: post.media_type ?? null,
       })) as TrendingWave[];
     },
   });

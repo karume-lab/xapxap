@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FameBurstItem } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
@@ -94,6 +94,69 @@ export function useFameBurst(userId: string | null) {
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage: { nextPage?: number }) => lastPage.nextPage,
+  });
+}
+
+export function useFamePost(postId: string | null) {
+  return useQuery({
+    queryKey: [...fameKeys.all, "post", postId],
+    enabled: !!postId,
+    queryFn: async () => {
+      if (!postId) return null;
+
+      const { data: post, error } = await supabase
+        .from("fleet_posts")
+        .select(
+          "*, author:profiles!fleet_posts_author_id_profiles_id_fk(*), fame_heuristics!inner(*)"
+        )
+        .eq("id", postId)
+        .single();
+
+      if (error || !post) return null;
+
+      const { data: interactions } = await supabase
+        .from("post_interactions")
+        .select("post_id, type, user_id")
+        .eq("post_id", postId);
+
+      let hugs = 0,
+        echoes = 0,
+        casts = 0,
+        anchors = 0;
+      let hug = false,
+        echo = false,
+        cast = false,
+        anchor = false;
+
+      for (const ix of interactions || []) {
+        if (ix.type === "echo") echoes++;
+        else if (ix.type === "cast") casts++;
+        else if (ix.type === "anchor") anchors++;
+        else hugs++;
+      }
+
+      const userId = null;
+      for (const ix of interactions || []) {
+        if (userId && ix.user_id === userId) {
+          if (ix.type === "hug") hug = true;
+          else if (ix.type === "echo") echo = true;
+          else if (ix.type === "cast") cast = true;
+          else if (ix.type === "anchor") anchor = true;
+        }
+      }
+
+      const transformed = transformRow<Record<string, unknown>>(post);
+      if (transformed.fameHeuristics !== undefined) {
+        transformed.fame_heuristics = transformed.fameHeuristics;
+        delete transformed.fameHeuristics;
+      }
+
+      return {
+        ...transformed,
+        counts: { hugs, echoes, casts, anchors },
+        myInteractions: { hug, echo, cast, anchor },
+      } as FameBurstItem;
+    },
   });
 }
 

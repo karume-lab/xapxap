@@ -22,6 +22,8 @@ interface AuthContextValue {
   refreshProfile: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, username: string) => Promise<void>;
+  signInWithPhone: (phone: string) => Promise<void>;
+  verifyOtp: (phone: string, token: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
   isAuthModalVisible: boolean;
@@ -150,6 +152,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   }, []);
 
+  const signInWithPhone = useCallback(async (phone: string) => {
+    const { error } = await supabase.auth.signInWithOtp({ phone });
+    if (error) throw error;
+  }, []);
+
+  const verifyOtp = useCallback(
+    async (phone: string, token: string) => {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token,
+        type: "sms",
+      });
+      if (error) throw error;
+      if (data.session) {
+        setSession(data.session);
+        if (data.session.user?.id) {
+          const p = await ensureProfile(
+            data.session.user.id,
+            data.session.user.user_metadata?.username as string | undefined
+          );
+          setProfile(p);
+          profileCacheRef.current = data.session.user.id;
+        }
+      }
+    },
+    [ensureProfile]
+  );
+
   const signOut = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
@@ -188,6 +218,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       refreshProfile,
       signIn,
       signUp,
+      signInWithPhone,
+      verifyOtp,
       signOut,
       updateProfile,
     }),
@@ -202,6 +234,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       completeOnboarding,
       signIn,
       signUp,
+      signInWithPhone,
+      verifyOtp,
       signOut,
     ]
   );
