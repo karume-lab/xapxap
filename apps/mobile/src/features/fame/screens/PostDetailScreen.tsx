@@ -1,8 +1,10 @@
+import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import * as MediaLibrary from "expo-media-library";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { ArrowLeft, Heart, MessageCircle, Share2 } from "lucide-react-native";
+import { ArrowLeft, Download, Heart, MessageCircle, Share2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -36,8 +38,45 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const colors = useColors();
   const { session, showAuthModal } = useAuth();
   const [showComments, setShowComments] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const { data: item, isLoading } = useFamePost(postId);
+
+  const handleDownload = async () => {
+    if (!item?.mediaUrl) return;
+
+    try {
+      setDownloading(true);
+      const uri = typeof item.mediaUrl === "string" ? item.mediaUrl : "";
+      if (!uri) return;
+
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access media library is required.");
+        return;
+      }
+
+      const filename = uri.split("/").pop() || "download";
+      const fileUri = `${FileSystem.documentDirectory}${filename}`;
+
+      const downloadResumable = FileSystem.createDownloadResumable(uri, fileUri);
+      const result = await downloadResumable.downloadAsync();
+
+      if (result?.uri) {
+        if (item.mediaType?.startsWith("image/") || item.mediaType?.startsWith("video/")) {
+          await MediaLibrary.saveToLibraryAsync(result.uri);
+          alert("Downloaded to your media library.");
+        } else {
+          alert(`Downloaded to ${result.uri}`);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Download failed.");
+    } finally {
+      setDownloading(false);
+    }
+  };
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
   const videoSource =
@@ -245,6 +284,20 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
               className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
               <Icon as={Share2} className="text-foreground" size={26} />
             </Button>
+
+            {item.mediaUrl && (
+              <Button
+                variant="ghost"
+                onPress={handleDownload}
+                disabled={downloading}
+                className="bg-muted/30 w-14 h-14 rounded-full items-center justify-center border border-border backdrop-blur-xl active:bg-muted/50 p-0 min-w-0 min-h-0">
+                {downloading ? (
+                  <ActivityIndicator color={colors.foreground} />
+                ) : (
+                  <Icon as={Download} className="text-foreground" size={26} />
+                )}
+              </Button>
+            )}
           </View>
         </View>
       </View>

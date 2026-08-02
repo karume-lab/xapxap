@@ -15,15 +15,7 @@ import {
   X,
 } from "lucide-react-native";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
@@ -119,7 +111,7 @@ export function CreatePostScreen() {
     }
     setBusy(true);
     try {
-      await createPost({
+      const newPost = await createPost({
         content: text,
         authorProfile: profile,
         mediaUrl: media?.uri,
@@ -130,7 +122,10 @@ export function CreatePostScreen() {
       }
       setText("");
       setMedia(null);
-      router.replace("/(tabs)");
+      router.replace({
+        pathname: "/post/[id]",
+        params: { id: newPost.id },
+      });
     } catch {
       Alert.alert("Could not drop wave", "Something went wrong.");
     } finally {
@@ -352,7 +347,22 @@ export function CreatePostScreen() {
                 CHOOSE FLEET DECK
               </Text>
               <View className="items-center justify-center pb-4">
-                <ActivityIndicator color={colors.primary} />
+                <Text className="text-muted-foreground font-bold font-[Inter_700Bold]">
+                  Coming Soon
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {postDestination === "inbox" && (
+            <View className="mt-6 mb-2">
+              <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-8 ml-1">
+                INBOX
+              </Text>
+              <View className="items-center justify-center pb-4">
+                <Text className="text-muted-foreground font-bold font-[Inter_700Bold]">
+                  Coming Soon
+                </Text>
               </View>
             </View>
           )}
@@ -360,7 +370,7 @@ export function CreatePostScreen() {
           <Button
             onPress={submit}
             isLoading={busy}
-            disabled={!text.trim() && !media}
+            disabled={(!text.trim() && !media) || postDestination !== "feed"}
             className="h-16 rounded-full bg-primary mt-4">
             <View className="flex-row items-center gap-3">
               <Icon as={Send} className="text-primary-foreground" size={18} />
