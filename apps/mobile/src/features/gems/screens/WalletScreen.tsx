@@ -13,7 +13,7 @@ import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
-import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
+import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
@@ -166,7 +166,7 @@ export function WalletScreen() {
         </View>
       </ScrollView>
 
-      <ComingSoonDialog
+      <ComingSoonSheet
         open={comingSoonOpen}
         onOpenChange={setComingSoonOpen}
         title={sheetType === "buy" ? "Buy Gems" : "Withdraw Earnings"}

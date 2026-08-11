@@ -18,7 +18,7 @@ import { Pressable, ScrollView, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
-import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
+import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
@@ -337,14 +337,14 @@ export function ProfileScreen() {
           </View>
         )}
       </ScrollView>
-      <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
-      <ComingSoonDialog
+      <ComingSoonSheet open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
+      <ComingSoonSheet
         open={fleetComingSoon}
         onOpenChange={setFleetComingSoon}
         title="Fleet Decks"
         description="Join communities, post to decks, and collaborate with your crew. Launching soon!"
       />
-      <ComingSoonDialog
+      <ComingSoonSheet
         open={modPanelComingSoon}
         onOpenChange={setModPanelComingSoon}
         title="Moderator Panel"

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
-import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
+import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 
@@ -24,7 +24,7 @@ export default function LiveTabComingSoon() {
           Go live and broadcast to your crew. This feature is launching soon!
         </Text>
       </Glass>
-      <ComingSoonDialog
+      <ComingSoonSheet
         open={open}
         onOpenChange={setOpen}
         title="Live Streaming"

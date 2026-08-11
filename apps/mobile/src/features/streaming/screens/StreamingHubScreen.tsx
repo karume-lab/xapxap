@@ -24,7 +24,7 @@ import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
+import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useLiveStreams } from "@/features/streaming/services/queries";
@@ -404,7 +404,7 @@ export function StreamingHubScreen() {
             </View>
           </BottomSheetScrollView>
         </BottomSheet>
-        <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
+        <ComingSoonSheet open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
       </View>
     </ErrorBoundary>
   );

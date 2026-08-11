@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ComingSoonDialog } from "@/components/ui/coming-soon-dialog";
+import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -120,7 +120,7 @@ export default function GemsScreen() {
           </View>
         </Button>
       </Glass>
-      <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
+      <ComingSoonSheet open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
     </View>
   );
 }
