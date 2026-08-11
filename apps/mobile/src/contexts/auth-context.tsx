@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Session } from "@supabase/supabase-js";
+import type { Session, VerifyOtpParams } from "@supabase/supabase-js";
 import type { Profile } from "@xapxap/types";
 import type React from "react";
 import {
@@ -23,7 +23,7 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signInWithPhone: (phone: string) => Promise<void>;
-  verifyOtp: (phone: string, token: string) => Promise<void>;
+  verifyOtp: (params: VerifyOtpParams) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
   isAuthModalVisible: boolean;
@@ -147,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { username } },
+      options: { data: { username }, emailRedirectTo: "xapxap://verify" },
     });
     if (error) throw error;
   }, []);
@@ -158,12 +158,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const verifyOtp = useCallback(
-    async (phone: string, token: string) => {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone,
-        token,
-        type: "sms",
-      });
+    async (params: VerifyOtpParams) => {
+      const { data, error } = await supabase.auth.verifyOtp(params);
       if (error) throw error;
       if (data.session) {
         setSession(data.session);

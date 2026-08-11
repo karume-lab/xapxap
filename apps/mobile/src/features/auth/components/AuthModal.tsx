@@ -77,7 +77,7 @@ export function AuthModal() {
     setBusy(true);
     setError(null);
     try {
-      await verifyOtp(phoneForOtp, otpCode.trim());
+      await verifyOtp({ phone: phoneForOtp, token: otpCode.trim(), type: "sms" });
       hideAuthModal();
       setOtpStep(false);
       setOtpCode("");
