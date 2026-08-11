@@ -274,9 +274,13 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
               variant="ghost"
               onPress={async () => {
                 try {
-                  await Share.share({
+                  const shareContent: { message: string; url?: string } = {
                     message: `Check out this wave by @${item.author.username} on XapXap!\n\n"${item.content}"`,
-                  });
+                  };
+                  if (item.mediaUrl && typeof item.mediaUrl === "string") {
+                    shareContent.url = item.mediaUrl;
+                  }
+                  await Share.share(shareContent);
                 } catch (error) {
                   console.error("Sharing failed", error);
                 }

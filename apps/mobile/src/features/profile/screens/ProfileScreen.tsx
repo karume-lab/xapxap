@@ -45,6 +45,8 @@ export function ProfileScreen() {
 
   const [currency, setCurrency] = useState("KES");
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [fleetComingSoon, setFleetComingSoon] = useState(false);
+  const [modPanelComingSoon, setModPanelComingSoon] = useState(false);
 
   const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
   const gemsBalance = wallet?.balance ?? 0;
@@ -198,7 +200,7 @@ export function ProfileScreen() {
             {/* Fleet Decks */}
             <Button
               variant="ghost"
-              onPress={() => router.push("/fleet")}
+              onPress={() => setFleetComingSoon(true)}
               className="flex-row items-center justify-between p-5 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
               <View className="flex-row items-center gap-4">
                 <Icon as={AnchorIcon} size={20} className="text-accent" />
@@ -316,6 +318,7 @@ export function ProfileScreen() {
             <Glass className="p-4 border border-destructive/20" radius={24}>
               <Button
                 variant="ghost"
+                onPress={() => setModPanelComingSoon(true)}
                 className="flex-row items-center py-3 p-0 min-w-0 min-h-0 h-auto w-full bg-transparent active:bg-transparent">
                 <View className="flex-row items-center w-full">
                   <View className="w-10 h-10 rounded-xl bg-destructive/10 items-center justify-center mr-4">
@@ -335,6 +338,18 @@ export function ProfileScreen() {
         )}
       </ScrollView>
       <ComingSoonDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen} />
+      <ComingSoonDialog
+        open={fleetComingSoon}
+        onOpenChange={setFleetComingSoon}
+        title="Fleet Decks"
+        description="Join communities, post to decks, and collaborate with your crew. Launching soon!"
+      />
+      <ComingSoonDialog
+        open={modPanelComingSoon}
+        onOpenChange={setModPanelComingSoon}
+        title="Moderator Panel"
+        description="Manage reported waves and moderate your community. Launching soon!"
+      />
     </View>
   );
 }
