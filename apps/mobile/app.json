@@ -39,7 +39,16 @@
         }
       ],
       "expo-status-bar",
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraGradleProperties": {
+              "org.gradle.jvmargs": "-Xmx4g -XX:MaxMetaspaceSize=1g"
+            }
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
