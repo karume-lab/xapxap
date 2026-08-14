@@ -1,10 +1,18 @@
 import { useRouter } from "expo-router";
 import { ArrowLeft, ShieldCheckIcon } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -20,16 +28,34 @@ export function EditProfileScreen() {
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+
+  const showDialog = (title: string, message: string) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
       await updateProfile({ username, bio });
-      Alert.alert("Success", "Profile updated successfully");
-      router.back();
+      showDialog("Success", "Profile updated successfully");
     } catch (_) {
-      Alert.alert("Error", "Failed to update profile");
+      showDialog("Error", "Failed to update profile");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    // Navigate back after success — title will be "Success"
+    if (dialogTitle === "Success") {
+      router.back();
     }
   };
 
@@ -90,6 +116,21 @@ export function EditProfileScreen() {
           </Button>
         </View>
       </View>
+
+      {/* In-app alert dialog */}
+      <Dialog open={dialogOpen} onOpenChange={handleDialogClose}>
+        <DialogContent className="mx-6">
+          <DialogHeader>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogDescription>{dialogMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-2">
+            <Button onPress={handleDialogClose} className="rounded-full">
+              <Text className="text-primary-foreground font-bold">OK</Text>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </View>
   );
 }

@@ -30,7 +30,7 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
-  const { loading, hasSeenOnboarding, profile } = useAuth();
+  const { loading, hasSeenOnboarding } = useAuth();
   const { theme } = useUniwind();
   const router = useRouter();
   const segments = useSegments();
@@ -51,7 +51,6 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
     const segs = segments as string[];
     const inAuthGroup = segs[0] === "(auth)";
     const isOnboarding = inAuthGroup && segs[1] === "onboarding";
-    const isAgeVerify = inAuthGroup && segs[1] === "age-verify";
 
     if (!hasSeenOnboarding) {
       // If the user has not seen onboarding, force them to the onboarding screen
@@ -63,12 +62,8 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
       if (isOnboarding) {
         router.replace("/(tabs)");
       }
-      // If the user already has a DOB, skip the age-verify screen
-      if (isAgeVerify && profile?.dateOfBirth) {
-        router.replace("/(tabs)");
-      }
     }
-  }, [loading, fontsLoaded, hasSeenOnboarding, profile, segments, router]);
+  }, [loading, fontsLoaded, hasSeenOnboarding, segments, router]);
 
   // Keep the native splash screen showing until fonts are loaded and auth check completes
   if (!fontsLoaded || loading) {

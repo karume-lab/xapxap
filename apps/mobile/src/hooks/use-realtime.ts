@@ -1,11 +1,23 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 
 export function useRealtimeFleetPosts() {
   const queryClient = useQueryClient();
+  // Use a ref to track if this instance already subscribed, preventing
+  // duplicate channels when multiple components call this hook simultaneously.
+  const subscribedRef = useRef(false);
 
   useEffect(() => {
+    if (subscribedRef.current) return;
+
+    // Check if a channel with this name already exists to avoid duplicates
+    const existingChannels = supabase.getChannels();
+    const alreadyExists = existingChannels.some((ch) => ch.topic === "realtime:public:fleet_posts");
+    if (alreadyExists) return;
+
+    subscribedRef.current = true;
+
     const channel = supabase
       .channel("public:fleet_posts")
       .on("postgres_changes", { event: "*", schema: "public", table: "fleet_posts" }, () => {
@@ -19,6 +31,7 @@ export function useRealtimeFleetPosts() {
       .subscribe();
 
     return () => {
+      subscribedRef.current = false;
       supabase.removeChannel(channel);
     };
   }, [queryClient]);

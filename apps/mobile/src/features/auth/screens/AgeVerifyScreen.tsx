@@ -3,11 +3,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Calendar, CircleAlert, CircleCheck, LogOut } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
+import { Platform, Pressable, Text, useWindowDimensions, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
@@ -34,6 +42,17 @@ export function AgeVerifyScreen() {
   const [showPicker, setShowPicker] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+
+  const showDialog = (title: string, message: string) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
   const compact = height < 700;
 
   const age = dob ? ageFromDate(dob) : null;
@@ -54,11 +73,11 @@ export function AgeVerifyScreen() {
 
   const submit = async () => {
     if (!dob) {
-      Alert.alert("Date of birth", "Enter a valid date.");
+      showDialog("Date of birth", "Enter a valid date.");
       return;
     }
     if (tooYoung) {
-      Alert.alert("Sorry", `You must be ${MIN_AGE} or older to use XapXap.`);
+      showDialog("Sorry", `You must be ${MIN_AGE} or older to use XapXap.`);
       return;
     }
     setBusy(true);
@@ -67,7 +86,7 @@ export function AgeVerifyScreen() {
       router.replace("/(tabs)");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Could not save";
-      Alert.alert("Age verify", msg);
+      showDialog("Age verify", msg);
     } finally {
       setBusy(false);
     }
@@ -181,6 +200,21 @@ export function AgeVerifyScreen() {
           </Button>
         </View>
       </KeyboardAwareScrollView>
+
+      {/* In-app alert dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="mx-6">
+          <DialogHeader>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogDescription>{dialogMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-2">
+            <Button onPress={() => setDialogOpen(false)} className="rounded-full">
+              <Text className="text-primary-foreground font-bold">OK</Text>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </View>
   );
 }

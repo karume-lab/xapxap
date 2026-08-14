@@ -247,7 +247,11 @@ export function ProfileScreen() {
                   </Text>
                 </View>
               </View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                nestedScrollEnabled={true}
+                className="flex-row">
                 {CURRENCIES.map((c) => (
                   <Button
                     key={c.code}

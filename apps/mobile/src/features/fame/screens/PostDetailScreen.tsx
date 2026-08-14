@@ -20,6 +20,14 @@ import { WebView } from "react-native-webview";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
@@ -40,6 +48,17 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const [showComments, setShowComments] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogMessage, setDialogMessage] = useState("");
+
+  const showDialog = (title: string, message: string) => {
+    setDialogTitle(title);
+    setDialogMessage(message);
+    setDialogOpen(true);
+  };
+
   const { data: item, isLoading } = useFamePost(postId);
 
   const handleDownload = async () => {
@@ -52,7 +71,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
 
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
-        alert("Permission to access media library is required.");
+        showDialog("Permission required", "Permission to access media library is required.");
         return;
       }
 
@@ -65,14 +84,14 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
       if (result?.uri) {
         if (item.mediaType?.startsWith("image/") || item.mediaType?.startsWith("video/")) {
           await MediaLibrary.saveToLibraryAsync(result.uri);
-          alert("Downloaded to your media library.");
+          showDialog("Downloaded", "Saved to your media library.");
         } else {
-          alert(`Downloaded to ${result.uri}`);
+          showDialog("Downloaded", `Saved to ${result.uri}`);
         }
       }
     } catch (error) {
       console.error(error);
-      alert("Download failed.");
+      showDialog("Download failed", "Could not download the file. Please try again.");
     } finally {
       setDownloading(false);
     }
@@ -88,10 +107,18 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
 
   useEffect(() => {
     if (videoSource) {
-      player?.play();
+      try {
+        player?.play();
+      } catch {
+        /* ignore */
+      }
     }
     return () => {
-      player?.pause();
+      try {
+        player?.pause();
+      } catch {
+        /* ignore if already released */
+      }
     };
   }, [player, videoSource]);
 
@@ -318,6 +345,21 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
           </View>
         </GestureHandlerRootView>
       </Modal>
+
+      {/* In-app alert dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="mx-6">
+          <DialogHeader>
+            <DialogTitle>{dialogTitle}</DialogTitle>
+            <DialogDescription>{dialogMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-2">
+            <Button onPress={() => setDialogOpen(false)} className="rounded-full">
+              <Text className="text-primary-foreground font-bold">OK</Text>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </View>
   );
 }
