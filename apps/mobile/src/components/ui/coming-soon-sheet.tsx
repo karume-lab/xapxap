@@ -6,6 +6,7 @@ import BottomSheet, {
 import { Clock } from "lucide-react-native";
 import { useCallback } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
@@ -25,6 +26,7 @@ export function ComingSoonSheet({
   description = "We're polishing this experience for launch. You'll be the first to know when it goes live.",
 }: ComingSoonSheetProps) {
   const colors = useColors();
+  const insets = useSafeAreaInsets();
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -45,9 +47,10 @@ export function ComingSoonSheet({
       enablePanDownToClose
       onClose={() => onOpenChange(false)}
       backdropComponent={renderBackdrop}
+      bottomInset={80 + insets.bottom}
       backgroundStyle={{ backgroundColor: colors.background, borderRadius: 32 }}
       handleIndicatorStyle={{ backgroundColor: colors.mutedForeground }}>
-      <BottomSheetView className="px-8 pt-2 pb-10 items-center">
+      <BottomSheetView style={{ paddingHorizontal: 32, paddingTop: 8, paddingBottom: 24, alignItems: "center" }}>
         <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center border border-primary/20 mb-6">
           <Icon as={Clock} size={28} className="text-primary" />
         </View>
@@ -56,7 +59,7 @@ export function ComingSoonSheet({
           {description}
         </Text>
         <Button onPress={() => onOpenChange(false)} className="w-full h-14 rounded-full bg-primary">
-          <Text className="text-primary-foreground font-bold text-lg">Got it</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit className="text-primary-foreground font-bold text-lg">Got it</Text>
         </Button>
       </BottomSheetView>
     </BottomSheet>
