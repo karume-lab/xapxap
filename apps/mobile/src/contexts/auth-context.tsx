@@ -21,8 +21,12 @@ interface AuthContextValue {
   loading: boolean;
   refreshProfile: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, username: string) => Promise<void>;
-  signInWithPhone: (phone: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    username: string
+  ) => Promise<{ needsConfirmation: boolean }>;
+  signInWithPhone: (phone: string, username?: string) => Promise<void>;
   verifyOtp: (params: VerifyOtpParams) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
@@ -144,16 +148,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, username: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { username }, emailRedirectTo: "xapxap://verify" },
     });
     if (error) throw error;
+    return { needsConfirmation: !!data.user && !data.session };
   }, []);
 
-  const signInWithPhone = useCallback(async (phone: string) => {
-    const { error } = await supabase.auth.signInWithOtp({ phone });
+  const signInWithPhone = useCallback(async (phone: string, username?: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      phone,
+      options: { data: username ? { username } : undefined },
+    });
     if (error) throw error;
   }, []);
 

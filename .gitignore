@@ -45,3 +45,5 @@ expo-env.d.ts
 
 # Ignore large media files
 *.mp4
+
+.temp/
