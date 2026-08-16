@@ -8,7 +8,6 @@ export const profiles = pgTable("profiles", {
   bio: text("bio"),
   isPremium: boolean("is_premium").default(false),
   role: varchar("role", { length: 20 }).default("user"),
-  dateOfBirth: timestamp("date_of_birth", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });

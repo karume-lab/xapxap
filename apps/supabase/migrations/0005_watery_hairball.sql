@@ -1,0 +1,1 @@
+ALTER TABLE "profiles" DROP COLUMN "date_of_birth";

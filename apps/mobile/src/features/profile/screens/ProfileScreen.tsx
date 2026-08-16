@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import {
   AlertTriangleIcon,
   AnchorIcon,
-  Calendar,
   Camera,
   ChevronRightIcon,
   GlobeIcon,
@@ -276,18 +275,6 @@ export function ProfileScreen() {
                   </Button>
                 ))}
               </ScrollView>
-            </Glass>
-
-            <Glass radius={24} className="p-5 border border-border flex-row items-center">
-              <View className="w-12 h-12 rounded-2xl bg-accent/10 items-center justify-center mr-4">
-                <Icon as={Calendar} size={24} className="text-accent" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-foreground font-bold text-base">Date of birth</Text>
-                <Text className="text-muted-foreground text-xs">
-                  {profile?.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : ""}
-                </Text>
-              </View>
             </Glass>
           </View>
         </View>

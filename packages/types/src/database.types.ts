@@ -382,7 +382,6 @@ export type Database = {
           avatar_url: string | null;
           bio: string | null;
           created_at: string | null;
-          date_of_birth: string | null;
           display_name: string | null;
           id: string;
           is_premium: boolean | null;
@@ -394,7 +393,6 @@ export type Database = {
           avatar_url?: string | null;
           bio?: string | null;
           created_at?: string | null;
-          date_of_birth?: string | null;
           display_name?: string | null;
           id: string;
           is_premium?: boolean | null;
@@ -406,7 +404,6 @@ export type Database = {
           avatar_url?: string | null;
           bio?: string | null;
           created_at?: string | null;
-          date_of_birth?: string | null;
           display_name?: string | null;
           id?: string;
           is_premium?: boolean | null;
