@@ -28,6 +28,7 @@ interface AuthContextValue {
   ) => Promise<{ needsConfirmation: boolean }>;
   signInWithPhone: (phone: string, username?: string) => Promise<void>;
   verifyOtp: (params: VerifyOtpParams) => Promise<void>;
+  resendSignUpEmail: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (patch: Partial<Profile>) => Promise<void>;
   isAuthModalVisible: boolean;
@@ -91,6 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(newSession);
 
       if (newSession?.user?.id) {
+        // A fresh session means auth completed — dismiss any open auth dialog.
+        setIsAuthModalVisible(false);
         if (newSession.user.id === profileCacheRef.current) return;
 
         const p = await ensureProfile(
@@ -165,6 +168,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   }, []);
 
+  const resendSignUpEmail = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: "xapxap://verify" },
+    });
+    if (error) throw error;
+  }, []);
+
   const verifyOtp = useCallback(
     async (params: VerifyOtpParams) => {
       const { data, error } = await supabase.auth.verifyOtp(params);
@@ -224,6 +236,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUp,
       signInWithPhone,
       verifyOtp,
+      resendSignUpEmail,
       signOut,
       updateProfile,
     }),
@@ -240,6 +253,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signUp,
       signInWithPhone,
       verifyOtp,
+      resendSignUpEmail,
       signOut,
     ]
   );

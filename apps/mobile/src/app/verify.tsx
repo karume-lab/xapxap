@@ -30,7 +30,7 @@ export default function VerifyScreen() {
     phone?: string;
   }>();
   const router = useRouter();
-  const { verifyOtp } = useAuth();
+  const { verifyOtp, hideAuthModal } = useAuth();
   const colors = useColors();
 
   const [status, setStatus] = useState<VerifyStatus>("verifying");
@@ -94,9 +94,10 @@ export default function VerifyScreen() {
 
   useEffect(() => {
     if (status !== "success") return;
+    hideAuthModal();
     const timeout = setTimeout(() => router.replace("/(tabs)"), 1500);
     return () => clearTimeout(timeout);
-  }, [status, router]);
+  }, [status, router, hideAuthModal]);
 
   return (
     <View className="flex-1 items-center justify-center p-8 bg-background gap-4">

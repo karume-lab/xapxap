@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { CheckCircle2, Info, Lock, Mail, Phone, User, X } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { Button } from "@/components/ui/button";
 import {
@@ -65,8 +65,15 @@ function friendlyError(e: unknown): string {
 }
 
 export function AuthModal() {
-  const { isAuthModalVisible, hideAuthModal, signIn, signUp, signInWithPhone, verifyOtp } =
-    useAuth();
+  const {
+    isAuthModalVisible,
+    hideAuthModal,
+    signIn,
+    signUp,
+    signInWithPhone,
+    verifyOtp,
+    resendSignUpEmail,
+  } = useAuth();
   const colors = useColors();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -87,7 +94,7 @@ export function AuthModal() {
 
   const isPhoneMode = isPhone(identifier);
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setUsername("");
     setIdentifier("");
     setPassword("");
@@ -98,7 +105,7 @@ export function AuthModal() {
     setOtpStep(false);
     setEmailConfirmStep(false);
     setIsSignUp(false);
-  };
+  }, []);
 
   const onSubmit = async () => {
     const identifierTrimmed = identifier.trim();
@@ -187,7 +194,7 @@ export function AuthModal() {
     setError(null);
     setNotice(null);
     try {
-      await signUp(creds.email, creds.password, creds.username);
+      await resendSignUpEmail(creds.email);
       setNotice(`We resent the confirmation link to ${creds.email}.`);
     } catch (e) {
       setError(friendlyError(e));
@@ -217,6 +224,13 @@ export function AuthModal() {
     hideAuthModal();
     resetForm();
   };
+
+  // Reset the form whenever the dialog closes for any reason (user close, or
+  // auto-dismiss when a session is established) so it never reopens in a stale
+  // "check your email / resend" step.
+  useEffect(() => {
+    if (!isAuthModalVisible) resetForm();
+  }, [isAuthModalVisible, resetForm]);
 
   return (
     <Dialog open={isAuthModalVisible} onOpenChange={(open) => !open && handleClose()}>
