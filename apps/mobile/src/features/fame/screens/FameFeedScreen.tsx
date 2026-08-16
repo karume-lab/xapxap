@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import type { FameBurstItem } from "@xapxap/types";
-import * as FileSystem from "expo-file-system/legacy";
+import { File, Paths } from "expo-file-system";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
@@ -85,17 +85,17 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
       }
 
       const filename = uri.split("/").pop() || "download";
-      const fileUri = `${FileSystem.documentDirectory}${filename}`;
 
-      const downloadResumable = FileSystem.createDownloadResumable(uri, fileUri);
-      const result = await downloadResumable.downloadAsync();
+      const file = await File.downloadFileAsync(uri, new File(Paths.document, filename), {
+        idempotent: true,
+      });
 
-      if (result?.uri) {
+      if (file.exists) {
         if (item.mediaType?.startsWith("image/") || item.mediaType?.startsWith("video/")) {
-          await MediaLibrary.saveToLibraryAsync(result.uri);
+          await MediaLibrary.Asset.create(file.uri);
           showDialog("Downloaded", "Saved to your media library.");
         } else {
-          showDialog("Downloaded", `Saved to ${result.uri}`);
+          showDialog("Downloaded", `Saved to ${file.uri}`);
         }
       }
     } catch (error) {
