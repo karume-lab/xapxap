@@ -179,8 +179,8 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
           <Text className="text-muted-foreground text-center mb-4">
             This wave may have been deleted or is no longer available.
           </Text>
-          <Button onPress={() => router.back()} size="lg" className="rounded-2xl">
-            <Text>Go Back</Text>
+          <Button onPress={() => router.replace("/(tabs)")} size="lg" className="rounded-2xl">
+            <Text>Go Home</Text>
           </Button>
         </Glass>
       </View>
