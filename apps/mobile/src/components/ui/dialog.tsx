@@ -36,20 +36,46 @@ const DialogContent = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "absolute left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border border-border bg-background p-6 shadow-lg",
-        Platform.OS === "web"
-          ? "duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]"
-          : "",
-        "rounded-3xl",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </DialogPrimitive.Content>
+    {Platform.OS === "web" ? (
+      <DialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "absolute left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border border-border bg-background p-6 shadow-lg",
+          "duration-200 data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+          "rounded-3xl",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </DialogPrimitive.Content>
+    ) : (
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 50,
+          alignItems: "center",
+          justifyContent: "center",
+          paddingHorizontal: 24,
+        }}
+        pointerEvents="box-none"
+      >
+        <DialogPrimitive.Content
+          ref={ref}
+          className={cn(
+            "z-50 w-full gap-4 border border-border bg-background p-6 shadow-lg rounded-3xl",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </DialogPrimitive.Content>
+      </View>
+    )}
   </DialogPortal>
 ));
 DialogContent.displayName = "DialogContent";
