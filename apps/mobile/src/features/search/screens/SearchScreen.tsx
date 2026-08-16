@@ -20,20 +20,18 @@ export function SearchScreen() {
   const router = useRouter();
   const { session, showAuthModal } = useAuth();
   const [query, setQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
 
   const { data: trendingWaves = [], isLoading: isLoadingWaves } = useTrendingWaves();
   const { data: popularTags = [], isLoading: isLoadingTags } = usePopularTags();
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    if (text.length > 2) {
-      setIsSearching(true);
-      setTimeout(() => {
-        setIsSearching(false);
-      }, 800);
-    }
-  };
+  const trimmedQuery = query.trim().toLowerCase();
+  const filteredWaves = trimmedQuery
+    ? trendingWaves.filter(
+        (wave) =>
+          wave.content?.toLowerCase().includes(trimmedQuery) ||
+          wave.author.toLowerCase().includes(trimmedQuery)
+      )
+    : trendingWaves;
 
   const handlePressWave = (id: string) => {
     if (!session) return showAuthModal();
@@ -95,7 +93,7 @@ export function SearchScreen() {
           <Icon as={Search} size={20} className="text-muted-foreground mr-3" />
           <TextInput
             value={query}
-            onChangeText={handleSearch}
+            onChangeText={setQuery}
             placeholder="Search waves, people, #tags..."
             placeholderTextColor={colors.mutedForeground}
             className="flex-1 h-full text-foreground font-medium text-base"
@@ -104,7 +102,7 @@ export function SearchScreen() {
           {query.length > 0 && (
             <Button
               variant="ghost"
-              onPress={() => handleSearch("")}
+              onPress={() => setQuery("")}
               className="p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
               <Icon as={X} size={20} className="text-muted-foreground" />
             </Button>
@@ -130,11 +128,7 @@ export function SearchScreen() {
                   <Button
                     key={tag.id}
                     variant="ghost"
-                    onPress={() => {
-                      setQuery(tag.tag);
-                      setIsSearching(true);
-                      setTimeout(() => setIsSearching(false), 600);
-                    }}
+                    onPress={() => setQuery(tag.tag)}
                     className="bg-muted border border-border rounded-full active:bg-secondary p-0 min-w-0 min-h-0 h-auto w-auto">
                     <View className="flex-row items-center gap-1.5 px-4 py-2.5">
                       <Text className="text-foreground text-sm font-semibold">{tag.tag}</Text>
@@ -157,14 +151,18 @@ export function SearchScreen() {
             </Text>
           </View>
 
-          {isSearching || isLoadingWaves ? (
+          {isLoadingWaves ? (
             <View className="h-40 items-center justify-center">
               <ActivityIndicator color={colors.primary} />
+            </View>
+          ) : filteredWaves.length === 0 ? (
+            <View className="px-6 py-10 items-center">
+              <Text className="text-muted-foreground">No waves found for "{query.trim()}".</Text>
             </View>
           ) : (
             <FlatList
               horizontal
-              data={trendingWaves}
+              data={filteredWaves}
               keyExtractor={(item) => item.id}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 20 }}

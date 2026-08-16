@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Users, X } from "lucide-react-native";
+import { useEffect } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
@@ -21,8 +22,17 @@ export function LiveStreamScreen({ streamId }: { streamId: string }) {
 
   const player = useVideoPlayer(stream?.playbackUrl ?? "", (player) => {
     player.loop = true;
-    player.play();
   });
+
+  useEffect(() => {
+    if (stream?.playbackUrl && !player.playing) {
+      try {
+        player.play();
+      } catch {
+        // Ignore if the player is not ready yet
+      }
+    }
+  }, [player, stream?.playbackUrl]);
 
   if (isLoading) {
     return (

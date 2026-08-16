@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { LiveStreamWithAuthor, Profile } from "@xapxap/types";
+import { gemsKeys } from "@/features/gems/services/queries";
 import { supabase } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
@@ -44,42 +45,16 @@ export function useJoinStreamMutation(userId: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ streamId, fee }: { streamId: string; fee: number }) => {
+    mutationFn: async ({ streamId }: { streamId: string }) => {
       if (!userId) throw new Error("Not authenticated");
 
-      const { error } = await supabase
-        .from("stream_tickets")
-        .insert({ stream_id: streamId, viewer_id: userId });
+      const { error } = await supabase.rpc("enter_stream", { p_stream_id: streamId });
       if (error) throw error;
-
-      if (fee > 0) {
-        const { data: wallet } = await supabase
-          .from("wallets")
-          .select("balance")
-          .eq("user_id", userId)
-          .single();
-
-        if (!wallet || wallet.balance < fee) {
-          throw new Error("Insufficient gems");
-        }
-
-        await supabase
-          .from("wallets")
-          .update({ balance: wallet.balance - fee })
-          .eq("user_id", userId);
-
-        await supabase.from("gem_transactions").insert({
-          sender_id: userId,
-          amount: fee,
-          type: "stream_entry",
-          status: "completed",
-        });
-      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: streamingKeys.liveStreams() });
-      queryClient.invalidateQueries({ queryKey: ["wallet-balance"] });
-      queryClient.invalidateQueries({ queryKey: ["gem-activity"] });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.walletBalance(userId) });
+      queryClient.invalidateQueries({ queryKey: gemsKeys.activity(userId) });
     },
   });
 }

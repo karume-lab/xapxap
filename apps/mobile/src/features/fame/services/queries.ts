@@ -97,9 +97,9 @@ export function useFameBurst(userId: string | null) {
   });
 }
 
-export function useFamePost(postId: string | null) {
+export function useFamePost(postId: string | null, userId: string | null) {
   return useQuery({
-    queryKey: [...fameKeys.all, "post", postId],
+    queryKey: [...fameKeys.all, "post", postId, userId],
     enabled: !!postId,
     queryFn: async () => {
       if (!postId) return null;
@@ -135,7 +135,6 @@ export function useFamePost(postId: string | null) {
         else hugs++;
       }
 
-      const userId = null;
       for (const ix of interactions || []) {
         if (userId && ix.user_id === userId) {
           if (ix.type === "hug") hug = true;

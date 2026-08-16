@@ -9,7 +9,7 @@ import { Text } from "@/components/ui/text";
 
 export default function LiveTabComingSoon() {
   const insets = useSafeAreaInsets();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <View

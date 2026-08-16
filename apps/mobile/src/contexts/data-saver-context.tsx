@@ -15,15 +15,22 @@ export function DataSaverProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Explicitly use the value to satisfy linter
     const storage = AsyncStorage;
-    storage.getItem("data_saver").then((val) => {
-      if (val !== null) setDataSaver(val === "true");
-    });
+    storage
+      .getItem("data_saver")
+      .then((val) => {
+        if (val !== null) setDataSaver(val === "true");
+      })
+      .catch(() => {
+        // Ignore storage read failures
+      });
   }, []);
 
   const toggle = () => {
     const next = !dataSaver;
     setDataSaver(next);
-    AsyncStorage.setItem("data_saver", String(next));
+    AsyncStorage.setItem("data_saver", String(next)).catch(() => {
+      // Ignore storage write failures
+    });
   };
 
   return (

@@ -59,7 +59,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
     setDialogOpen(true);
   };
 
-  const { data: item, isLoading } = useFamePost(postId);
+  const { data: item, isLoading } = useFamePost(postId, session?.user?.id || null);
 
   const handleDownload = async () => {
     if (!item?.mediaUrl) return;

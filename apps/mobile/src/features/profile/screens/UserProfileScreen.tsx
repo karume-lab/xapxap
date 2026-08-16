@@ -42,7 +42,8 @@ export function UserProfileScreen() {
   const { data: statsData, isLoading: isStatsLoading } = useUserProfileStats(userId);
   const { data: wavesData, isLoading: isWavesLoading } = useUserWaves(userId);
 
-  const username = statsData?.profile?.username || paramUsername;
+  const fallbackUsername = paramUsername && paramUsername !== "undefined" ? paramUsername : "";
+  const username = statsData?.profile?.username || fallbackUsername;
 
   return (
     <View className="flex-1 bg-background">

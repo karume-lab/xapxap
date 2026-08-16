@@ -167,7 +167,9 @@ export function ProfileScreen() {
             <Button
               variant="ghost"
               onPress={() =>
-                router.push(`/profile/${session?.user?.id}?username=${profile?.username}`)
+                router.push(
+                  `/profile/${session?.user?.id}${profile?.username ? `?username=${profile.username}` : ""}`
+                )
               }
               className="flex-row items-center justify-between p-5 border-b border-border/30 rounded-none h-auto min-h-0 bg-transparent active:bg-transparent">
               <View className="flex-row items-center gap-4">

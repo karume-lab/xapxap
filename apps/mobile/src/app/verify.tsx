@@ -22,7 +22,12 @@ const VERIFY_TYPES = [
 type VerifyType = (typeof VERIFY_TYPES)[number];
 
 export default function VerifyScreen() {
-  const params = useLocalSearchParams<{ token?: string; type?: string; email?: string }>();
+  const params = useLocalSearchParams<{
+    token?: string;
+    type?: string;
+    email?: string;
+    phone?: string;
+  }>();
   const router = useRouter();
   const { verifyOtp } = useAuth();
   const colors = useColors();
@@ -32,29 +37,41 @@ export default function VerifyScreen() {
 
   const token = Array.isArray(params.token) ? params.token[0] : params.token;
   const email = Array.isArray(params.email) ? params.email[0] : params.email;
+  const phone = Array.isArray(params.phone) ? params.phone[0] : params.phone;
   const typeRaw = Array.isArray(params.type) ? params.type[0] : params.type;
   const type: VerifyType = VERIFY_TYPES.includes(typeRaw as VerifyType)
     ? (typeRaw as VerifyType)
     : "signup";
 
+  const isPhoneType = type === "sms" || type === "phone_change";
+
   const handleVerify = useCallback(async () => {
     setStatus("verifying");
     setErrorMessage(null);
 
-    if (!token || !email) {
+    if (!token) {
+      setStatus("error");
+      setErrorMessage("This verification link is incomplete. Please request a new one.");
+      return;
+    }
+
+    const identifier = isPhoneType ? phone : email;
+    if (!identifier) {
       setStatus("error");
       setErrorMessage("This verification link is incomplete. Please request a new one.");
       return;
     }
 
     try {
-      await verifyOtp({ email, token, type });
+      await verifyOtp(
+        isPhoneType ? { phone: identifier, token, type } : { email: identifier, token, type }
+      );
       setStatus("success");
     } catch (e) {
       setStatus("error");
       setErrorMessage(e instanceof Error ? e.message : "Verification failed");
     }
-  }, [token, email, type, verifyOtp]);
+  }, [token, email, phone, type, isPhoneType, verifyOtp]);
 
   useEffect(() => {
     handleVerify();

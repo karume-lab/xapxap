@@ -96,6 +96,7 @@ export function FleetDeckScreen({ deckId }: { deckId?: string }) {
             size="icon"
             onPress={() => {
               if (!session) return showAuthModal();
+              router.push("/fleet/create");
             }}
             className="rounded-full h-14 w-14 bg-primary shadow-lg shadow-primary/40">
             <Icon as={Zap} className="text-primary-foreground" size={24} />

@@ -35,7 +35,7 @@ export function useTrendingWaves() {
           content,
           media_url,
           media_type,
-          profiles!author_id(username),
+          profiles!author_id(id, username),
           post_interactions(count)
         `)
         .order("created_at", { ascending: false })

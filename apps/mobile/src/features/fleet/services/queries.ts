@@ -207,23 +207,9 @@ export function useJoinFleetDeck() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ deckId, profileId }: { deckId: string; profileId: string }) => {
-      const { error } = await supabase
-        .from("fleet_deck_members")
-        .insert({ deck_id: deckId, user_id: profileId, role: "member" });
-
+    mutationFn: async ({ deckId }: { deckId: string }) => {
+      const { error } = await supabase.rpc("join_fleet_deck", { p_deck_id: deckId });
       if (error) throw error;
-
-      const { data: deck } = await supabase
-        .from("fleet_decks")
-        .select("member_count")
-        .eq("id", deckId)
-        .single();
-
-      await supabase
-        .from("fleet_decks")
-        .update({ member_count: (deck?.member_count ?? 1) + 1 })
-        .eq("id", deckId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });

@@ -382,9 +382,16 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
 export function FameFeedScreen() {
   const { session } = useAuth();
   useRealtimeFleetPosts();
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useFameBurst(
-    session?.user?.id || null
-  );
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useFameBurst(session?.user?.id || null);
   const { isOnline } = useNetwork();
   const insets = useSafeAreaInsets();
   const { height: SCREEN_HEIGHT } = useWindowDimensions();
@@ -428,6 +435,24 @@ export function FameFeedScreen() {
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator color={colors.primary} size="large" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background p-6">
+        <Glass className="p-6 items-center">
+          <Text variant="h3" className="mb-2">
+            Couldn't Load Fame
+          </Text>
+          <Text className="text-muted-foreground text-center mb-4">
+            {error instanceof Error ? error.message : "Something went wrong loading the fame feed."}
+          </Text>
+          <Button onPress={() => refetch()} className="rounded-full bg-primary">
+            <Text className="text-primary-foreground font-bold">Retry</Text>
+          </Button>
+        </Glass>
       </View>
     );
   }

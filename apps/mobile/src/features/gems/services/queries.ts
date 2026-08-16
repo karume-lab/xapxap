@@ -128,39 +128,13 @@ export function usePayoutMutation(userId: string | null) {
         throw new Error("Missing required payout fields");
       }
 
-      const { error: payoutError } = await supabase.from("payout_requests").insert({
-        user_id: userId,
-        gem_amount: request.gemAmount,
-        fiat_amount: request.fiatAmount ?? 0,
-        fiat_currency: request.fiatCurrency,
-        mobile_money_number: request.mobileMoneyNumber,
-        provider: request.provider,
-        status: "pending",
+      const { error } = await supabase.rpc("request_payout", {
+        p_gem_amount: request.gemAmount,
+        p_fiat_currency: request.fiatCurrency,
+        p_mobile_money_number: request.mobileMoneyNumber,
+        p_provider: request.provider,
       });
-      if (payoutError) throw payoutError;
-
-      const { data: wallet } = await supabase
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", userId)
-        .single();
-
-      if (!wallet || wallet.balance < request.gemAmount) {
-        throw new Error("Insufficient balance");
-      }
-
-      const { error: walletError } = await supabase
-        .from("wallets")
-        .update({ balance: wallet.balance - request.gemAmount })
-        .eq("user_id", userId);
-      if (walletError) throw walletError;
-
-      await supabase.from("gem_transactions").insert({
-        sender_id: userId,
-        amount: request.gemAmount,
-        type: "withdrawal",
-        status: "completed",
-      });
+      if (error) throw error;
 
       return { success: true, ...request };
     },
@@ -178,42 +152,11 @@ export function useTipMutation(userId: string | null) {
     mutationFn: async ({ creatorId, amount }: { creatorId: string; amount: number }) => {
       if (!userId) throw new Error("Not authenticated");
 
-      const { error: txError } = await supabase.from("gem_transactions").insert({
-        sender_id: userId,
-        receiver_id: creatorId,
-        amount,
-        type: "tip",
-        status: "completed",
+      const { error } = await supabase.rpc("tip_gems", {
+        p_creator_id: creatorId,
+        p_amount: amount,
       });
-      if (txError) throw txError;
-
-      const { data: senderWallet } = await supabase
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", userId)
-        .single();
-
-      if (!senderWallet || senderWallet.balance < amount) {
-        throw new Error("Insufficient balance");
-      }
-
-      await supabase
-        .from("wallets")
-        .update({ balance: senderWallet.balance - amount })
-        .eq("user_id", userId);
-
-      const { data: receiverWallet } = await supabase
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", creatorId)
-        .single();
-
-      await supabase
-        .from("wallets")
-        .upsert(
-          { user_id: creatorId, balance: (receiverWallet?.balance ?? 0) + amount },
-          { onConflict: "user_id" }
-        );
+      if (error) throw error;
 
       return { success: true };
     },

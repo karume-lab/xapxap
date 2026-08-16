@@ -54,47 +54,59 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const { data: wallet, error: walletError } = await supabase
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", payout.user_id)
-      .single();
+    // request_payout (RPC) reserves the gems at request time and records the
+    // withdrawal with reference_id = payout id. If that transaction already
+    // exists, the wallet has already been debited — just mark it processed.
+    const { data: existingTx } = await supabase
+      .from("gem_transactions")
+      .select("id")
+      .eq("reference_id", payout_id)
+      .eq("type", "withdrawal")
+      .maybeSingle();
 
-    if (walletError || !wallet || wallet.balance < payout.gem_amount) {
-      await supabase
-        .from("payout_requests")
-        .update({ status: "failed" })
-        .eq("id", payout_id);
+    if (!existingTx) {
+      const { data: wallet, error: walletError } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", payout.user_id)
+        .single();
 
-      return new Response(
-        JSON.stringify({ error: "Insufficient wallet balance" }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (walletError || !wallet || wallet.balance < payout.gem_amount) {
+        await supabase
+          .from("payout_requests")
+          .update({ status: "failed" })
+          .eq("id", payout_id);
+
+        return new Response(
+          JSON.stringify({ error: "Insufficient wallet balance" }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { error: deductError } = await supabase
+        .from("wallets")
+        .update({
+          balance: wallet.balance - payout.gem_amount,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", payout.user_id);
+
+      if (deductError) {
+        return new Response(
+          JSON.stringify({ error: "Failed to deduct balance" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      await supabase.from("gem_transactions").insert({
+        sender_id: payout.user_id,
+        receiver_id: null,
+        amount: payout.gem_amount,
+        type: "withdrawal",
+        status: "completed",
+        reference_id: payout_id,
+      });
     }
-
-    const { error: deductError } = await supabase
-      .from("wallets")
-      .update({
-        balance: wallet.balance - payout.gem_amount,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", payout.user_id);
-
-    if (deductError) {
-      return new Response(
-        JSON.stringify({ error: "Failed to deduct balance" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    await supabase.from("gem_transactions").insert({
-      sender_id: payout.user_id,
-      receiver_id: null,
-      amount: payout.gem_amount,
-      type: "withdrawal",
-      status: "completed",
-      reference_id: payout_id,
-    });
 
     const { error: updateError } = await supabase
       .from("payout_requests")

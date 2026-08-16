@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { ArrowLeft, ShieldCheckIcon } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -27,6 +27,14 @@ export function EditProfileScreen() {
   const [username, setUsername] = useState(profile?.username ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [isSaving, setIsSaving] = useState(false);
+
+  // Populate the form once the profile finishes loading (it resolves async).
+  // `prev ||` preserves anything the user has already typed.
+  useEffect(() => {
+    if (!profile) return;
+    setUsername((prev) => prev || profile.username || "");
+    setBio((prev) => prev || profile.bio || "");
+  }, [profile]);
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);

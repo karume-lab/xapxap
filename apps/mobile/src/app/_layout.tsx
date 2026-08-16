@@ -51,10 +51,12 @@ function AppLayout({ fontsLoaded }: { fontsLoaded: boolean }) {
     const segs = segments as string[];
     const inAuthGroup = segs[0] === "(auth)";
     const isOnboarding = inAuthGroup && segs[1] === "onboarding";
+    const isVerify = segs[0] === "verify";
 
     if (!hasSeenOnboarding) {
-      // If the user has not seen onboarding, force them to the onboarding screen
-      if (!isOnboarding) {
+      // If the user has not seen onboarding, force them to the onboarding screen.
+      // Don't hijack auth deep links like /verify (email confirmation links).
+      if (!isOnboarding && !isVerify) {
         router.replace("/(auth)/onboarding");
       }
     } else {
