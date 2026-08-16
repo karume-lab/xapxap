@@ -24,6 +24,7 @@ type VerifyType = (typeof VERIFY_TYPES)[number];
 export default function VerifyScreen() {
   const params = useLocalSearchParams<{
     token?: string;
+    token_hash?: string;
     type?: string;
     email?: string;
     phone?: string;
@@ -35,10 +36,12 @@ export default function VerifyScreen() {
   const [status, setStatus] = useState<VerifyStatus>("verifying");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const token = Array.isArray(params.token) ? params.token[0] : params.token;
-  const email = Array.isArray(params.email) ? params.email[0] : params.email;
-  const phone = Array.isArray(params.phone) ? params.phone[0] : params.phone;
-  const typeRaw = Array.isArray(params.type) ? params.type[0] : params.type;
+  const paramStr = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+  const token = paramStr(params.token);
+  const tokenHash = paramStr(params.token_hash);
+  const email = paramStr(params.email);
+  const phone = paramStr(params.phone);
+  const typeRaw = paramStr(params.type);
   const type: VerifyType = VERIFY_TYPES.includes(typeRaw as VerifyType)
     ? (typeRaw as VerifyType)
     : "signup";
@@ -48,6 +51,18 @@ export default function VerifyScreen() {
   const handleVerify = useCallback(async () => {
     setStatus("verifying");
     setErrorMessage(null);
+
+    // Supabase email confirmation links use token_hash in the URL, but the token
+    // is consumed server-side before the redirect reaches the app. If we receive
+    // token_hash (or no token at all for email/signup types), the verification
+    // was already completed — just confirm the session and navigate home.
+    const isEmailVerification =
+      type === "signup" || type === "email" || type === "email_change" || type === "invite";
+
+    if (isEmailVerification && (tokenHash || !token)) {
+      setStatus("success");
+      return;
+    }
 
     if (!token) {
       setStatus("error");
@@ -71,7 +86,7 @@ export default function VerifyScreen() {
       setStatus("error");
       setErrorMessage(e instanceof Error ? e.message : "Verification failed");
     }
-  }, [token, email, phone, type, isPhoneType, verifyOtp]);
+  }, [token, tokenHash, email, phone, type, isPhoneType, verifyOtp]);
 
   useEffect(() => {
     handleVerify();
