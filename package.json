@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "lefthook install",
     "clean": "biome check --write --unsafe --no-errors-on-unmatched",
     "typecheck": "cd apps/mobile && bun run typecheck",
     "db:generate": "cd packages/db && bun run db:generate",
@@ -27,5 +28,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "patchedDependencies": {
+    "react-native@0.86.2": "patches/react-native@0.86.2.patch"
   }
 }

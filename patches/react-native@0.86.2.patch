@@ -1,0 +1,16 @@
+diff --git a/ReactAndroid/src/main/java/com/facebook/react/ReactActivityDelegate.java b/ReactAndroid/src/main/java/com/facebook/react/ReactActivityDelegate.java
+index 2e80bb26fe7adab29cf7d98a325c8a4b811ce054..70ea5e4568176436f5342d9d816ec4ea1f2eeb9d 100644
+--- a/ReactAndroid/src/main/java/com/facebook/react/ReactActivityDelegate.java
++++ b/ReactAndroid/src/main/java/com/facebook/react/ReactActivityDelegate.java
+@@ -212,7 +212,10 @@ public class ReactActivityDelegate {
+   }
+ 
+   public boolean onKeyDown(int keyCode, KeyEvent event) {
+-    return Objects.requireNonNull(mReactDelegate).onKeyDown(keyCode, event);
++    if (mReactDelegate == null) {
++      return false;
++    }
++    return mReactDelegate.onKeyDown(keyCode, event);
+   }
+ 
+   public boolean onKeyUp(int keyCode, KeyEvent event) {
