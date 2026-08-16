@@ -179,8 +179,8 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
           <Text className="text-muted-foreground text-center mb-4">
             This wave may have been deleted or is no longer available.
           </Text>
-          <Button onPress={() => router.back()} className="bg-primary rounded-full px-6 py-3">
-            <Text className="text-primary-foreground font-bold">Go Back</Text>
+          <Button onPress={() => router.back()} size="lg" className="rounded-2xl">
+            <Text>Go Back</Text>
           </Button>
         </Glass>
       </View>
