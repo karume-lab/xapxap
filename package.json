@@ -1,10 +1,19 @@
 {
   "name": "xapxap-monorepo",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "overrides": {
+    "expo-constants": "~57.0.8",
+    "expo-font": "~57.0.1",
+    "expo-manifests": "~57.0.1",
+    "expo-updates-interface": "~57.0.1",
+    "expo-json-utils": "~57.0.1"
+  },
+  "patchedDependencies": {
+    "react-native@0.86.2": "patches/react-native@0.86.2.patch"
+  },
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
     "postinstall": "lefthook install",
     "clean": "biome check --write --unsafe --no-errors-on-unmatched",
@@ -19,17 +28,8 @@
     "dev:mobile": "cd apps/mobile && bun run start",
     "start:supabase": "cd apps/supabase && bun run supabase start"
   },
-  "overrides": {
-    "expo-constants": "~57.0.8",
-    "expo-font": "~57.0.1",
-    "expo-manifests": "~57.0.1",
-    "expo-updates-interface": "~57.0.1",
-    "expo-json-utils": "~57.0.1"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  },
-  "patchedDependencies": {
-    "react-native@0.86.2": "patches/react-native@0.86.2.patch"
-  }
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

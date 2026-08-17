@@ -28,6 +28,54 @@ export type Database = {
   };
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          actor_id: string | null;
+          content: string;
+          created_at: string | null;
+          id: string;
+          is_read: boolean | null;
+          type: string;
+          user_id: string;
+          amount: number | null;
+        };
+        Insert: {
+          actor_id?: string | null;
+          content: string;
+          created_at?: string | null;
+          id?: string;
+          is_read?: boolean | null;
+          type: string;
+          user_id: string;
+          amount?: number | null;
+        };
+        Update: {
+          actor_id?: string | null;
+          content?: string;
+          created_at?: string | null;
+          id?: string;
+          is_read?: boolean | null;
+          type?: string;
+          user_id?: string;
+          amount?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_actor_id_profiles_id_fk";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_user_id_profiles_id_fk";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       fame_heuristics: {
         Row: {
           burst_ended_at: string | null;

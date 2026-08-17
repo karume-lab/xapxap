@@ -82,3 +82,4 @@ export type LiveStreamWithAuthor = LiveStream & {
 
 export type FleetDeck = InferSelectModel<typeof schema.fleetDecks>;
 export type FleetDeckMember = InferSelectModel<typeof schema.fleetDeckMembers>;
+export type Notification = InferSelectModel<typeof schema.notifications>;

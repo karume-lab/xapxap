@@ -35,6 +35,17 @@ import { useFamePost, useToggleFameInteraction } from "@/features/fame/services/
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
 
+function isVideoType(mt: string | null | undefined) {
+  return !!mt && (mt.startsWith("video/") || mt === "video");
+}
+
+function isDocType(mt: string | null | undefined) {
+  return (
+    mt === "application/pdf" ||
+    mt === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  );
+}
+
 interface PostDetailScreenProps {
   postId: string;
 }
@@ -82,7 +93,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
       });
 
       if (file.exists) {
-        if (item.mediaType?.startsWith("image/") || item.mediaType?.startsWith("video/")) {
+        if (item.mediaType?.startsWith("image/") || isVideoType(item.mediaType)) {
           await MediaLibrary.Asset.create(file.uri);
           showDialog("Downloaded", "Saved to your media library.");
         } else {
@@ -99,7 +110,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
   const videoSource =
-    item?.mediaType?.startsWith("video/") && item?.mediaUrl ? { uri: item.mediaUrl } : null;
+    isVideoType(item?.mediaType) && item?.mediaUrl ? { uri: item.mediaUrl } : null;
 
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
@@ -126,7 +137,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
     if (!item) return null;
     const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
 
-    if (item.mediaType?.startsWith("video/")) {
+    if (isVideoType(item.mediaType)) {
       return (
         <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
           <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
@@ -134,10 +145,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
       );
     }
 
-    if (
-      item.mediaType === "application/pdf" ||
-      item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
+    if (isDocType(item.mediaType)) {
       const uri = typeof item.mediaUrl === "string" ? item.mediaUrl : "";
       const googleDocsUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(uri)}`;
 

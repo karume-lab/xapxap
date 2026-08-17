@@ -49,6 +49,17 @@ type FameItemProps = {
   isActive: boolean;
 };
 
+function isVideoType(mt: string | null | undefined) {
+  return !!mt && (mt.startsWith("video/") || mt === "video");
+}
+
+function isDocType(mt: string | null | undefined) {
+  return (
+    mt === "application/pdf" ||
+    mt === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  );
+}
+
 function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps) {
   const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -91,7 +102,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
       });
 
       if (file.exists) {
-        if (item.mediaType?.startsWith("image/") || item.mediaType?.startsWith("video/")) {
+        if (item.mediaType?.startsWith("image/") || isVideoType(item.mediaType)) {
           await MediaLibrary.Asset.create(file.uri);
           showDialog("Downloaded", "Saved to your media library.");
         } else {
@@ -106,8 +117,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
     }
   };
 
-  const videoSource =
-    item.mediaType?.startsWith("video/") && item.mediaUrl ? { uri: item.mediaUrl } : null;
+  const videoSource = isVideoType(item.mediaType) && item.mediaUrl ? { uri: item.mediaUrl } : null;
 
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
@@ -146,7 +156,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
     const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
 
     if (isActive) {
-      if (item.mediaType?.startsWith("video/")) {
+      if (isVideoType(item.mediaType)) {
         return (
           <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
             <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
@@ -154,10 +164,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
         );
       }
 
-      if (
-        item.mediaType === "application/pdf" ||
-        item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      ) {
+      if (isDocType(item.mediaType)) {
         return (
           <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
             <Text className="text-white text-lg font-bold mb-2">Document</Text>
@@ -175,10 +182,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
     }
 
     // Lightweight poster image (For docs and unrendered items)
-    if (
-      item.mediaType === "application/pdf" ||
-      item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ) {
+    if (isDocType(item.mediaType)) {
       return (
         <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
           <Text className="text-white text-lg font-bold">Document Preview</Text>
@@ -198,9 +202,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
     );
   };
 
-  const isDocument =
-    item.mediaType === "application/pdf" ||
-    item.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  const isDocument = isDocType(item.mediaType);
 
   return (
     <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-background">
