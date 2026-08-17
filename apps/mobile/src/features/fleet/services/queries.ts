@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
-import { supabase } from "@/lib/supabase";
+import { getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
 async function fetchInteractions(
@@ -424,13 +424,34 @@ export function useCreateFleetPost() {
       mediaType?: "image" | "video" | "pdf";
       deckId?: string;
     }) => {
+      let uploadedUrl: string | null = null;
+      let uploadedMediaType: string | null = mediaType ?? null;
+
+      if (mediaUrl && authorProfile) {
+        const ext = mediaType === "video" ? "mp4" : mediaType === "pdf" ? "pdf" : "jpg";
+        const mimeMap: Record<string, string> = {
+          image: "image/jpeg",
+          video: "video/mp4",
+          pdf: "application/pdf",
+        };
+        const path = `posts/${authorProfile.id}/${crypto.randomUUID()}.${ext}`;
+
+        await uploadMedia(
+          { uri: mediaUrl, name: path, type: mimeMap[mediaType ?? "image"] ?? "image/jpeg" },
+          path
+        );
+
+        uploadedUrl = getMediaUrl(path);
+        uploadedMediaType = mimeMap[mediaType ?? "image"] ?? "image/jpeg";
+      }
+
       const { data, error } = await supabase
         .from("fleet_posts")
         .insert({
           author_id: authorProfile?.id,
           content,
-          media_url: mediaUrl || null,
-          media_type: mediaType,
+          media_url: uploadedUrl,
+          media_type: uploadedMediaType,
           deck_id: deckId || null,
         })
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
