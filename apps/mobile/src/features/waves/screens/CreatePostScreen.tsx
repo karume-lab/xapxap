@@ -14,7 +14,7 @@ import {
   Send,
   X,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
@@ -79,6 +79,14 @@ export function CreatePostScreen() {
       }
     }
   });
+
+  useEffect(() => {
+    return () => {
+      try {
+        videoPlayer?.pause();
+      } catch {}
+    };
+  }, [videoPlayer]);
 
   if (!session) {
     return (

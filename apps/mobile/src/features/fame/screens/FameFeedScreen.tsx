@@ -4,7 +4,7 @@ import { File, Paths } from "expo-file-system";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Download, Heart, MessageCircle, Share2, SparklesIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -47,6 +47,7 @@ type FameItemProps = {
   onShowComments: () => void;
   onPressPost: () => void;
   isActive: boolean;
+  isScreenFocused: boolean;
 };
 
 function isVideoType(mt: string | null | undefined) {
@@ -60,7 +61,7 @@ function isDocType(mt: string | null | undefined) {
   );
 }
 
-function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps) {
+function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused }: FameItemProps) {
   const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -124,7 +125,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
   });
 
   useEffect(() => {
-    if (isActive) {
+    if (isActive && isScreenFocused) {
       try {
         player?.play();
       } catch {
@@ -137,7 +138,14 @@ function FameItem({ item, onShowComments, onPressPost, isActive }: FameItemProps
         /* ignore if not ready or already released */
       }
     }
-  }, [isActive, player]);
+    return () => {
+      try {
+        player?.pause();
+      } catch {
+        /* ignore if not ready or already released */
+      }
+    };
+  }, [isActive, isScreenFocused, player]);
 
   useEffect(() => {
     if (item.fame_heuristics?.burstEndedAt) {
@@ -402,6 +410,16 @@ export function FameFeedScreen() {
   const [showComments, setShowComments] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [screenFocused, setScreenFocused] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      setScreenFocused(true);
+      return () => {
+        setScreenFocused(false);
+      };
+    }, [])
+  );
 
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 80,
@@ -472,6 +490,7 @@ export function FameFeedScreen() {
             <FameItem
               item={item}
               isActive={index === activeIndex}
+              isScreenFocused={screenFocused}
               onShowComments={() => {
                 setSelectedPostId(item.id);
                 setShowComments(true);

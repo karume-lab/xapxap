@@ -1,8 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Users, X } from "lucide-react-native";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
@@ -33,6 +33,18 @@ export function LiveStreamScreen({ streamId }: { streamId: string }) {
       }
     }
   }, [player, stream?.playbackUrl]);
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        try {
+          player?.pause();
+        } catch {
+          // Ignore if not ready
+        }
+      };
+    }, [player])
+  );
 
   if (isLoading) {
     return (

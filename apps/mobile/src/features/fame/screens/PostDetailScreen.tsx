@@ -2,10 +2,10 @@ import { File, Paths } from "expo-file-system";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { ArrowLeft, Download, Heart, MessageCircle, Share2 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -115,6 +115,25 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      if (videoSource) {
+        try {
+          player?.play();
+        } catch {
+          /* ignore */
+        }
+      }
+      return () => {
+        try {
+          player?.pause();
+        } catch {
+          /* ignore */
+        }
+      };
+    }, [player, videoSource])
+  );
 
   useEffect(() => {
     if (videoSource) {
