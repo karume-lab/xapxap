@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
-import { getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
+import { generateUUID, getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
 import { transformRow } from "@/lib/supabase-helpers";
 
 async function fetchInteractions(
@@ -434,7 +434,7 @@ export function useCreateFleetPost() {
           video: "video/mp4",
           pdf: "application/pdf",
         };
-        const path = `posts/${authorProfile.id}/${crypto.randomUUID()}.${ext}`;
+        const path = `posts/${authorProfile.id}/${generateUUID()}.${ext}`;
 
         await uploadMedia(
           { uri: mediaUrl, name: path, type: mimeMap[mediaType ?? "image"] ?? "image/jpeg" },

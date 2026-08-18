@@ -24,6 +24,14 @@ export const supabase = createClient(
 );
 
 // Storage Utilities
+export function generateUUID(): string {
+  const s = () =>
+    Math.floor(Math.random() * 0x10000)
+      .toString(16)
+      .padStart(4, "0");
+  return `${s()}${s()}-${s()}-4${s().slice(1)}-${s().slice(0, 2)}${s().slice(2)}-${s()}${s()}${s()}`;
+}
+
 export const uploadMedia = async (
   file: { uri: string; name: string; type: string },
   path: string

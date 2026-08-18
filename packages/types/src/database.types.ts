@@ -141,6 +141,7 @@ export type Database = {
           checksum: string | null;
           content: string | null;
           created_at: string | null;
+          deck_id: string | null;
           id: string;
           media_type: string | null;
           media_url: string | null;
@@ -153,6 +154,7 @@ export type Database = {
           checksum?: string | null;
           content?: string | null;
           created_at?: string | null;
+          deck_id?: string | null;
           id?: string;
           media_type?: string | null;
           media_url?: string | null;
@@ -165,6 +167,7 @@ export type Database = {
           checksum?: string | null;
           content?: string | null;
           created_at?: string | null;
+          deck_id?: string | null;
           id?: string;
           media_type?: string | null;
           media_url?: string | null;
@@ -178,6 +181,13 @@ export type Database = {
             columns: ["author_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "fleet_posts_deck_id_fleet_decks_id_fk";
+            columns: ["deck_id"];
+            isOneToOne: false;
+            referencedRelation: "fleet_decks";
             referencedColumns: ["id"];
           },
           {
