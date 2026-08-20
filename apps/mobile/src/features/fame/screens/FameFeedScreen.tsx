@@ -161,27 +161,27 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
   }, [item.fame_heuristics?.burstEndedAt]);
 
   const renderMedia = () => {
-    const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : item.mediaUrl;
+    const imageUrl = typeof item.mediaUrl === "string" ? { uri: item.mediaUrl } : null;
 
-    if (isActive) {
-      if (isVideoType(item.mediaType)) {
-        return (
-          <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
-            <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
-          </View>
-        );
-      }
+    if (isVideoType(item.mediaType) && item.mediaUrl) {
+      return (
+        <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
+          <VideoView player={player} style={StyleSheet.absoluteFill} contentFit="cover" />
+        </View>
+      );
+    }
 
-      if (isDocType(item.mediaType)) {
-        return (
-          <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
-            <Text className="text-white text-lg font-bold mb-2">Document</Text>
-            <Text className="text-white/60 text-sm">Tap to view full document</Text>
-          </View>
-        );
-      }
+    if (isDocType(item.mediaType)) {
+      return (
+        <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
+          <Text className="text-white text-lg font-bold mb-2">Document</Text>
+          <Text className="text-white/60 text-sm">Tap to view full document</Text>
+        </View>
+      );
+    }
 
-      // Active state for images (no play button)
+    // Active state for images (no play button)
+    if (item.mediaUrl) {
       return (
         <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
           <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="cover" />
@@ -201,7 +201,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
     return (
       <View style={StyleSheet.absoluteFill} className="bg-zinc-900">
         <Image
-          source={imageUrl}
+          source={item.mediaUrl ? { uri: item.mediaUrl } : null}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
           className="opacity-50"

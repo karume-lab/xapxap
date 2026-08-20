@@ -22,7 +22,7 @@ export function useFameBurst(userId: string | null) {
         .select(
           "*, author:profiles!fleet_posts_author_id_profiles_id_fk(*), fame_heuristics!inner(*)"
         )
-        .eq("fame_heuristics.status", "fame_burst")
+        .not("fame_heuristics.status", "eq", "rejected")
         .order("created_at", { ascending: false })
         .range(start, end);
 
