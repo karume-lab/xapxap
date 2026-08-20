@@ -80,7 +80,7 @@
       "id": "11111111-1111-1111-1111-111111111111",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Just caught an incredible sunset! 🌅",
-      "mediaFile": "img1.jpg",
+      "mediaFile": "short1.mp4",
       "mediaType": "image/jpeg",
       "deckId": "a1000000-0000-0000-0000-000000000002"
     },
@@ -95,7 +95,7 @@
       "id": "33333333-3333-3333-3333-333333333333",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
       "content": "Check out my new beat drop! 🎧",
-      "mediaFile": "bunny.mp4",
+      "mediaFile": "short1.mp4",
       "mediaType": "video/mp4",
       "deckId": "a1000000-0000-0000-0000-000000000003"
     },
@@ -147,7 +147,7 @@
       "id": "b52b2665-3a13-4160-9596-38c26036f22b",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
       "content": "My new workstation setup is finally complete! Ready to write some code. 💻 #setup #tech",
-      "mediaFile": "img3_tech.jpg",
+      "mediaFile": "short3.mp4",
       "mediaType": "image/jpeg"
     },
     {
@@ -203,56 +203,56 @@
       "id": "6ffa4eeb-36d2-4792-ae3a-316dac00c03a",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
       "content": "Big Buck Bunny is an absolute classic of open source animation! 🐰 #blender",
-      "mediaFile": "vid1_bunny.mp4",
+      "mediaFile": "short2.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "9a52aa64-0706-4c21-91a9-ad7aaa31549c",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
       "content": "Elephants Dream was the first ever open movie project. Such history! 🐘 #history",
-      "mediaFile": "vid2_elephants.mp4",
+      "mediaFile": "short3.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "548ecfa7-5c8e-4996-bc64-0a6af33c581b",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Testing the For Bigger Blazes encoding - the quality is actually quite good! 🔥 #testing",
-      "mediaFile": "vid3_blazes.mp4",
+      "mediaFile": "img4_coffee.jpg",
       "mediaType": "video/mp4"
     },
     {
       "id": "904592fd-5e41-4a30-94f8-9f6424ac7ada",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
       "content": "Great escapes! The action sequences here are really well choreographed. 🎬 #action",
-      "mediaFile": "vid4_escapes.mp4",
+      "mediaFile": "img5_abstract.jpg",
       "mediaType": "video/mp4"
     },
     {
       "id": "dc224352-5e2a-4d4f-8afb-74aa47f9e93d",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
       "content": "For bigger fun! Always good to have some test footage to play with. 😄 #devlife",
-      "mediaFile": "vid5_fun.mp4",
+      "mediaFile": "img6_architecture.jpg",
       "mediaType": "video/mp4"
     },
     {
       "id": "8db9e907-e745-4900-b46f-9b1d8981b62f",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
       "content": "Joyrides! Makes me want to go on a road trip immediately. 🚗 #roadtrip",
-      "mediaFile": "vid6_joyrides.mp4",
+      "mediaFile": "img7_portrait.jpg",
       "mediaType": "video/mp4"
     },
     {
       "id": "bd988aaf-26b6-4aac-94c0-0cd3162b07d2",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
       "content": "Sintel still holds up so well after all these years. Beautiful rendering. 🐉 #animation",
-      "mediaFile": "vid7_sintel.mp4",
+      "mediaFile": "img8_food.jpg",
       "mediaType": "video/mp4"
     },
     {
       "id": "43045c7c-4f0b-4d65-b91a-0ecf550234a9",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
       "content": "Tears of Steel shows off what Blender can do with live action VFX. 🦾 #vfx",
-      "mediaFile": "vid8_tears.mp4",
+      "mediaFile": "img9_travel.jpg",
       "mediaType": "video/mp4"
     },
     {

@@ -1,5 +1,6 @@
 import "react-native-url-polyfill/auto";
 import { createClient } from "@supabase/supabase-js";
+import * as FileSystem from "expo-file-system";
 import { env } from "@/lib/env";
 
 export const supabase = createClient(
@@ -28,8 +29,16 @@ export const uploadMedia = async (
   file: { uri: string; name: string; type: string },
   path: string
 ) => {
-  const response = await fetch(file.uri);
-  const blob = await response.blob();
+  // Use expo-file-system to read the file as base64, then construct Blob
+  const base64 = await FileSystem.readAsStringAsync(file.uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+  const byteCharacters = atob(base64);
+  const byteArray = new Uint8Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteArray[i] = byteCharacters.charCodeAt(i);
+  }
+  const blob = new Blob([byteArray], { type: file.type });
 
   const { data, error } = await supabase.storage.from("media").upload(path, blob, {
     contentType: file.type,
