@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { db } from "@db/client";
 import {
@@ -45,7 +46,11 @@ export const seedContent = async () => {
         let mediaUrl = null;
         if (mediaFile) {
           const localPath = path.resolve(__dirname, `../../seed/assets/${mediaFile}`);
-          mediaUrl = await uploadMediaFile("media", `posts/${rest.id}/${mediaFile}`, localPath);
+          if (existsSync(localPath)) {
+            mediaUrl = await uploadMediaFile("media", `posts/${rest.id}/${mediaFile}`, localPath);
+          } else {
+            console.warn(`  Skipping media for post ${rest.id}: ${mediaFile} not found`);
+          }
         }
         return { ...rest, mediaUrl, mediaType: mediaType || null, createdAt };
       })

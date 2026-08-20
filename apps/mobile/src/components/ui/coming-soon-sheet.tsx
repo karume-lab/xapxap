@@ -4,7 +4,7 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { Clock } from "lucide-react-native";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,20 @@ export function ComingSoonSheet({
 }: ComingSoonSheetProps) {
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  useEffect(() => {
+    if (open) {
+      bottomSheetRef.current?.expand();
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [open]);
+
+  const handleClose = useCallback(() => {
+    bottomSheetRef.current?.close();
+    onOpenChange(false);
+  }, [onOpenChange]);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -42,10 +56,11 @@ export function ComingSoonSheet({
 
   return (
     <BottomSheet
-      index={open ? 0 : -1}
+      ref={bottomSheetRef}
+      index={-1}
       enableDynamicSizing
       enablePanDownToClose
-      onClose={() => onOpenChange(false)}
+      onClose={handleClose}
       backdropComponent={renderBackdrop}
       bottomInset={80 + insets.bottom}
       backgroundStyle={{ backgroundColor: colors.background, borderRadius: 32 }}
@@ -58,7 +73,7 @@ export function ComingSoonSheet({
         <Text className="text-muted-foreground text-center text-base px-2 mb-8 font-[Inter_400Regular]">
           {description}
         </Text>
-        <Button onPress={() => onOpenChange(false)} className="w-full h-14 rounded-full bg-primary">
+        <Button onPress={handleClose} className="w-full h-14 rounded-full bg-primary">
           <Text numberOfLines={1} adjustsFontSizeToFit className="text-primary-foreground font-bold text-lg">Got it</Text>
         </Button>
       </BottomSheetView>

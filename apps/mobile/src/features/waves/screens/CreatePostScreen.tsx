@@ -114,15 +114,17 @@ export function CreatePostScreen() {
   const pickImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: ["images", "videos"],
         allowsEditing: true,
         quality: 1,
+        videoMaxDuration: 60,
       });
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const asset = result.assets[0];
-        const type = asset.type === "video" ? "video" : "image";
-        setMedia({ uri: asset.uri, type });
+        const isVideo =
+          asset.type === "video" || asset.mimeType?.startsWith("video/") || asset.duration != null;
+        setMedia({ uri: asset.uri, type: isVideo ? "video" : "image" });
       }
     } catch {
       showDialog("Error", "Could not pick media.");

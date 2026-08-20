@@ -1,9 +1,11 @@
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import { ArrowLeft, ShieldCheckIcon } from "lucide-react-native";
+import { ArrowLeft, Camera, ShieldCheckIcon } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
+import { Pressable, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +19,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useColors } from "@/hooks/use-colors";
+import { generateUUID, getMediaUrl, uploadMedia } from "@/lib/supabase";
 
 export function EditProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -27,6 +30,7 @@ export function EditProfileScreen() {
   const [username, setUsername] = useState(profile?.username ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
   const [isSaving, setIsSaving] = useState(false);
+  const [avatarUri, setAvatarUri] = useState<string | null>(null);
 
   // Populate the form once the profile finishes loading (it resolves async).
   // `prev ||` preserves anything the user has already typed.
@@ -47,10 +51,38 @@ export function EditProfileScreen() {
     setDialogOpen(true);
   };
 
+  const pickAvatar = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setAvatarUri(result.assets[0].uri);
+      }
+    } catch {
+      showDialog("Error", "Could not pick image.");
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await updateProfile({ username, bio });
+      const patch: Record<string, unknown> = { username, bio };
+
+      if (avatarUri && profile) {
+        const ext = "jpg";
+        const path = `avatars/${profile.id}/${generateUUID()}.${ext}`;
+
+        await uploadMedia({ uri: avatarUri, name: path, type: "image/jpeg" }, path);
+
+        patch.avatarUrl = getMediaUrl(path);
+      }
+
+      await updateProfile(patch);
       showDialog("Success", "Profile updated successfully");
     } catch (_) {
       showDialog("Error", "Failed to update profile");
@@ -66,6 +98,8 @@ export function EditProfileScreen() {
       router.back();
     }
   };
+
+  const displayAvatar = avatarUri || profile?.avatarUrl;
 
   return (
     <View className="flex-1 bg-background">
@@ -84,6 +118,17 @@ export function EditProfileScreen() {
         <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 ml-1">
           Edit Profile
         </Text>
+
+        {/* Avatar Picker */}
+        <View className="items-center mb-8">
+          <Pressable onPress={pickAvatar} className="relative">
+            <Avatar url={displayAvatar} username={profile?.username} size={100} ring />
+            <View className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary items-center justify-center border-2 border-background">
+              <Icon as={Camera} size={14} className="text-primary-foreground" />
+            </View>
+          </Pressable>
+          <Text className="text-muted-foreground text-xs mt-2">Tap to change photo</Text>
+        </View>
 
         <View className="gap-4">
           <Glass radius={24} className="p-5 border border-border">

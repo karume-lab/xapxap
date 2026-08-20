@@ -428,21 +428,27 @@ export function useCreateFleetPost() {
       let uploadedMediaType: string | null = mediaType ?? null;
 
       if (mediaUrl && authorProfile) {
-        const ext = mediaType === "video" ? "mp4" : mediaType === "pdf" ? "pdf" : "jpg";
         const mimeMap: Record<string, string> = {
           image: "image/jpeg",
           video: "video/mp4",
           pdf: "application/pdf",
         };
+        const extMap: Record<string, string> = {
+          image: "jpg",
+          video: "mp4",
+          pdf: "pdf",
+        };
+        const resolvedType = mediaType ?? "image";
+        const ext = extMap[resolvedType] ?? "jpg";
         const path = `posts/${authorProfile.id}/${generateUUID()}.${ext}`;
 
         await uploadMedia(
-          { uri: mediaUrl, name: path, type: mimeMap[mediaType ?? "image"] ?? "image/jpeg" },
+          { uri: mediaUrl, name: path, type: mimeMap[resolvedType] ?? "image/jpeg" },
           path
         );
 
         uploadedUrl = getMediaUrl(path);
-        uploadedMediaType = mimeMap[mediaType ?? "image"] ?? "image/jpeg";
+        uploadedMediaType = mimeMap[resolvedType] ?? "image/jpeg";
       }
 
       const { data, error } = await supabase

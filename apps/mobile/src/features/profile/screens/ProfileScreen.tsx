@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import {
   AlertTriangleIcon,
@@ -86,11 +87,21 @@ export function ProfileScreen() {
             {/* User Info Row */}
             <View className="flex-row items-center mb-6">
               <View className="relative mr-4">
-                <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
-                  <Text className="text-3xl font-bold text-foreground">
-                    {profile?.username?.[0]?.toUpperCase() ?? ""}
-                  </Text>
-                </View>
+                {profile?.avatarUrl ? (
+                  <View className="w-20 h-20 rounded-full overflow-hidden items-center justify-center">
+                    <Image
+                      source={{ uri: profile.avatarUrl }}
+                      style={{ width: 80, height: 80 }}
+                      contentFit="cover"
+                    />
+                  </View>
+                ) : (
+                  <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
+                    <Text className="text-3xl font-bold text-foreground">
+                      {profile?.username?.[0]?.toUpperCase() ?? ""}
+                    </Text>
+                  </View>
+                )}
                 <View className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
                   <Icon as={Camera} size={14} className="text-primary-foreground" />
                 </View>
