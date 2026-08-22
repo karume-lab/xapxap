@@ -31,9 +31,8 @@ export const uploadMedia = async (
 ) => {
   const file = new File(fileParams.uri);
   const arrayBuffer = await file.arrayBuffer();
-  const blob = new Blob([arrayBuffer], { type: fileParams.type });
 
-  const { data, error } = await supabase.storage.from("media").upload(path, blob, {
+  const { data, error } = await supabase.storage.from("media").upload(path, arrayBuffer, {
     contentType: fileParams.type,
     upsert: false,
   });

@@ -58,6 +58,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_post_interaction_notify ON public.post_interactions;
 CREATE TRIGGER on_post_interaction_notify
   AFTER INSERT ON public.post_interactions
   FOR EACH ROW
@@ -96,6 +97,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_comment_notify ON public.fleet_posts;
 CREATE TRIGGER on_comment_notify
   AFTER INSERT ON public.fleet_posts
   FOR EACH ROW
@@ -132,6 +134,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_tip_notify ON public.gem_transactions;
 CREATE TRIGGER on_tip_notify
   AFTER INSERT ON public.gem_transactions
   FOR EACH ROW
@@ -166,6 +169,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_stream_entry_notify ON public.stream_tickets;
 CREATE TRIGGER on_stream_entry_notify
   AFTER INSERT ON public.stream_tickets
   FOR EACH ROW
@@ -200,6 +204,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_fleet_join_notify ON public.fleet_deck_members;
 CREATE TRIGGER on_fleet_join_notify
   AFTER INSERT ON public.fleet_deck_members
   FOR EACH ROW
@@ -237,6 +242,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS on_poll_vote_notify ON public.poll_votes;
 CREATE TRIGGER on_poll_vote_notify
   AFTER INSERT ON public.poll_votes
   FOR EACH ROW
