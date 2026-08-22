@@ -79,22 +79,22 @@
     {
       "id": "11111111-1111-1111-1111-111111111111",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Just caught an incredible sunset! 🌅",
-      "mediaFile": "short1.mp4",
-      "mediaType": "image/jpeg",
+      "content": "Quick demo of the new app feature we just pushed to production! \ud83d\ude80",
+      "mediaFile": "sunset.mp4",
+      "mediaType": "video/mp4",
       "deckId": "a1000000-0000-0000-0000-000000000002"
     },
     {
       "id": "22222222-2222-2222-2222-222222222222",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Going live later tonight to discuss the new crypto regulations. Tune in! 📈",
+      "content": "Going live later tonight to discuss the new crypto regulations. Tune in! \ud83d\udcc8",
       "mediaType": "text",
       "deckId": "a1000000-0000-0000-0000-000000000001"
     },
     {
       "id": "33333333-3333-3333-3333-333333333333",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Check out my new beat drop! 🎧",
+      "content": "Quick demo of the new app feature we just pushed to production! \ud83d\ude80",
       "mediaFile": "short1.mp4",
       "mediaType": "video/mp4",
       "deckId": "a1000000-0000-0000-0000-000000000003"
@@ -109,7 +109,7 @@
     {
       "id": "55555555-5555-5555-5555-555555555555",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Building XapXap has been an incredible journey so far! 🚀",
+      "content": "Building XapXap has been an incredible journey so far! \ud83d\ude80",
       "mediaType": "text",
       "deckId": "a1000000-0000-0000-0000-000000000001"
     },
@@ -132,142 +132,177 @@
     {
       "id": "b3c56a3b-ee0f-495d-9955-24155f62d257",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Just arrived in the city, the skyline is breathtaking tonight! 🏙️ #travel",
+      "content": "Homemade pasta night! It turned out absolutely perfect. \ud83c\udf5d",
       "mediaFile": "img1_city.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "065de822-faae-4f55-9ca3-1f482efff074",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Took a long hike this weekend to clear my mind. Nature is the best therapy. 🌲 #hiking #nature",
+      "content": "Nature is the best therapy. Needed this escape. \ud83c\udf32",
       "mediaFile": "img2_nature.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "b52b2665-3a13-4160-9596-38c26036f22b",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "My new workstation setup is finally complete! Ready to write some code. 💻 #setup #tech",
+      "content": "When the beat drops just right... \ud83d\udd25 #musicproducer",
       "mediaFile": "short3.mp4",
-      "mediaType": "image/jpeg"
+      "mediaType": "video/mp4"
     },
     {
       "id": "59a6a7f2-c73b-4c0f-a9db-1de53aa388a8",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Starting the day right with a fresh pour-over coffee. ☕ #morning",
+      "content": "A quick portrait from yesterday's session. Loving the tones! \ud83d\udcf8",
       "mediaFile": "img4_coffee.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "a53c5e7f-9e6d-4ed3-a129-c5005686b7e3",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Went to the modern art gallery today. This abstract piece really stood out to me. 🎨 #art",
+      "content": "Homemade pasta night! It turned out absolutely perfect. \ud83c\udf5d",
       "mediaFile": "img5_abstract.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "a302cfb6-50b2-4bc9-9a2e-fc2e2bc715df",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Fascinated by brutalist architecture. So imposing yet elegant. 🏢 #architecture",
+      "content": "The light was perfect at the gallery today. \ud83c\udfa8",
       "mediaFile": "img6_architecture.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "31837a49-2121-485e-a0fa-b0563ea429c2",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "A quick portrait I shot on film last week. Loving the grainy texture! 📸 #photography",
+      "content": "Fascinated by the architecture around here. \ud83c\udfe2",
       "mediaFile": "img7_portrait.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "78d25fb1-9db7-467b-8ef0-2a5cd91804e4",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Tried making homemade pasta for the first time. It was a massive success! 🍝 #cooking",
+      "content": "Fascinated by the architecture around here. \ud83c\udfe2",
       "mediaFile": "img8_food.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "780e0163-6473-408e-bdaa-f3d5b1cad66c",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Found a hidden gem of a street while wandering through Europe. 🗺️ #wanderlust",
+      "content": "Fascinated by the architecture around here. \ud83c\udfe2",
       "mediaFile": "img9_travel.jpg",
       "mediaType": "image/jpeg"
     },
     {
       "id": "dfcede4a-f683-464b-b8f2-8250ba4d9e89",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "The James Webb telescope images never cease to amaze me. 🌌 #space #astronomy",
+      "content": "Homemade pasta night! It turned out absolutely perfect. \ud83c\udf5d",
       "mediaFile": "img10_space.jpg",
       "mediaType": "image/jpeg"
     },
     {
-      "id": "6ffa4eeb-36d2-4792-ae3a-316dac00c03a",
-      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "Big Buck Bunny is an absolute classic of open source animation! 🐰 #blender",
-      "mediaFile": "short2.mp4",
-      "mediaType": "video/mp4"
-    },
-    {
       "id": "9a52aa64-0706-4c21-91a9-ad7aaa31549c",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Elephants Dream was the first ever open movie project. Such history! 🐘 #history",
+      "content": "Captured this beautiful moment over the weekend. #memories",
       "mediaFile": "short3.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "548ecfa7-5c8e-4996-bc64-0a6af33c581b",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Testing the For Bigger Blazes encoding - the quality is actually quite good! 🔥 #testing",
-      "mediaFile": "img4_coffee.jpg",
+      "content": "Morning run views. Nothing beats starting the day like this! \ud83c\udfc3\u200d\u2642\ufe0f\ud83c\udf05",
+      "mediaFile": "for_bigger_blazes.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "904592fd-5e41-4a30-94f8-9f6424ac7ada",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Great escapes! The action sequences here are really well choreographed. 🎬 #action",
-      "mediaFile": "img5_abstract.jpg",
+      "content": "Check out this insane transition I've been working on. #vfx #editing",
+      "mediaFile": "great_escapes.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "dc224352-5e2a-4d4f-8afb-74aa47f9e93d",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "For bigger fun! Always good to have some test footage to play with. 😄 #devlife",
-      "mediaFile": "img6_architecture.jpg",
+      "content": "Quick demo of the new app feature we just pushed to production! \ud83d\ude80",
+      "mediaFile": "for_bigger_fun.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "8db9e907-e745-4900-b46f-9b1d8981b62f",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Joyrides! Makes me want to go on a road trip immediately. 🚗 #roadtrip",
-      "mediaFile": "img7_portrait.jpg",
+      "content": "Vibing to this new drop! What do you guys think? \ud83c\udfa7",
+      "mediaFile": "joyrides.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "bd988aaf-26b6-4aac-94c0-0cd3162b07d2",
       "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-      "content": "Sintel still holds up so well after all these years. Beautiful rendering. 🐉 #animation",
-      "mediaFile": "img8_food.jpg",
+      "content": "An absolute classic clip. Never gets old! \ud83d\ude02",
+      "mediaFile": "sintel.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "43045c7c-4f0b-4d65-b91a-0ecf550234a9",
       "authorId": "c02b2b1a-3e5e-4a64-9a8c-9b8a8e3d2f1b",
-      "content": "Tears of Steel shows off what Blender can do with live action VFX. 🦾 #vfx",
-      "mediaFile": "img9_travel.jpg",
+      "content": "Captured this beautiful moment over the weekend. #memories",
+      "mediaFile": "tears_of_steel.mp4",
       "mediaType": "video/mp4"
     },
     {
       "id": "cbb3aeca-68ac-43ed-a207-1ca502264b7e",
       "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
-      "content": "The original Bitcoin whitepaper by Satoshi Nakamoto. A revolutionary piece of history. 📄 #crypto #bitcoin",
+      "content": "Fascinating read on the future of decentralization. Highly recommend! \ud83d\udcc4",
       "mediaFile": "doc1_bitcoin.pdf",
       "mediaType": "application/pdf"
     },
     {
       "id": "a41e019f-b829-4eb8-aa74-2559381dbb17",
       "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
-      "content": "Check out this sample DOCX file I generated. It has real content inside! 📝 #testing #docs",
+      "content": "Here are the meeting notes from today's sync.",
       "mediaFile": "doc2_real.docx",
       "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    },
+    {
+      "id": "87cbf8da-6bd9-440b-b5c1-97f28858b0d4",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "A classic piece of internet history right here. #history",
+      "mediaFile": "doc1_w3c.pdf",
+      "mediaType": "application/pdf"
+    },
+    {
+      "id": "d128a1f9-6c73-40d1-b8e2-e4dd76cc2e27",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Working on the draft for the upcoming proposal. Let me know if you want to collaborate! \ud83d\udcdd",
+      "mediaFile": "doc2_sample.docx",
+      "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    },
+    {
+      "id": "f91ce419-89b6-4696-bd27-259955a89a6b",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Looking up at the stars tonight. \ud83c\udf0c #astronomy",
+      "mediaFile": "img3_tech.jpg",
+      "mediaType": "image/jpeg"
+    },
+    {
+      "id": "b594407e-0dde-4b46-85eb-37caefba9fea",
+      "authorId": "21e76024-c504-498a-8c15-e51042b2555a",
+      "content": "Fascinating read on the future of decentralization. Highly recommend! \ud83d\udcc4",
+      "mediaFile": "doc2_rfc.pdf",
+      "mediaType": "application/pdf"
+    },
+    {
+      "id": "f5c825d9-2ac0-48c7-834f-7484298e1ada",
+      "authorId": "d13c3c2b-4f6f-5b75-ab9d-ac9b9f4e302c",
+      "content": "Just wrapped up an amazing video shoot today. Here's a sneak peek! \ud83c\udfac",
+      "mediaFile": "short2.mp4",
+      "mediaType": "video/mp4"
+    },
+    {
+      "id": "70fab7d9-5470-4a07-a258-f33dbda9aea6",
+      "authorId": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+      "content": "Fascinating read on the future of decentralization. Highly recommend! \ud83d\udcc4",
+      "mediaFile": "doc.pdf",
+      "mediaType": "application/pdf"
     }
   ],
   "polls": [
