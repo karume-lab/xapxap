@@ -32,6 +32,7 @@ export type FleetPostWithAuthor = FleetPost & {
     echoes: number;
     casts: number;
     anchors: number;
+    comments: number;
   };
   myInteractions: {
     hug: boolean;
@@ -60,6 +61,7 @@ export type FameBurstItem = FleetPost & {
     echoes: number;
     casts: number;
     anchors: number;
+    comments: number;
   };
   myInteractions: {
     hug: boolean;

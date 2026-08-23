@@ -6,25 +6,41 @@ async function fetchInteractions(
   postIds: string[],
   userId: string | null
 ): Promise<{
-  counts: Record<string, { hugs: number; echoes: number; casts: number; anchors: number }>;
+  counts: Record<
+    string,
+    { hugs: number; echoes: number; casts: number; anchors: number; comments: number }
+  >;
   userInteractions: Record<string, { hug: boolean; echo: boolean; cast: boolean; anchor: boolean }>;
 }> {
-  const counts: Record<string, { hugs: number; echoes: number; casts: number; anchors: number }> =
-    {};
+  const counts: Record<
+    string,
+    { hugs: number; echoes: number; casts: number; anchors: number; comments: number }
+  > = {};
   const userInteractions: Record<
     string,
     { hug: boolean; echo: boolean; cast: boolean; anchor: boolean }
   > = {};
 
   for (const id of postIds) {
-    counts[id] = { hugs: 0, echoes: 0, casts: 0, anchors: 0 };
+    counts[id] = { hugs: 0, echoes: 0, casts: 0, anchors: 0, comments: 0 };
     userInteractions[id] = { hug: false, echo: false, cast: false, anchor: false };
   }
 
-  const { data: interactions } = await supabase
-    .from("post_interactions")
-    .select("postId, type, userId")
-    .in("postId", postIds);
+  const [{ data: interactions }, { data: commentRows }] = await Promise.all([
+    supabase.from("post_interactions").select("postId, type, userId").in("postId", postIds),
+    supabase
+      .from("fleet_posts")
+      .select("parentId")
+      .in("parentId", postIds)
+      .not("parentId", "is", null),
+  ]);
+
+  for (const row of commentRows || []) {
+    if (row.parentId) {
+      const c = counts[row.parentId];
+      if (c) c.comments += 1;
+    }
+  }
 
   for (const ix of interactions || []) {
     const c = counts[ix.postId];

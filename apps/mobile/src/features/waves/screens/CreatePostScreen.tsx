@@ -151,6 +151,10 @@ export function CreatePostScreen() {
       showDialog("Empty wave", "Add a thought or media first.");
       return;
     }
+    if (media?.type === "pdf" && !text.trim()) {
+      showDialog("Description required", "Add a description for your PDF before posting.");
+      return;
+    }
     setBusy(true);
     try {
       const newPost = await createPost({
@@ -197,7 +201,11 @@ export function CreatePostScreen() {
             <TextInput
               value={text}
               onChangeText={setText}
-              placeholder="What's rippling through your mind?"
+              placeholder={
+                media?.type === "pdf"
+                  ? "Describe this document..."
+                  : "What's rippling through your mind?"
+              }
               placeholderTextColor={colors.mutedForeground}
               multiline
               maxLength={500}
@@ -237,10 +245,15 @@ export function CreatePostScreen() {
                     </Pressable>
                   )}
                   {media.type === "pdf" && (
-                    <View className="items-center justify-center p-4">
-                      <Icon as={FileText} size={48} className="text-magenta mb-2" />
+                    <View className="items-center justify-center p-4 gap-2">
+                      <View className="w-16 h-20 rounded-lg bg-magenta/10 border border-magenta/30 items-center justify-center">
+                        <Icon as={FileText} size={32} className="text-magenta" />
+                      </View>
                       <Text className="text-foreground font-bold text-center" numberOfLines={1}>
                         {media.name ?? "Selected PDF"}
+                      </Text>
+                      <Text className="text-muted-foreground text-xs text-center">
+                        {text.trim() ? "Description added" : "Add a description below"}
                       </Text>
                     </View>
                   )}
@@ -416,7 +429,11 @@ export function CreatePostScreen() {
           <Button
             onPress={submit}
             isLoading={busy}
-            disabled={(!text.trim() && !media) || postDestination !== "feed"}
+            disabled={
+              (!text.trim() && !media) ||
+              (media?.type === "pdf" && !text.trim()) ||
+              postDestination !== "feed"
+            }
             className="h-16 rounded-full bg-primary mt-4">
             <View className="flex-row items-center gap-3">
               <Icon as={Send} className="text-primary-foreground" size={18} />

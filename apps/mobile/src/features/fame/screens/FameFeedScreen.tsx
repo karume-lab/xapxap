@@ -6,7 +6,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { Download, Heart, MessageCircle, Share2, SparklesIcon } from "lucide-react-native";
+import {
+  Download,
+  FileText,
+  Heart,
+  MessageCircle,
+  Share2,
+  SparklesIcon,
+} from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -173,9 +180,22 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
 
     if (isDocType(item.mediaType)) {
       return (
-        <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
-          <Text className="text-white text-lg font-bold mb-2">Document</Text>
-          <Text className="text-white/60 text-sm">Tap to view full document</Text>
+        <View
+          style={StyleSheet.absoluteFill}
+          className="bg-zinc-900 items-center justify-center px-8">
+          <View className="w-20 h-24 rounded-xl bg-magenta/10 border border-magenta/30 items-center justify-center mb-4">
+            <Icon as={FileText} size={36} className="text-magenta" />
+          </View>
+          {item.content ? (
+            <Text
+              className="text-white text-base font-semibold text-center leading-6"
+              numberOfLines={3}>
+              {item.content}
+            </Text>
+          ) : (
+            <Text className="text-white/60 text-sm">Document</Text>
+          )}
+          <Text className="text-white/40 text-xs mt-2">Tap to view full document</Text>
         </View>
       );
     }
@@ -189,15 +209,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
       );
     }
 
-    // Lightweight poster image (For docs and unrendered items)
-    if (isDocType(item.mediaType)) {
-      return (
-        <View style={StyleSheet.absoluteFill} className="bg-zinc-900 items-center justify-center">
-          <Text className="text-white text-lg font-bold">Document Preview</Text>
-        </View>
-      );
-    }
-
+    // Lightweight poster image (for unrendered items without media)
     return (
       <View style={StyleSheet.absoluteFill} className="bg-zinc-900">
         <Image
@@ -211,6 +223,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
   };
 
   const isDocument = isDocType(item.mediaType);
+  const isTextOnly = !item.mediaUrl && !isDocument;
 
   return (
     <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} className="bg-background">
@@ -228,21 +241,25 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
 
       {/* Dark Overlay for legibility */}
       <LinearGradient
-        colors={["transparent", `${colors.background}cc`, colors.background]}
-        locations={[0, 0.55, 1]}
+        colors={
+          isTextOnly
+            ? [`${colors.background}ee`, `${colors.background}cc`, colors.background]
+            : ["transparent", `${colors.background}cc`, colors.background]
+        }
+        locations={isTextOnly ? [0, 0.3, 1] : [0, 0.55, 1]}
         style={{
           position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
-          height: 480,
+          height: isTextOnly ? SCREEN_HEIGHT : 480,
           pointerEvents: "none",
         }}
       />
 
       {/* Overlays */}
       <View
-        className="absolute inset-0 justify-end p-6"
+        className={cn("absolute inset-0 p-6", isTextOnly ? "justify-center" : "justify-end")}
         style={{
           paddingTop: insets.top + 85,
           paddingBottom: insets.bottom + 80,
@@ -267,35 +284,75 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
         )}
 
         {/* Bottom: Post Info & Engagement */}
-        <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
-          <View className="flex-1" pointerEvents="box-none">
-            <Button
-              variant="ghost"
-              onPress={() =>
-                router.push({
-                  pathname: "/profile/[id]",
-                  params: { id: item.author.id, username: item.author.username },
-                })
-              }
-              className="justify-start items-center flex-row gap-3 mb-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
-              <View className="flex-row items-center gap-3">
-                <Avatar
-                  url={item.author.avatarUrl}
-                  username={item.author.username}
-                  size={48}
-                  ring
-                />
-                <View>
-                  <Text className="font-bold text-foreground text-lg">@{item.author.username}</Text>
-                  <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
-                    Rising Star
-                  </Text>
+        <View
+          className={cn("flex-row items-end justify-between gap-6", isTextOnly && "items-center")}
+          pointerEvents="box-none">
+          <View className={cn("flex-1", isTextOnly && "items-center")} pointerEvents="box-none">
+            {isTextOnly && (
+              <Button
+                variant="ghost"
+                onPress={() =>
+                  router.push({
+                    pathname: "/profile/[id]",
+                    params: { id: item.author.id, username: item.author.username },
+                  })
+                }
+                className="justify-start items-center flex-row gap-3 mb-4 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+                <View className="flex-row items-center gap-3">
+                  <Avatar
+                    url={item.author.avatarUrl}
+                    username={item.author.username}
+                    size={48}
+                    ring
+                  />
+                  <View>
+                    <Text className="font-bold text-foreground text-lg">
+                      @{item.author.username}
+                    </Text>
+                    <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                      Rising Star
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </Button>
-            <Text className="text-foreground/95 text-base leading-6 font-medium" numberOfLines={3}>
+              </Button>
+            )}
+            <Text
+              className={cn(
+                isTextOnly
+                  ? "text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]"
+                  : "text-base leading-7 text-foreground/95 font-medium"
+              )}
+              numberOfLines={isTextOnly ? undefined : 3}>
               {item.content}
             </Text>
+            {!isTextOnly && (
+              <Button
+                variant="ghost"
+                onPress={() =>
+                  router.push({
+                    pathname: "/profile/[id]",
+                    params: { id: item.author.id, username: item.author.username },
+                  })
+                }
+                className="justify-start items-center flex-row gap-3 mt-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+                <View className="flex-row items-center gap-3">
+                  <Avatar
+                    url={item.author.avatarUrl}
+                    username={item.author.username}
+                    size={48}
+                    ring
+                  />
+                  <View>
+                    <Text className="font-bold text-foreground text-lg">
+                      @{item.author.username}
+                    </Text>
+                    <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                      Rising Star
+                    </Text>
+                  </View>
+                </View>
+              </Button>
+            )}
           </View>
 
           {/* Engagement Buttons */}
@@ -331,7 +388,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
                 <Icon as={MessageCircle} className="text-foreground" size={26} />
               </Button>
               <Text className="text-foreground text-xs mt-1.5 font-bold">
-                {item.counts?.echoes ?? 0}
+                {item.counts?.comments ?? 0}
               </Text>
             </View>
 

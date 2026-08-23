@@ -35,14 +35,25 @@ export function useFameBurst(userId: string | null) {
 
       const postIds = posts.map((p) => p.id);
 
-      const { data: interactions } = await supabase
-        .from("post_interactions")
-        .select("postId, type, userId")
-        .in("postId", postIds);
+      const [{ data: interactions }, { data: commentRows }] = await Promise.all([
+        supabase.from("post_interactions").select("postId, type, userId").in("postId", postIds),
+        supabase
+          .from("fleet_posts")
+          .select("parentId")
+          .in("parentId", postIds)
+          .not("parentId", "is", null),
+      ]);
+
+      const commentCounts: Record<string, number> = {};
+      for (const row of commentRows || []) {
+        if (row.parentId) {
+          commentCounts[row.parentId] = (commentCounts[row.parentId] || 0) + 1;
+        }
+      }
 
       const countsMap: Record<
         string,
-        { hugs: number; echoes: number; casts: number; anchors: number }
+        { hugs: number; echoes: number; casts: number; anchors: number; comments: number }
       > = {};
       const userMap: Record<
         string,
@@ -50,7 +61,13 @@ export function useFameBurst(userId: string | null) {
       > = {};
 
       for (const post of posts) {
-        countsMap[post.id] = { hugs: 0, echoes: 0, casts: 0, anchors: 0 };
+        countsMap[post.id] = {
+          hugs: 0,
+          echoes: 0,
+          casts: 0,
+          anchors: 0,
+          comments: commentCounts[post.id] || 0,
+        };
         userMap[post.id] = { hug: false, echo: false, cast: false, anchor: false };
       }
 
@@ -106,10 +123,12 @@ export function useFamePost(postId: string | null, userId: string | null) {
 
       if (error || !post) return null;
 
-      const { data: interactions } = await supabase
-        .from("post_interactions")
-        .select("postId, type, userId")
-        .eq("postId", postId);
+      const [{ data: interactions }, { data: commentRows }] = await Promise.all([
+        supabase.from("post_interactions").select("postId, type, userId").eq("postId", postId),
+        supabase.from("fleet_posts").select("parentId").eq("parentId", postId),
+      ]);
+
+      const commentCount = commentRows?.length || 0;
 
       let hugs = 0,
         echoes = 0,
@@ -138,7 +157,7 @@ export function useFamePost(postId: string | null, userId: string | null) {
 
       return {
         ...post,
-        counts: { hugs, echoes, casts, anchors },
+        counts: { hugs, echoes, casts, anchors, comments: commentCount },
         myInteractions: { hug, echo, cast, anchor },
       } as FameBurstItem;
     },

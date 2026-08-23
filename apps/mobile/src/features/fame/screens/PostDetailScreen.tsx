@@ -412,7 +412,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
                 <Icon as={MessageCircle} className="text-foreground" size={26} />
               </Button>
               <Text className="text-foreground text-xs mt-1.5 font-bold">
-                {item.counts?.echoes ?? 0}
+                {item.counts?.comments ?? 0}
               </Text>
             </View>
 

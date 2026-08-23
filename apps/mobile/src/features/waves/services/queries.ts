@@ -4,7 +4,8 @@ import { supabase } from "@/lib/supabase";
 
 async function enrichComments(
   comments: Record<string, unknown>[],
-  userId: string | null
+  userId: string | null,
+  replyCounts: Record<string, number> = {}
 ): Promise<FleetPostWithAuthor[]> {
   const ids = comments.map((c) => c.id as string);
 
@@ -13,13 +14,15 @@ async function enrichComments(
     .select("postId, type, userId")
     .in("postId", ids);
 
-  const counts: Record<string, { hugs: number; echoes: number; casts: number; anchors: number }> =
-    {};
+  const counts: Record<
+    string,
+    { hugs: number; echoes: number; casts: number; anchors: number; comments: number }
+  > = {};
   const userInt: Record<string, { hug: boolean; echo: boolean; cast: boolean; anchor: boolean }> =
     {};
 
   for (const id of ids) {
-    counts[id] = { hugs: 0, echoes: 0, casts: 0, anchors: 0 };
+    counts[id] = { hugs: 0, echoes: 0, casts: 0, anchors: 0, comments: replyCounts[id] || 0 };
     userInt[id] = { hug: false, echo: false, cast: false, anchor: false };
   }
 
@@ -45,7 +48,13 @@ async function enrichComments(
   return comments.map((comment) => {
     return {
       ...(comment as FleetPostWithAuthor),
-      counts: counts[comment.id as string] ?? { hugs: 0, echoes: 0, casts: 0, anchors: 0 },
+      counts: counts[comment.id as string] ?? {
+        hugs: 0,
+        echoes: 0,
+        casts: 0,
+        anchors: 0,
+        comments: 0,
+      },
       myInteractions: userInt[comment.id as string] ?? {
         hug: false,
         echo: false,
@@ -84,8 +93,15 @@ export function useComments(postId: string | null, userId: string | null = null)
         .in("parentId", topLevelIds)
         .order("createdAt", { ascending: true });
 
+      const replyCounts: Record<string, number> = {};
+      for (const reply of replies || []) {
+        if (reply.parentId) {
+          replyCounts[reply.parentId] = (replyCounts[reply.parentId] || 0) + 1;
+        }
+      }
+
       const all = [...topLevel, ...(replies || [])];
-      return enrichComments(all, userId);
+      return enrichComments(all, userId, replyCounts);
     },
     enabled: !!realPostId,
   });
