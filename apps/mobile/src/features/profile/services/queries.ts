@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { FleetPostWithAuthor, Profile } from "@xapxap/types";
+import { fetchInteractions } from "@/features/fleet/services/queries";
 import { supabase } from "@/lib/supabase";
 
 export const profileKeys = {
@@ -70,19 +71,34 @@ export function useUserProfileStats(userId: string | null) {
   });
 }
 
-export function useUserWaves(userId: string | null) {
+export function useUserWaves(userId: string | null, viewerId: string | null = null) {
   return useQuery({
-    queryKey: profileKeys.waves(userId),
+    queryKey: [...profileKeys.waves(userId), viewerId],
     enabled: !!userId,
     queryFn: async () => {
+      // Only top-level waves: comments (posts with parentId) live under their parent post.
       const { data, error } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .eq("authorId", userId)
+        .is("parentId", null)
         .order("createdAt", { ascending: false });
 
       if (error) throw error;
-      return (data || []) as FleetPostWithAuthor[];
+
+      const posts = (data || []) as FleetPostWithAuthor[];
+      if (posts.length === 0) return posts;
+
+      const { counts, userInteractions } = await fetchInteractions(
+        posts.map((p) => p.id),
+        viewerId
+      );
+
+      return posts.map((post) => ({
+        ...post,
+        counts: counts[post.id],
+        myInteractions: userInteractions[post.id],
+      }));
     },
   });
 }

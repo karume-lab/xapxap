@@ -10,7 +10,7 @@ import {
   RepeatIcon,
   Send,
 } from "lucide-react-native";
-import { RefreshControl, Image as RNImage, ScrollView, View } from "react-native";
+import { Pressable, RefreshControl, Image as RNImage, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
@@ -18,8 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { useAuth } from "@/contexts/auth-context";
+import { useToggleFleetInteraction } from "@/features/fleet/services/queries";
 import { useUserProfileStats, useUserWaves } from "@/features/profile/services/queries";
 import { useColors } from "@/hooks/use-colors";
+import { cn } from "@/lib/utils";
 
 const STATS_KEYS = [
   { label: "WAVES", icon: CloudIcon, count: 2, colorKey: "cyan" },
@@ -34,10 +37,20 @@ export function UserProfileScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const colors = useColors();
+  const { session, showAuthModal } = useAuth();
+  const { mutate: toggleInteraction } = useToggleFleetInteraction(session?.user?.id || null);
   const { username: paramUsername, id: userId } = useLocalSearchParams<{
     id: string;
     username: string;
   }>();
+
+  const requireAuth = () => {
+    if (!session) {
+      showAuthModal();
+      return false;
+    }
+    return true;
+  };
 
   const {
     data: statsData,
@@ -50,7 +63,7 @@ export function UserProfileScreen() {
     isLoading: isWavesLoading,
     refetch: refetchWaves,
     isRefetching: isRefetchingWaves,
-  } = useUserWaves(userId);
+  } = useUserWaves(userId, session?.user?.id || null);
 
   const fallbackUsername = paramUsername && paramUsername !== "undefined" ? paramUsername : "";
   const username = statsData?.profile?.username || fallbackUsername;
@@ -85,7 +98,7 @@ export function UserProfileScreen() {
         {/* Profile Card */}
         <View className="px-4">
           <Glass radius={32} className="p-8 border border-border items-center">
-            <Avatar username={username} size={120} ring />
+            <Avatar url={statsData?.profile?.avatarUrl} username={username} size={120} ring />
 
             <View className="flex-row items-center mt-4 gap-2">
               <Text className="text-foreground text-3xl font-bold">@{username}</Text>
@@ -145,7 +158,12 @@ export function UserProfileScreen() {
               wavesData?.map((wave: FleetPostWithAuthor) => (
                 <Glass key={wave.id} radius={32} className="p-6 border border-border">
                   <View className="flex-row items-center mb-4">
-                    <Avatar username={wave.author?.username} size={40} ring />
+                    <Avatar
+                      url={wave.author?.avatarUrl}
+                      username={wave.author?.username}
+                      size={40}
+                      ring
+                    />
                     <View className="ml-3 flex-1">
                       <View className="flex-row items-center gap-1">
                         <Text className="text-foreground font-bold">@{wave.author?.username}</Text>
@@ -161,54 +179,122 @@ export function UserProfileScreen() {
                   <Text className="text-foreground text-base mb-4">{wave.content}</Text>
 
                   {wave.mediaUrl && (
-                    <View className="rounded-3xl overflow-hidden bg-background/40 border border-border">
-                      <RNImage
-                        source={{ uri: wave.mediaUrl }}
-                        style={{ width: "100%", height: 200 }}
-                        resizeMode="cover"
-                      />
-                      <View className="absolute bottom-3 left-3 bg-background/60 px-3 py-1.5 rounded-full flex-row items-center gap-2 border border-border">
-                        <Icon as={CloudIcon} size={12} className="text-foreground" />
-                        <Text className="text-foreground text-[10px] font-bold uppercase">
-                          {wave.mediaType}
-                        </Text>
+                    <Pressable onPress={() => router.push(`/post/${wave.id}`)}>
+                      <View className="rounded-3xl overflow-hidden bg-background/40 border border-border">
+                        <RNImage
+                          source={{ uri: wave.mediaUrl }}
+                          style={{ width: "100%", height: 200 }}
+                          resizeMode="cover"
+                        />
+                        <View className="absolute bottom-3 left-3 bg-background/60 px-3 py-1.5 rounded-full flex-row items-center gap-2 border border-border">
+                          <Icon as={CloudIcon} size={12} className="text-foreground" />
+                          <Text className="text-foreground text-[10px] font-bold uppercase">
+                            {wave.mediaType}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
+                    </Pressable>
                   )}
 
                   {/* Action Bar */}
                   <View className="flex-row items-center justify-between mt-6 px-2">
                     <Button
                       variant="ghost"
+                      onPress={() => {
+                        if (!requireAuth()) return;
+                        toggleInteraction({ postId: wave.id, type: "hug" });
+                      }}
                       className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                      <Icon as={Heart} size={18} className="text-muted-foreground" />
-                      <Text className="text-muted-foreground text-xs font-bold">0</Text>
+                      <Icon
+                        as={Heart}
+                        size={18}
+                        color={wave.myInteractions?.hug ? colors.primary : colors.mutedForeground}
+                        fill={wave.myInteractions?.hug ? colors.primary : "transparent"}
+                      />
+                      <Text
+                        className={cn(
+                          "text-xs font-bold",
+                          wave.myInteractions?.hug ? "text-primary" : "text-muted-foreground"
+                        )}>
+                        {wave.counts?.hugs ?? 0}
+                      </Text>
                     </Button>
                     <Button
                       variant="ghost"
+                      onPress={() => {
+                        if (!requireAuth()) return;
+                        toggleInteraction({ postId: wave.id, type: "echo" });
+                      }}
                       className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                      <Icon as={RepeatIcon} size={18} className="text-muted-foreground" />
-                      <Text className="text-muted-foreground text-xs font-bold">Echo</Text>
+                      <Icon
+                        as={RepeatIcon}
+                        size={18}
+                        className={
+                          wave.myInteractions?.echo ? "text-primary" : "text-muted-foreground"
+                        }
+                      />
+                      <Text
+                        className={cn(
+                          "text-xs font-bold",
+                          wave.myInteractions?.echo ? "text-primary" : "text-muted-foreground"
+                        )}>
+                        {wave.counts?.echoes ?? 0}
+                      </Text>
                     </Button>
                     <Button
                       variant="ghost"
+                      onPress={() => router.push(`/post/${wave.id}`)}
                       className="flex-row items-center gap-2 bg-cyan/10 px-3 py-1.5 rounded-full border border-cyan/20 p-0 min-w-0 min-h-0 h-auto w-auto active:bg-transparent">
                       <View className="flex-row items-center gap-2 px-3 py-1.5">
                         <Icon as={MessageCircle} size={18} className="text-cyan" />
-                        <Text className="text-cyan text-xs font-bold">0</Text>
+                        <Text className="text-cyan text-xs font-bold">
+                          {wave.counts?.comments ?? 0}
+                        </Text>
                       </View>
                     </Button>
                     <Button
                       variant="ghost"
+                      onPress={() => {
+                        if (!requireAuth()) return;
+                        toggleInteraction({ postId: wave.id, type: "cast" });
+                      }}
                       className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                      <Icon as={Send} size={18} className="text-muted-foreground" />
-                      <Text className="text-muted-foreground text-xs font-bold">Cast</Text>
+                      <Icon
+                        as={Send}
+                        size={18}
+                        className={
+                          wave.myInteractions?.cast ? "text-primary" : "text-muted-foreground"
+                        }
+                      />
+                      <Text
+                        className={cn(
+                          "text-xs font-bold",
+                          wave.myInteractions?.cast ? "text-primary" : "text-muted-foreground"
+                        )}>
+                        {wave.counts?.casts ?? 0}
+                      </Text>
                     </Button>
                     <Button
                       variant="ghost"
+                      onPress={() => {
+                        if (!requireAuth()) return;
+                        toggleInteraction({ postId: wave.id, type: "anchor" });
+                      }}
                       className="flex-row items-center gap-2 p-0 min-w-0 min-h-0 h-auto w-auto bg-transparent active:bg-transparent">
-                      <Icon as={BookmarkIcon} size={18} className="text-muted-foreground" />
-                      <Text className="text-muted-foreground text-xs font-bold">Save</Text>
+                      <Icon
+                        as={BookmarkIcon}
+                        size={18}
+                        className={
+                          wave.myInteractions?.anchor ? "text-primary" : "text-muted-foreground"
+                        }
+                      />
+                      <Text
+                        className={cn(
+                          "text-xs font-bold",
+                          wave.myInteractions?.anchor ? "text-primary" : "text-muted-foreground"
+                        )}>
+                        {wave.counts?.anchors ?? 0}
+                      </Text>
                     </Button>
                   </View>
                 </Glass>

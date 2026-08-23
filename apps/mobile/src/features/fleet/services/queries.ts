@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
 import { generateUUID, getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
 
-async function fetchInteractions(
+export async function fetchInteractions(
   postIds: string[],
   userId: string | null
 ): Promise<{
@@ -407,6 +407,8 @@ export function useToggleFleetInteraction(userId: string | null) {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });
       queryClient.invalidateQueries({ queryKey: ["fame"] });
+      // Profile screens show interaction counts too.
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },
   });
 }
