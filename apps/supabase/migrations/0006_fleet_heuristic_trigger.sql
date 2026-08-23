@@ -2,6 +2,8 @@
 CREATE OR REPLACE FUNCTION public.handle_fame_heuristic()
 RETURNS trigger
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
   INSERT INTO public.fame_heuristics (post_id)
