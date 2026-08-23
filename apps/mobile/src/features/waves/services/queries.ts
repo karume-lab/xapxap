@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { FleetPostWithAuthor } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 async function enrichComments(
   comments: Record<string, unknown>[],
@@ -11,8 +10,8 @@ async function enrichComments(
 
   const { data: interactions } = await supabase
     .from("post_interactions")
-    .select("post_id, type, user_id")
-    .in("post_id", ids);
+    .select("postId, type, userId")
+    .in("postId", ids);
 
   const counts: Record<string, { hugs: number; echoes: number; casts: number; anchors: number }> =
     {};
@@ -25,7 +24,7 @@ async function enrichComments(
   }
 
   for (const ix of interactions || []) {
-    const c = counts[ix.post_id];
+    const c = counts[ix.postId];
     if (c) {
       const key =
         ix.type === "echo"
@@ -37,18 +36,17 @@ async function enrichComments(
               : "hugs";
       c[key] = (c[key] ?? 0) + 1;
     }
-    if (userId && ix.user_id === userId) {
-      const u = userInt[ix.post_id];
+    if (userId && ix.userId === userId) {
+      const u = userInt[ix.postId];
       if (u) u[ix.type as keyof typeof u] = true;
     }
   }
 
   return comments.map((comment) => {
-    const transformed = transformRow<FleetPostWithAuthor>(comment);
     return {
-      ...transformed,
-      counts: counts[transformed.id] ?? { hugs: 0, echoes: 0, casts: 0, anchors: 0 },
-      myInteractions: userInt[transformed.id] ?? {
+      ...(comment as FleetPostWithAuthor),
+      counts: counts[comment.id as string] ?? { hugs: 0, echoes: 0, casts: 0, anchors: 0 },
+      myInteractions: userInt[comment.id as string] ?? {
         hug: false,
         echo: false,
         cast: false,
@@ -74,8 +72,8 @@ export function useComments(postId: string | null, userId: string | null = null)
       const { data: topLevel } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
-        .eq("parent_id", realPostId)
-        .order("created_at", { ascending: true });
+        .eq("parentId", realPostId)
+        .order("createdAt", { ascending: true });
 
       if (!topLevel || topLevel.length === 0) return [];
 
@@ -83,8 +81,8 @@ export function useComments(postId: string | null, userId: string | null = null)
       const { data: replies } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
-        .in("parent_id", topLevelIds)
-        .order("created_at", { ascending: true });
+        .in("parentId", topLevelIds)
+        .order("createdAt", { ascending: true });
 
       const all = [...topLevel, ...(replies || [])];
       return enrichComments(all, userId);

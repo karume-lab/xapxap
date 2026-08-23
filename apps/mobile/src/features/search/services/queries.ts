@@ -33,12 +33,12 @@ export function useTrendingWaves() {
         .select(`
           id,
           content,
-          media_url,
-          media_type,
-          profiles!author_id(id, username),
+          mediaUrl,
+          mediaType,
+          profiles!fleet_posts_author_id_profiles_id_fk(id, username),
           post_interactions(count)
         `)
-        .order("created_at", { ascending: false })
+        .order("createdAt", { ascending: false })
         .limit(10);
 
       if (error) throw error;
@@ -50,8 +50,8 @@ export function useTrendingWaves() {
         author: post.profiles?.username ?? "",
         authorId: post.profiles?.id,
         buzz: post.post_interactions?.[0]?.count || 0,
-        mediaUrl: post.media_url ?? null,
-        mediaType: post.media_type ?? null,
+        mediaUrl: post.mediaUrl ?? null,
+        mediaType: post.mediaType ?? null,
       })) as TrendingWave[];
     },
   });

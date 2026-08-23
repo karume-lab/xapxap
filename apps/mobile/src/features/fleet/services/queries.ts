@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
 import { generateUUID, getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 async function fetchInteractions(
   postIds: string[],
@@ -24,11 +23,11 @@ async function fetchInteractions(
 
   const { data: interactions } = await supabase
     .from("post_interactions")
-    .select("post_id, type, user_id")
-    .in("post_id", postIds);
+    .select("postId, type, userId")
+    .in("postId", postIds);
 
   for (const ix of interactions || []) {
-    const c = counts[ix.post_id];
+    const c = counts[ix.postId];
     if (c) {
       const key =
         ix.type === "echo"
@@ -40,8 +39,8 @@ async function fetchInteractions(
               : "hugs";
       c[key] = (c[key] || 0) + 1;
     }
-    if (userId && ix.user_id === userId) {
-      const u = userInteractions[ix.post_id];
+    if (userId && ix.userId === userId) {
+      const u = userInteractions[ix.postId];
       if (u) u[ix.type as keyof typeof u] = true;
     }
   }
@@ -64,7 +63,7 @@ export function useFleetThreads(userId: string | null) {
       const { data: posts, error } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
-        .order("created_at", { ascending: false });
+        .order("createdAt", { ascending: false });
 
       if (error || !posts || posts.length === 0) return [];
 
@@ -72,20 +71,17 @@ export function useFleetThreads(userId: string | null) {
 
       const [{ counts, userInteractions }, { data: polls }] = await Promise.all([
         fetchInteractions(postIds, userId),
-        supabase.from("polls").select("id, post_id").in("post_id", postIds),
+        supabase.from("polls").select("id, postId").in("postId", postIds),
       ]);
 
-      const pollMap = new Map(polls?.map((p) => [p.post_id, p.id]) || []);
+      const pollMap = new Map(polls?.map((p) => [p.postId, p.id]) || []);
 
-      return posts.map((post) => {
-        const transformed = transformRow<FleetPostWithAuthor>(post);
-        return {
-          ...transformed,
-          pollId: pollMap.get(post.id) || null,
-          counts: counts[post.id],
-          myInteractions: userInteractions[post.id],
-        };
-      });
+      return posts.map((post) => ({
+        ...(post as FleetPostWithAuthor),
+        pollId: pollMap.get(post.id) || null,
+        counts: counts[post.id],
+        myInteractions: userInteractions[post.id],
+      }));
     },
   });
 }
@@ -97,9 +93,9 @@ export function useFleets() {
       const { data, error } = await supabase
         .from("fleet_decks")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("createdAt", { ascending: false });
       if (error || !data) return [];
-      return data.map((d) => transformRow<FleetDeck>(d));
+      return data as FleetDeck[];
     },
   });
 }
@@ -114,7 +110,7 @@ export function useFleetDeck(deckId: string) {
         .eq("id", deckId)
         .single();
       if (error || !data) return null;
-      return transformRow<FleetDeck>(data);
+      return data as FleetDeck;
     },
   });
 }
@@ -126,8 +122,8 @@ export function useFleetDeckPosts(deckId: string, userId: string | null) {
       const { data: posts, error } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
-        .eq("deck_id", deckId)
-        .order("created_at", { ascending: false });
+        .eq("deckId", deckId)
+        .order("createdAt", { ascending: false });
 
       if (error || !posts || posts.length === 0) return [];
 
@@ -135,20 +131,17 @@ export function useFleetDeckPosts(deckId: string, userId: string | null) {
 
       const [{ counts, userInteractions }, { data: polls }] = await Promise.all([
         fetchInteractions(postIds, userId),
-        supabase.from("polls").select("id, post_id").in("post_id", postIds),
+        supabase.from("polls").select("id, postId").in("postId", postIds),
       ]);
 
-      const pollMap = new Map(polls?.map((p) => [p.post_id, p.id]) || []);
+      const pollMap = new Map(polls?.map((p) => [p.postId, p.id]) || []);
 
-      return posts.map((post) => {
-        const transformed = transformRow<FleetPostWithAuthor>(post);
-        return {
-          ...transformed,
-          pollId: pollMap.get(post.id) || null,
-          counts: counts[post.id],
-          myInteractions: userInteractions[post.id],
-        };
-      });
+      return posts.map((post) => ({
+        ...(post as FleetPostWithAuthor),
+        pollId: pollMap.get(post.id) || null,
+        counts: counts[post.id],
+        myInteractions: userInteractions[post.id],
+      }));
     },
   });
 }
@@ -173,22 +166,22 @@ export function useCreateFleetDeck() {
       const { data, error } = await supabase
         .from("fleet_decks")
         .insert({
-          captain_id: profileId,
+          captainId: profileId,
           name,
           description: description || null,
           category,
-          is_open: isOpen,
-          member_count: 1,
+          isOpen: isOpen,
+          memberCount: 1,
         })
         .select("*")
         .single();
 
       if (error || !data) throw error || new Error("Failed to create fleet deck");
-      const deck = transformRow<FleetDeck>(data);
+      const deck = data as FleetDeck;
 
       const { error: memberError } = await supabase
         .from("fleet_deck_members")
-        .insert({ deck_id: deck.id, user_id: profileId, role: "captain" });
+        .insert({ deckId: deck.id, userId: profileId, role: "captain" });
 
       if (memberError) {
         await supabase.from("fleet_decks").delete().eq("id", deck.id);
@@ -234,27 +227,26 @@ export function usePoll(pollId: string, userId: string | null) {
       const optionIds = poll.options?.map((o: { id: string }) => o.id) || [];
       const { data: votes } = await supabase
         .from("poll_votes")
-        .select("option_id, user_id")
-        .in("option_id", optionIds);
+        .select("optionId, userId")
+        .in("optionId", optionIds);
 
       const votesByOption = new Map<string, number>();
       for (const v of votes || []) {
-        votesByOption.set(v.option_id, (votesByOption.get(v.option_id) || 0) + 1);
+        votesByOption.set(v.optionId, (votesByOption.get(v.optionId) || 0) + 1);
       }
 
-      const userVote = votes?.find((v) => userId && v.user_id === userId);
-      const transformed = transformRow<PollWithDetails>(poll);
+      const userVote = votes?.find((v) => userId && v.userId === userId);
 
       return {
-        ...transformed,
+        ...(poll as PollWithDetails),
         options: (Array.isArray(poll.options) ? poll.options : []).map(
           (opt: Record<string, unknown>) => ({
-            ...transformRow<Record<string, unknown>>(opt),
+            ...opt,
             votes: votesByOption.get((opt.id as string) ?? "") ?? 0,
           })
         ),
         totalVotes: votes?.length ?? 0,
-        userVotedId: userVote?.option_id ?? null,
+        userVotedId: userVote?.optionId ?? null,
       };
     },
   });
@@ -271,11 +263,9 @@ export function usePoll(pollId: string, userId: string | null) {
 
       const optionIds = poll?.options?.map((o: { id: string }) => o.id) || [];
 
-      await supabase.from("poll_votes").delete().in("option_id", optionIds).eq("user_id", userId);
+      await supabase.from("poll_votes").delete().in("optionId", optionIds).eq("userId", userId);
 
-      const { error } = await supabase
-        .from("poll_votes")
-        .insert({ option_id: optionId, user_id: userId });
+      const { error } = await supabase.from("poll_votes").insert({ optionId, userId });
 
       if (error) throw error;
     },
@@ -302,9 +292,9 @@ export function useToggleFleetInteraction(userId: string | null) {
 
       const { data: existing } = await supabase
         .from("post_interactions")
-        .select("post_id")
-        .eq("post_id", postId)
-        .eq("user_id", userId)
+        .select("postId")
+        .eq("postId", postId)
+        .eq("userId", userId)
         .eq("type", type)
         .maybeSingle();
 
@@ -312,14 +302,12 @@ export function useToggleFleetInteraction(userId: string | null) {
         const { error } = await supabase
           .from("post_interactions")
           .delete()
-          .eq("post_id", postId)
-          .eq("user_id", userId)
+          .eq("postId", postId)
+          .eq("userId", userId)
           .eq("type", type);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("post_interactions")
-          .insert({ post_id: postId, user_id: userId, type });
+        const { error } = await supabase.from("post_interactions").insert({ postId, userId, type });
         if (error) throw error;
       }
     },
@@ -454,17 +442,17 @@ export function useCreateFleetPost() {
       const { data, error } = await supabase
         .from("fleet_posts")
         .insert({
-          author_id: authorProfile?.id,
+          authorId: authorProfile?.id,
           content,
-          media_url: uploadedUrl,
-          media_type: uploadedMediaType,
-          deck_id: deckId || null,
+          mediaUrl: uploadedUrl,
+          mediaType: uploadedMediaType,
+          deckId: deckId || null,
         })
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;
-      return transformRow<FleetPostWithAuthor>(data);
+      return data as FleetPostWithAuthor;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });
@@ -521,16 +509,16 @@ export function useEditPost() {
         .from("fleet_posts")
         .update({
           content,
-          media_url: uploadedUrl,
-          media_type: uploadedMediaType,
-          updated_at: new Date().toISOString(),
+          mediaUrl: uploadedUrl,
+          mediaType: uploadedMediaType,
+          updatedAt: new Date().toISOString(),
         })
         .eq("id", postId)
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;
-      return transformRow<FleetPostWithAuthor>(data);
+      return data as FleetPostWithAuthor;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });

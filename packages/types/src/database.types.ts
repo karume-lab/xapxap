@@ -30,46 +30,46 @@ export type Database = {
     Tables: {
       notifications: {
         Row: {
-          actor_id: string | null;
+          actorId: string | null;
           content: string;
-          created_at: string | null;
+          createdAt: string | null;
           id: string;
-          is_read: boolean | null;
+          isRead: boolean | null;
           type: string;
-          user_id: string;
+          userId: string;
           amount: number | null;
         };
         Insert: {
-          actor_id?: string | null;
+          actorId?: string | null;
           content: string;
-          created_at?: string | null;
+          createdAt?: string | null;
           id?: string;
-          is_read?: boolean | null;
+          isRead?: boolean | null;
           type: string;
-          user_id: string;
+          userId: string;
           amount?: number | null;
         };
         Update: {
-          actor_id?: string | null;
+          actorId?: string | null;
           content?: string;
-          created_at?: string | null;
+          createdAt?: string | null;
           id?: string;
-          is_read?: boolean | null;
+          isRead?: boolean | null;
           type?: string;
-          user_id?: string;
+          userId?: string;
           amount?: number | null;
         };
         Relationships: [
           {
             foreignKeyName: "notifications_actor_id_profiles_id_fk";
-            columns: ["actor_id"];
+            columns: ["actorId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "notifications_user_id_profiles_id_fk";
-            columns: ["user_id"];
+            columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -78,57 +78,57 @@ export type Database = {
       };
       fame_heuristics: {
         Row: {
-          burst_ended_at: string | null;
-          burst_started_at: string | null;
-          checksum_verified: boolean | null;
-          completion_rate: number | null;
-          created_at: string | null;
-          follow_conversion_rate: number | null;
-          latency_of_interest_ms: number | null;
-          post_id: string;
-          resolution_meets_floor: boolean | null;
-          sentiment_score: number | null;
+          burstEndedAt: string | null;
+          burstStartedAt: string | null;
+          checksumVerified: boolean | null;
+          completionRate: number | null;
+          createdAt: string | null;
+          followConversionRate: number | null;
+          latencyOfInterestMs: number | null;
+          postId: string;
+          resolutionMeetsFloor: boolean | null;
+          sentimentScore: number | null;
           status: Database["public"]["Enums"]["fame_status"] | null;
-          tag_correlation_score: number | null;
-          updated_at: string | null;
-          views_count: number | null;
+          tagCorrelationScore: number | null;
+          updatedAt: string | null;
+          viewsCount: number | null;
         };
         Insert: {
-          burst_ended_at?: string | null;
-          burst_started_at?: string | null;
-          checksum_verified?: boolean | null;
-          completion_rate?: number | null;
-          created_at?: string | null;
-          follow_conversion_rate?: number | null;
-          latency_of_interest_ms?: number | null;
-          post_id: string;
-          resolution_meets_floor?: boolean | null;
-          sentiment_score?: number | null;
+          burstEndedAt?: string | null;
+          burstStartedAt?: string | null;
+          checksumVerified?: boolean | null;
+          completionRate?: number | null;
+          createdAt?: string | null;
+          followConversionRate?: number | null;
+          latencyOfInterestMs?: number | null;
+          postId: string;
+          resolutionMeetsFloor?: boolean | null;
+          sentimentScore?: number | null;
           status?: Database["public"]["Enums"]["fame_status"] | null;
-          tag_correlation_score?: number | null;
-          updated_at?: string | null;
-          views_count?: number | null;
+          tagCorrelationScore?: number | null;
+          updatedAt?: string | null;
+          viewsCount?: number | null;
         };
         Update: {
-          burst_ended_at?: string | null;
-          burst_started_at?: string | null;
-          checksum_verified?: boolean | null;
-          completion_rate?: number | null;
-          created_at?: string | null;
-          follow_conversion_rate?: number | null;
-          latency_of_interest_ms?: number | null;
-          post_id?: string;
-          resolution_meets_floor?: boolean | null;
-          sentiment_score?: number | null;
+          burstEndedAt?: string | null;
+          burstStartedAt?: string | null;
+          checksumVerified?: boolean | null;
+          completionRate?: number | null;
+          createdAt?: string | null;
+          followConversionRate?: number | null;
+          latencyOfInterestMs?: number | null;
+          postId?: string;
+          resolutionMeetsFloor?: boolean | null;
+          sentimentScore?: number | null;
           status?: Database["public"]["Enums"]["fame_status"] | null;
-          tag_correlation_score?: number | null;
-          updated_at?: string | null;
-          views_count?: number | null;
+          tagCorrelationScore?: number | null;
+          updatedAt?: string | null;
+          viewsCount?: number | null;
         };
         Relationships: [
           {
             foreignKeyName: "fame_heuristics_post_id_fleet_posts_id_fk";
-            columns: ["post_id"];
+            columns: ["postId"];
             isOneToOne: true;
             referencedRelation: "fleet_posts";
             referencedColumns: ["id"];
@@ -137,62 +137,62 @@ export type Database = {
       };
       fleet_posts: {
         Row: {
-          author_id: string;
+          authorId: string;
           checksum: string | null;
           content: string | null;
-          created_at: string | null;
-          deck_id: string | null;
+          createdAt: string | null;
+          deckId: string | null;
           id: string;
-          media_type: string | null;
-          media_url: string | null;
-          parent_id: string | null;
+          mediaType: string | null;
+          mediaUrl: string | null;
+          parentId: string | null;
           resolution: number | null;
-          updated_at: string | null;
+          updatedAt: string | null;
         };
         Insert: {
-          author_id: string;
+          authorId: string;
           checksum?: string | null;
           content?: string | null;
-          created_at?: string | null;
-          deck_id?: string | null;
+          createdAt?: string | null;
+          deckId?: string | null;
           id?: string;
-          media_type?: string | null;
-          media_url?: string | null;
-          parent_id?: string | null;
+          mediaType?: string | null;
+          mediaUrl?: string | null;
+          parentId?: string | null;
           resolution?: number | null;
-          updated_at?: string | null;
+          updatedAt?: string | null;
         };
         Update: {
-          author_id?: string;
+          authorId?: string;
           checksum?: string | null;
           content?: string | null;
-          created_at?: string | null;
-          deck_id?: string | null;
+          createdAt?: string | null;
+          deckId?: string | null;
           id?: string;
-          media_type?: string | null;
-          media_url?: string | null;
-          parent_id?: string | null;
+          mediaType?: string | null;
+          mediaUrl?: string | null;
+          parentId?: string | null;
           resolution?: number | null;
-          updated_at?: string | null;
+          updatedAt?: string | null;
         };
         Relationships: [
           {
             foreignKeyName: "fleet_posts_author_id_profiles_id_fk";
-            columns: ["author_id"];
+            columns: ["authorId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "fleet_posts_deck_id_fleet_decks_id_fk";
-            columns: ["deck_id"];
+            columns: ["deckId"];
             isOneToOne: false;
             referencedRelation: "fleet_decks";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "fleet_posts_parent_id_fleet_posts_id_fk";
-            columns: ["parent_id"];
+            columns: ["parentId"];
             isOneToOne: false;
             referencedRelation: "fleet_posts";
             referencedColumns: ["id"];
@@ -202,45 +202,45 @@ export type Database = {
       gem_transactions: {
         Row: {
           amount: number;
-          created_at: string | null;
+          createdAt: string | null;
           id: string;
-          receiver_id: string | null;
-          reference_id: string | null;
-          sender_id: string | null;
+          receiverId: string | null;
+          referenceId: string | null;
+          senderId: string | null;
           status: Database["public"]["Enums"]["transaction_status"] | null;
           type: Database["public"]["Enums"]["transaction_type"];
         };
         Insert: {
           amount: number;
-          created_at?: string | null;
+          createdAt?: string | null;
           id?: string;
-          receiver_id?: string | null;
-          reference_id?: string | null;
-          sender_id?: string | null;
+          receiverId?: string | null;
+          referenceId?: string | null;
+          senderId?: string | null;
           status?: Database["public"]["Enums"]["transaction_status"] | null;
           type: Database["public"]["Enums"]["transaction_type"];
         };
         Update: {
           amount?: number;
-          created_at?: string | null;
+          createdAt?: string | null;
           id?: string;
-          receiver_id?: string | null;
-          reference_id?: string | null;
-          sender_id?: string | null;
+          receiverId?: string | null;
+          referenceId?: string | null;
+          senderId?: string | null;
           status?: Database["public"]["Enums"]["transaction_status"] | null;
           type?: Database["public"]["Enums"]["transaction_type"];
         };
         Relationships: [
           {
             foreignKeyName: "gem_transactions_receiver_id_profiles_id_fk";
-            columns: ["receiver_id"];
+            columns: ["receiverId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "gem_transactions_sender_id_profiles_id_fk";
-            columns: ["sender_id"];
+            columns: ["senderId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -249,48 +249,48 @@ export type Database = {
       };
       live_streams: {
         Row: {
-          broadcaster_id: string;
-          created_at: string | null;
-          ended_at: string | null;
-          entry_fee_gems: number | null;
+          broadcasterId: string;
+          createdAt: string | null;
+          endedAt: string | null;
+          entryFeeGems: number | null;
           id: string;
-          is_gated: boolean | null;
-          is_live: boolean | null;
-          playback_url: string | null;
+          isGated: boolean | null;
+          isLive: boolean | null;
+          playbackUrl: string | null;
           quality: Database["public"]["Enums"]["stream_quality"] | null;
-          started_at: string | null;
+          startedAt: string | null;
           title: string;
         };
         Insert: {
-          broadcaster_id: string;
-          created_at?: string | null;
-          ended_at?: string | null;
-          entry_fee_gems?: number | null;
+          broadcasterId: string;
+          createdAt?: string | null;
+          endedAt?: string | null;
+          entryFeeGems?: number | null;
           id?: string;
-          is_gated?: boolean | null;
-          is_live?: boolean | null;
-          playback_url?: string | null;
+          isGated?: boolean | null;
+          isLive?: boolean | null;
+          playbackUrl?: string | null;
           quality?: Database["public"]["Enums"]["stream_quality"] | null;
-          started_at?: string | null;
+          startedAt?: string | null;
           title: string;
         };
         Update: {
-          broadcaster_id?: string;
-          created_at?: string | null;
-          ended_at?: string | null;
-          entry_fee_gems?: number | null;
+          broadcasterId?: string;
+          createdAt?: string | null;
+          endedAt?: string | null;
+          entryFeeGems?: number | null;
           id?: string;
-          is_gated?: boolean | null;
-          is_live?: boolean | null;
-          playback_url?: string | null;
+          isGated?: boolean | null;
+          isLive?: boolean | null;
+          playbackUrl?: string | null;
           quality?: Database["public"]["Enums"]["stream_quality"] | null;
-          started_at?: string | null;
+          startedAt?: string | null;
           title?: string;
         };
         Relationships: [
           {
             foreignKeyName: "live_streams_broadcaster_id_profiles_id_fk";
-            columns: ["broadcaster_id"];
+            columns: ["broadcasterId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -299,45 +299,45 @@ export type Database = {
       };
       payout_requests: {
         Row: {
-          created_at: string | null;
-          fiat_amount: number;
-          fiat_currency: string | null;
-          gem_amount: number;
+          createdAt: string | null;
+          fiatAmount: number;
+          fiatCurrency: string | null;
+          gemAmount: number;
           id: string;
-          mobile_money_number: string;
-          processed_at: string | null;
+          mobileMoneyNumber: string;
+          processedAt: string | null;
           provider: string;
           status: Database["public"]["Enums"]["transaction_status"] | null;
-          user_id: string;
+          userId: string;
         };
         Insert: {
-          created_at?: string | null;
-          fiat_amount: number;
-          fiat_currency?: string | null;
-          gem_amount: number;
+          createdAt?: string | null;
+          fiatAmount: number;
+          fiatCurrency?: string | null;
+          gemAmount: number;
           id?: string;
-          mobile_money_number: string;
-          processed_at?: string | null;
+          mobileMoneyNumber: string;
+          processedAt?: string | null;
           provider: string;
           status?: Database["public"]["Enums"]["transaction_status"] | null;
-          user_id: string;
+          userId: string;
         };
         Update: {
-          created_at?: string | null;
-          fiat_amount?: number;
-          fiat_currency?: string | null;
-          gem_amount?: number;
+          createdAt?: string | null;
+          fiatAmount?: number;
+          fiatCurrency?: string | null;
+          gemAmount?: number;
           id?: string;
-          mobile_money_number?: string;
-          processed_at?: string | null;
+          mobileMoneyNumber?: string;
+          processedAt?: string | null;
           provider?: string;
           status?: Database["public"]["Enums"]["transaction_status"] | null;
-          user_id?: string;
+          userId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "payout_requests_user_id_profiles_id_fk";
-            columns: ["user_id"];
+            columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -347,23 +347,23 @@ export type Database = {
       poll_options: {
         Row: {
           id: string;
-          option_text: string;
-          poll_id: string;
+          optionText: string;
+          pollId: string;
         };
         Insert: {
           id?: string;
-          option_text: string;
-          poll_id: string;
+          optionText: string;
+          pollId: string;
         };
         Update: {
           id?: string;
-          option_text?: string;
-          poll_id?: string;
+          optionText?: string;
+          pollId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "poll_options_poll_id_polls_id_fk";
-            columns: ["poll_id"];
+            columns: ["pollId"];
             isOneToOne: false;
             referencedRelation: "polls";
             referencedColumns: ["id"];
@@ -372,31 +372,31 @@ export type Database = {
       };
       poll_votes: {
         Row: {
-          created_at: string | null;
-          option_id: string;
-          user_id: string;
+          createdAt: string | null;
+          optionId: string;
+          userId: string;
         };
         Insert: {
-          created_at?: string | null;
-          option_id: string;
-          user_id: string;
+          createdAt?: string | null;
+          optionId: string;
+          userId: string;
         };
         Update: {
-          created_at?: string | null;
-          option_id?: string;
-          user_id?: string;
+          createdAt?: string | null;
+          optionId?: string;
+          userId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "poll_votes_option_id_poll_options_id_fk";
-            columns: ["option_id"];
+            columns: ["optionId"];
             isOneToOne: false;
             referencedRelation: "poll_options";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "poll_votes_user_id_profiles_id_fk";
-            columns: ["user_id"];
+            columns: ["userId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -405,30 +405,30 @@ export type Database = {
       };
       polls: {
         Row: {
-          created_at: string | null;
-          expires_at: string;
+          createdAt: string | null;
+          expiresAt: string;
           id: string;
-          post_id: string;
+          postId: string;
           question: string;
         };
         Insert: {
-          created_at?: string | null;
-          expires_at: string;
+          createdAt?: string | null;
+          expiresAt: string;
           id?: string;
-          post_id: string;
+          postId: string;
           question: string;
         };
         Update: {
-          created_at?: string | null;
-          expires_at?: string;
+          createdAt?: string | null;
+          expiresAt?: string;
           id?: string;
-          post_id?: string;
+          postId?: string;
           question?: string;
         };
         Relationships: [
           {
             foreignKeyName: "polls_post_id_fleet_posts_id_fk";
-            columns: ["post_id"];
+            columns: ["postId"];
             isOneToOne: false;
             referencedRelation: "fleet_posts";
             referencedColumns: ["id"];
@@ -437,67 +437,67 @@ export type Database = {
       };
       profiles: {
         Row: {
-          avatar_url: string | null;
+          avatarUrl: string | null;
           bio: string | null;
-          created_at: string | null;
-          display_name: string | null;
+          createdAt: string | null;
+          displayName: string | null;
           id: string;
-          is_premium: boolean | null;
+          isPremium: boolean | null;
           role: string | null;
-          updated_at: string | null;
+          updatedAt: string | null;
           username: string;
         };
         Insert: {
-          avatar_url?: string | null;
+          avatarUrl?: string | null;
           bio?: string | null;
-          created_at?: string | null;
-          display_name?: string | null;
+          createdAt?: string | null;
+          displayName?: string | null;
           id: string;
-          is_premium?: boolean | null;
+          isPremium?: boolean | null;
           role?: string | null;
-          updated_at?: string | null;
+          updatedAt?: string | null;
           username: string;
         };
         Update: {
-          avatar_url?: string | null;
+          avatarUrl?: string | null;
           bio?: string | null;
-          created_at?: string | null;
-          display_name?: string | null;
+          createdAt?: string | null;
+          displayName?: string | null;
           id?: string;
-          is_premium?: boolean | null;
+          isPremium?: boolean | null;
           role?: string | null;
-          updated_at?: string | null;
+          updatedAt?: string | null;
           username?: string;
         };
         Relationships: [];
       };
       stream_tickets: {
         Row: {
-          purchased_at: string | null;
-          stream_id: string;
-          viewer_id: string;
+          purchasedAt: string | null;
+          streamId: string;
+          viewerId: string;
         };
         Insert: {
-          purchased_at?: string | null;
-          stream_id: string;
-          viewer_id: string;
+          purchasedAt?: string | null;
+          streamId: string;
+          viewerId: string;
         };
         Update: {
-          purchased_at?: string | null;
-          stream_id?: string;
-          viewer_id?: string;
+          purchasedAt?: string | null;
+          streamId?: string;
+          viewerId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "stream_tickets_stream_id_live_streams_id_fk";
-            columns: ["stream_id"];
+            columns: ["streamId"];
             isOneToOne: false;
             referencedRelation: "live_streams";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "stream_tickets_viewer_id_profiles_id_fk";
-            columns: ["viewer_id"];
+            columns: ["viewerId"];
             isOneToOne: false;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
@@ -507,23 +507,23 @@ export type Database = {
       wallets: {
         Row: {
           balance: number;
-          updated_at: string | null;
-          user_id: string;
+          updatedAt: string | null;
+          userId: string;
         };
         Insert: {
           balance?: number;
-          updated_at?: string | null;
-          user_id: string;
+          updatedAt?: string | null;
+          userId: string;
         };
         Update: {
           balance?: number;
-          updated_at?: string | null;
-          user_id?: string;
+          updatedAt?: string | null;
+          userId?: string;
         };
         Relationships: [
           {
             foreignKeyName: "wallets_user_id_profiles_id_fk";
-            columns: ["user_id"];
+            columns: ["userId"];
             isOneToOne: true;
             referencedRelation: "profiles";
             referencedColumns: ["id"];

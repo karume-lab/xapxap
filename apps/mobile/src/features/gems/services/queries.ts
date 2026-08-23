@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PayoutRequest } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 interface GemActivityItem {
   id: string;
@@ -85,11 +84,11 @@ export function useWalletBalance(userId: string | null) {
       const { data, error } = await supabase
         .from("wallets")
         .select("*")
-        .eq("user_id", userId)
+        .eq("userId", userId)
         .maybeSingle();
 
       if (error || !data) return { userId, balance: 0, updatedAt: new Date() };
-      return transformRow<{ userId: string; balance: number; updatedAt: Date }>(data);
+      return data;
     },
   });
 }
@@ -102,12 +101,12 @@ export function useGemActivity(userId: string | null) {
       const { data, error } = await supabase
         .from("gem_transactions")
         .select("*")
-        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-        .order("created_at", { ascending: false })
+        .or(`senderId.eq.${userId},receiverId.eq.${userId}`)
+        .order("createdAt", { ascending: false })
         .limit(50);
 
       if (error || !data) return [];
-      return data.map((row) => toGemActivity(transformRow(row), userId));
+      return data.map((row) => toGemActivity(row, userId));
     },
   });
 }

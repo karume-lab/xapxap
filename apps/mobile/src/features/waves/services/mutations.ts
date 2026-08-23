@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FleetPostWithAuthor } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 import { commentsKeys } from "./queries";
 
 export function useAddComment() {
@@ -23,15 +22,15 @@ export function useAddComment() {
       const { data, error } = await supabase
         .from("fleet_posts")
         .insert({
-          author_id: author.id,
-          parent_id: realParentId,
+          authorId: author.id,
+          parentId: realParentId,
           content,
         })
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;
-      return { newComment: transformRow<FleetPostWithAuthor>(data), postId };
+      return { newComment: data as FleetPostWithAuthor, postId };
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: commentsKeys.postComments(res.postId, null) });
@@ -49,9 +48,9 @@ export function useToggleCommentLike(userId: string | null) {
 
       const { data: existing } = await supabase
         .from("post_interactions")
-        .select("post_id")
-        .eq("post_id", commentId)
-        .eq("user_id", userId)
+        .select("postId")
+        .eq("postId", commentId)
+        .eq("userId", userId)
         .eq("type", "hug")
         .maybeSingle();
 
@@ -59,14 +58,14 @@ export function useToggleCommentLike(userId: string | null) {
         const { error } = await supabase
           .from("post_interactions")
           .delete()
-          .eq("post_id", commentId)
-          .eq("user_id", userId)
+          .eq("postId", commentId)
+          .eq("userId", userId)
           .eq("type", "hug");
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("post_interactions")
-          .insert({ post_id: commentId, user_id: userId, type: "hug" });
+          .insert({ postId: commentId, userId, type: "hug" });
         if (error) throw error;
       }
 

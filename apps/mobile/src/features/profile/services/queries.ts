@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { FleetPostWithAuthor, Profile } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 export const profileKeys = {
   all: ["profiles"] as const,
@@ -27,7 +26,7 @@ export function useUserProfileStats(userId: string | null) {
       const { data: userPosts } = await supabase
         .from("fleet_posts")
         .select("id")
-        .eq("author_id", id);
+        .eq("authorId", id);
 
       const postIds = userPosts?.map((p) => p.id) ?? [];
 
@@ -35,16 +34,16 @@ export function useUserProfileStats(userId: string | null) {
         supabase
           .from("fleet_posts")
           .select("*", { count: "exact", head: true })
-          .eq("author_id", id)
-          .is("parent_id", null),
+          .eq("authorId", id)
+          .is("parentId", null),
         postIds.length > 0
           ? supabase
               .from("fleet_posts")
               .select("*", { count: "exact", head: true })
-              .in("parent_id", postIds)
+              .in("parentId", postIds)
           : Promise.resolve({ count: 0, data: null, error: null }),
         postIds.length > 0
-          ? supabase.from("post_interactions").select("type").in("post_id", postIds)
+          ? supabase.from("post_interactions").select("type").in("postId", postIds)
           : Promise.resolve({ data: [], error: null }),
       ]);
 
@@ -79,11 +78,11 @@ export function useUserWaves(userId: string | null) {
       const { data, error } = await supabase
         .from("fleet_posts")
         .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
-        .eq("author_id", userId)
-        .order("created_at", { ascending: false });
+        .eq("authorId", userId)
+        .order("createdAt", { ascending: false });
 
       if (error) throw error;
-      return (data || []).map((row) => transformRow<FleetPostWithAuthor>(row));
+      return (data || []) as FleetPostWithAuthor[];
     },
   });
 }

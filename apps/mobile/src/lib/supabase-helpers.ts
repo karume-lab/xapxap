@@ -1,33 +1,9 @@
-function snakeToCamel(str: string): string {
-  return str.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-}
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
 
-export function transformRow<T>(row: Record<string, unknown>): T {
-  const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(row)) {
-    const camelKey = snakeToCamel(key);
-    if (Array.isArray(value)) {
-      result[camelKey] = value.map((item) =>
-        item && typeof item === "object" && !(item instanceof Date)
-          ? transformRow(item as Record<string, unknown>)
-          : item
-      );
-    } else if (value && typeof value === "object" && !(value instanceof Date)) {
-      result[camelKey] = transformRow(value as Record<string, unknown>);
-    } else if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-      result[camelKey] = new Date(value);
-    } else if (typeof value === "string" && value.includes("127.0.0.1:54321")) {
-      result[camelKey] = value.replace(
-        "http://127.0.0.1:54321",
-        process.env.EXPO_PUBLIC_SUPABASE_URL || ""
-      );
-    } else {
-      result[camelKey] = value;
-    }
+export function fixMediaUrl<T>(obj: T): T {
+  if (!SUPABASE_URL) return obj;
+  if (typeof obj === "string" && obj.includes("127.0.0.1:54321")) {
+    return obj.replace("http://127.0.0.1:54321", SUPABASE_URL) as T;
   }
-  return result as T;
-}
-
-export function transformRows<T>(rows: Record<string, unknown>[]): T[] {
-  return rows.map((row) => transformRow<T>(row));
+  return obj;
 }

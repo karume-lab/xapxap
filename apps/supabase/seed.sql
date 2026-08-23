@@ -36,7 +36,7 @@ using ( bucket_id = 'media' and auth.uid() = owner );
 -- ---------------------------------------------------------------------------
 -- Profiles
 -- ---------------------------------------------------------------------------
-insert into public.profiles (id, username, display_name, avatar_url, bio, is_premium, role, created_at, updated_at) values
+insert into public.profiles (id, username, displayName, avatarUrl, bio, isPremium, role, createdAt, updatedAt) values
   ('10000000-0000-4000-8000-000000000001', 'cyber_punk',    'CyberPunk',    'https://i.pravatar.cc/150?img=12', 'Building the future at one frame per minute.', true,  'user', now() - interval '120 days', now() - interval '2 days'),
   ('10000000-0000-4000-8000-000000000002', 'neon_rider',    'Neon Rider',   'https://i.pravatar.cc/150?img=15', 'Screens. Streets. Speed.',                      false, 'user', now() - interval '95 days',  now() - interval '5 days'),
   ('10000000-0000-4000-8000-000000000003', 'rumzkurama',    'Rumz',         'https://i.pravatar.cc/150?img=33', 'Just here for the waves.',                       false, 'user', now() - interval '60 days',  now() - interval '1 day'),
@@ -64,14 +64,14 @@ on conflict (id) do nothing;
 -- ---------------------------------------------------------------------------
 -- Fleet decks + members
 -- ---------------------------------------------------------------------------
-insert into public.fleet_decks (id, captain_id, name, description, category, is_open, member_count, created_at) values
+insert into public.fleet_decks (id, captainId, name, description, category, isOpen, memberCount, createdAt) values
   ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'TechNairobi',    'Devs, founders and makers building in Nairobi.',  'tech',  true, 3, now() - interval '90 days'),
   ('30000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000005', 'BeatDrop KE',    'Daily drops, live sets and studio vibes.',        'music', true, 3, now() - interval '70 days'),
   ('30000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000008', 'Pixels & Pad',   'Clips, speedruns and gamer memes.',               'gaming', true, 2, now() - interval '40 days'),
   ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000006', 'The Wave Riders','Short-form kings and queens. 1 minute fame.',     'waves', true, 3, now() - interval '15 days')
 on conflict (id) do nothing;
 
-insert into public.fleet_deck_members (deck_id, user_id, role, joined_at) values
+insert into public.fleet_deck_members (deckId, userId, role, joinedAt) values
   ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'captain', now() - interval '90 days'),
   ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'member',  now() - interval '80 days'),
   ('30000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000007', 'member',  now() - interval '9 days'),
@@ -83,12 +83,12 @@ insert into public.fleet_deck_members (deck_id, user_id, role, joined_at) values
   ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000006', 'captain', now() - interval '15 days'),
   ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000003', 'member',  now() - interval '12 days'),
   ('30000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000004', 'member',  now() - interval '10 days')
-on conflict (deck_id, user_id) do nothing;
+on conflict (deckId, userId) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- Fleet posts (fame_heuristics rows are auto-created by trigger in 0006)
 -- ---------------------------------------------------------------------------
-insert into public.fleet_posts (id, author_id, deck_id, parent_id, content, media_url, media_type, checksum, resolution, created_at, updated_at) values
+insert into public.fleet_posts (id, authorId, deckId, parentId, content, mediaUrl, mediaType, checksum, resolution, createdAt, updatedAt) values
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', null, 'Wrote a script that edits my clips while I sleep. The future is automated. #tech #gems', 'https://bvhywimygpsoctrlrwky.supabase.co/storage/v1/object/public/media/posts/11111111-1111-1111-1111-111111111111/img1.jpg', 'image/jpeg', 'seed-cyber-1', 720, now() - interval '2 hours', now() - interval '2 hours'),
   ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000002', '30000000-0000-4000-8000-000000000001', null, 'Night ride through the city. The lights never miss. #waves #tech', 'https://bvhywimygpsoctrlrwky.supabase.co/storage/v1/object/public/media/posts/b3c56a3b-ee0f-495d-9955-24155f62d257/img1_city.jpg', 'image/jpeg', 'seed-neon-1', 1080, now() - interval '5 hours', now() - interval '5 hours'),
   ('20000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002', null, null, 'POV: your upload hits 10k waves at 3am. #fame #waves', null, null, 'seed-neon-2', null, now() - interval '26 hours', now() - interval '26 hours'),
@@ -110,18 +110,18 @@ on conflict (id) do nothing;
 -- ---------------------------------------------------------------------------
 update public.fame_heuristics set
   status = 'fame_burst',
-  checksum_verified = true,
-  resolution_meets_floor = true,
-  sentiment_score = 0.9200,
-  tag_correlation_score = 0.8800,
-  views_count = 48210,
-  completion_rate = 0.7800,
-  latency_of_interest_ms = 1400,
-  follow_conversion_rate = 0.1200,
-  burst_started_at = now() - interval '26 hours',
-  burst_ended_at = now() - interval '2 hours',
-  updated_at = now()
-where post_id in (
+  checksumVerified = true,
+  resolutionMeetsFloor = true,
+  sentimentScore = 0.9200,
+  tagCorrelationScore = 0.8800,
+  viewsCount = 48210,
+  completionRate = 0.7800,
+  latencyOfInterestMs = 1400,
+  followConversionRate = 0.1200,
+  burstStartedAt = now() - interval '26 hours',
+  burstEndedAt = now() - interval '2 hours',
+  updatedAt = now()
+where postId in (
   '20000000-0000-4000-8000-000000000001',
   '20000000-0000-4000-8000-000000000005',
   '20000000-0000-4000-8000-000000000006',
@@ -132,30 +132,30 @@ where post_id in (
 
 update public.fame_heuristics set
   status = 'trend_deck',
-  checksum_verified = true,
-  resolution_meets_floor = true,
-  sentiment_score = 0.7400,
-  tag_correlation_score = 0.7000,
-  views_count = 18940,
-  completion_rate = 0.5400,
-  latency_of_interest_ms = 3200,
-  follow_conversion_rate = 0.0600,
-  burst_started_at = now() - interval '8 hours',
-  burst_ended_at = null,
-  updated_at = now()
-where post_id in (
+  checksumVerified = true,
+  resolutionMeetsFloor = true,
+  sentimentScore = 0.7400,
+  tagCorrelationScore = 0.7000,
+  viewsCount = 18940,
+  completionRate = 0.5400,
+  latencyOfInterestMs = 3200,
+  followConversionRate = 0.0600,
+  burstStartedAt = now() - interval '8 hours',
+  burstEndedAt = null,
+  updatedAt = now()
+where postId in (
   '20000000-0000-4000-8000-000000000002',
   '20000000-0000-4000-8000-000000000009',
   '20000000-0000-4000-8000-000000000014'
 );
 
 update public.fame_heuristics set
-  sentiment_score = 0.5100,
-  tag_correlation_score = 0.4000,
-  views_count = 3100,
-  completion_rate = 0.2200,
-  updated_at = now()
-where post_id in (
+  sentimentScore = 0.5100,
+  tagCorrelationScore = 0.4000,
+  viewsCount = 3100,
+  completionRate = 0.2200,
+  updatedAt = now()
+where postId in (
   '20000000-0000-4000-8000-000000000003',
   '20000000-0000-4000-8000-000000000004',
   '20000000-0000-4000-8000-000000000007',
@@ -166,7 +166,7 @@ where post_id in (
 -- ---------------------------------------------------------------------------
 -- Post interactions (hug / echo / cast / anchor)
 -- ---------------------------------------------------------------------------
-insert into public.post_interactions (post_id, user_id, type, created_at) values
+insert into public.post_interactions (postId, userId, type, createdAt) values
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'hug',   now() - interval '2 hours'),
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'hug',   now() - interval '100 minutes'),
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000007', 'echo',  now() - interval '90 minutes'),
@@ -185,18 +185,18 @@ insert into public.post_interactions (post_id, user_id, type, created_at) values
   ('20000000-0000-4000-8000-000000000014', '10000000-0000-4000-8000-000000000006', 'hug',   now() - interval '20 hours'),
   ('20000000-0000-4000-8000-000000000014', '10000000-0000-4000-8000-000000000001', 'anchor',now() - interval '19 hours'),
   ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000003', 'hug',   now() - interval '5 hours')
-on conflict (post_id, user_id, type) do nothing;
+on conflict (postId, userId, type) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- Polls + options + votes
 -- ---------------------------------------------------------------------------
-insert into public.polls (id, post_id, question, expires_at, created_at) values
+insert into public.polls (id, postId, question, expiresAt, createdAt) values
   ('40000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000004', 'Is this beat drop-worthy?',        now() + interval '3 days', now() - interval '8 hours'),
   ('40000000-0000-4000-8000-000000000002', '20000000-0000-4000-8000-000000000010', 'Which route should I run next?',    now() + interval '2 days', now() - interval '7 hours'),
   ('40000000-0000-4000-8000-000000000003', '20000000-0000-4000-8000-000000000001', 'Ship the AI editor to beta?',       now() + interval '5 days', now() - interval '2 hours')
 on conflict (id) do nothing;
 
-insert into public.poll_options (id, poll_id, option_text) values
+insert into public.poll_options (id, pollId, optionText) values
   ('50000000-0000-4000-8000-000000000001', '40000000-0000-4000-8000-000000000001', 'Drop it'),
   ('50000000-0000-4000-8000-000000000002', '40000000-0000-4000-8000-000000000001', 'Keep cooking'),
   ('50000000-0000-4000-8000-000000000003', '40000000-0000-4000-8000-000000000002', 'Castle%'),
@@ -205,19 +205,19 @@ insert into public.poll_options (id, poll_id, option_text) values
   ('50000000-0000-4000-8000-000000000006', '40000000-0000-4000-8000-000000000003', 'Not yet')
 on conflict (id) do nothing;
 
-insert into public.poll_votes (option_id, user_id, created_at) values
+insert into public.poll_votes (optionId, userId, createdAt) values
   ('50000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', now() - interval '7 hours'),
   ('50000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', now() - interval '6 hours'),
   ('50000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000006', now() - interval '5 hours'),
   ('50000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000002', now() - interval '6 hours'),
   ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000007', now() - interval '2 hours'),
   ('50000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000002', now() - interval '1 hour')
-on conflict (option_id, user_id) do nothing;
+on conflict (optionId, userId) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- Post tags + tag counts
 -- ---------------------------------------------------------------------------
-insert into public.post_tags (post_id, tag_id) values
+insert into public.post_tags (postId, tagId) values
   ('20000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000008'),
   ('20000000-0000-4000-8000-000000000001', '70000000-0000-4000-8000-000000000005'),
   ('20000000-0000-4000-8000-000000000002', '70000000-0000-4000-8000-000000000006'),
@@ -236,30 +236,30 @@ insert into public.post_tags (post_id, tag_id) values
   ('20000000-0000-4000-8000-000000000012', '70000000-0000-4000-8000-000000000008'),
   ('20000000-0000-4000-8000-000000000014', '70000000-0000-4000-8000-000000000006'),
   ('20000000-0000-4000-8000-000000000014', '70000000-0000-4000-8000-000000000005')
-on conflict (post_id, tag_id) do nothing;
+on conflict (postId, tagId) do nothing;
 
-update public.tags set count = (select count(*) from public.post_tags where post_tags.tag_id = tags.id);
+update public.tags set count = (select count(*) from public.post_tags where post_tags.tagId = tags.id);
 
 -- ---------------------------------------------------------------------------
 -- Live streams + tickets
 -- ---------------------------------------------------------------------------
-insert into public.live_streams (id, broadcaster_id, title, quality, is_live, playback_url, is_gated, entry_fee_gems, started_at, created_at) values
+insert into public.live_streams (id, broadcasterId, title, quality, isLive, playbackUrl, isGated, entryFeeGems, startedAt, createdAt) values
   ('60000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'Wave prediction model — live demo', 'aqua_premium', true,  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4', false, 0,   now() - interval '20 minutes', now() - interval '1 day'),
   ('60000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000005', 'Nyash Chef live: 60-second chapatis', 'drift_expo',    true,  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', true,  50,  now() - interval '5 minutes',  now() - interval '2 days'),
   ('60000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000008', 'Speedrun attempts (don''t clip me)', 'drift_expo',    false, null, true,  20,  null, now() - interval '3 days'),
   ('60000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000006', 'Drift day recap + rain edits',       'drift_expo',    false, null, false, 0,   null, now() - interval '4 days')
 on conflict (id) do nothing;
 
-insert into public.stream_tickets (stream_id, viewer_id, purchased_at) values
+insert into public.stream_tickets (streamId, viewerId, purchasedAt) values
   ('60000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000003', now() - interval '4 minutes'),
   ('60000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000004', now() - interval '3 minutes'),
   ('60000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000002', now() - interval '3 days')
-on conflict (stream_id, viewer_id) do nothing;
+on conflict (streamId, viewerId) do nothing;
 
 -- ---------------------------------------------------------------------------
 -- Wallets + gem transactions
 -- ---------------------------------------------------------------------------
-insert into public.wallets (user_id, balance, updated_at) values
+insert into public.wallets (userId, balance, updatedAt) values
   ('10000000-0000-4000-8000-000000000001', 1240, now() - interval '1 day'),
   ('10000000-0000-4000-8000-000000000002', 320,  now() - interval '2 days'),
   ('10000000-0000-4000-8000-000000000003', 180,  now() - interval '1 day'),
@@ -268,9 +268,9 @@ insert into public.wallets (user_id, balance, updated_at) values
   ('10000000-0000-4000-8000-000000000006', 0,    now() - interval '4 days'),
   ('10000000-0000-4000-8000-000000000007', 2500, now() - interval '2 days'),
   ('10000000-0000-4000-8000-000000000008', 75,   now() - interval '6 hours')
-on conflict (user_id) do nothing;
+on conflict (userId) do nothing;
 
-insert into public.gem_transactions (id, sender_id, receiver_id, amount, type, status, reference_id, created_at) values
+insert into public.gem_transactions (id, senderId, receiverId, amount, type, status, referenceId, createdAt) values
   ('80000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000007', '10000000-0000-4000-8000-000000000005', 100, 'tip',           'completed', null, now() - interval '1 hour'),
   ('80000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', 50,  'tip',           'completed', null, now() - interval '2 hours'),
   ('80000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000003', null,                               500, 'deposit',       'completed', 'dep-seed-1', now() - interval '3 days'),
@@ -284,7 +284,7 @@ on conflict (id) do nothing;
 -- ---------------------------------------------------------------------------
 -- Payout requests
 -- ---------------------------------------------------------------------------
-insert into public.payout_requests (id, user_id, gem_amount, fiat_amount, fiat_currency, mobile_money_number, provider, status, created_at) values
+insert into public.payout_requests (id, userId, gemAmount, fiatAmount, fiatCurrency, mobileMoneyNumber, provider, status, createdAt) values
   ('90000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 200, 1200.00, 'KES', '+254711000001', 'mpesa', 'pending',   now() - interval '1 day'),
   ('90000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000007', 800, 4800.00, 'KES', '+254711000002', 'mpesa', 'completed', now() - interval '8 days')
 on conflict (id) do nothing;
@@ -292,7 +292,7 @@ on conflict (id) do nothing;
 -- ---------------------------------------------------------------------------
 -- Notifications
 -- ---------------------------------------------------------------------------
-insert into public.notifications (id, user_id, actor_id, type, content, amount, is_read, created_at) values
+insert into public.notifications (id, userId, actorId, type, content, amount, isRead, createdAt) values
   ('a0000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', '10000000-0000-4000-8000-000000000007', 'tip',    'Sahara Siren sent you 100 gems for the pilau video.', 100, false, now() - interval '1 hour'),
   ('a0000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'hug',    'Neon Rider hugged your post.',                            null, false, now() - interval '2 hours'),
   ('a0000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000001', 'echo',   'CyberPunk echoed your wave.',                               null, true,  now() - interval '3 hours'),

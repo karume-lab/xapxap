@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { LiveStreamWithAuthor, Profile } from "@xapxap/types";
 import { gemsKeys } from "@/features/gems/services/queries";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 export const streamingKeys = {
   all: ["streaming"] as const,
@@ -16,26 +15,26 @@ export function useLiveStreams() {
       const { data: streams, error } = await supabase
         .from("live_streams")
         .select("*, author:profiles!live_streams_broadcaster_id_profiles_id_fk(*)")
-        .eq("is_live", true)
-        .order("created_at", { ascending: false });
+        .eq("isLive", true)
+        .order("createdAt", { ascending: false });
 
       if (error || !streams || streams.length === 0) return [];
 
       const streamIds = streams.map((s) => s.id);
       const { data: tickets } = await supabase
         .from("stream_tickets")
-        .select("stream_id")
-        .in("stream_id", streamIds);
+        .select("streamId")
+        .in("streamId", streamIds);
 
       const viewerCounts = new Map<string, number>();
       for (const t of tickets || []) {
-        viewerCounts.set(t.stream_id, (viewerCounts.get(t.stream_id) || 0) + 1);
+        viewerCounts.set(t.streamId, (viewerCounts.get(t.streamId) || 0) + 1);
       }
 
       return streams.map((stream) => {
-        const transformed = transformRow<Record<string, unknown>>(stream);
-        transformed.viewerCount = viewerCounts.get(stream.id) ?? 0;
-        return transformed as LiveStreamWithAuthor;
+        const enriched = stream as LiveStreamWithAuthor;
+        enriched.viewerCount = viewerCounts.get(stream.id) ?? 0;
+        return enriched;
       });
     },
   });
@@ -80,22 +79,22 @@ export function useStartStreamMutation(userId: string | null) {
       const { data, error } = await supabase
         .from("live_streams")
         .insert({
-          broadcaster_id: userId,
+          broadcasterId: userId,
           title,
           quality,
-          is_live: true,
-          is_gated: isGated,
-          entry_fee_gems: isGated ? entryFeeGems : 0,
-          started_at: new Date().toISOString(),
+          isLive: true,
+          isGated: isGated,
+          entryFeeGems: isGated ? entryFeeGems : 0,
+          startedAt: new Date().toISOString(),
         })
         .select("*, author:profiles!live_streams_broadcaster_id_profiles_id_fk(*)")
         .single();
 
       if (error) throw error;
 
-      const transformed = transformRow<Record<string, unknown>>(data);
-      transformed.viewerCount = 1;
-      return transformed as LiveStreamWithAuthor;
+      const enriched = data as LiveStreamWithAuthor;
+      enriched.viewerCount = 1;
+      return enriched;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: streamingKeys.liveStreams() });

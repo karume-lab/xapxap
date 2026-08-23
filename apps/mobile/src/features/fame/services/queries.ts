@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FameBurstItem } from "@xapxap/types";
 import { supabase } from "@/lib/supabase";
-import { transformRow } from "@/lib/supabase-helpers";
 
 const PAGE_SIZE = 20;
 
@@ -23,7 +22,7 @@ export function useFameBurst(userId: string | null) {
           "*, author:profiles!fleet_posts_author_id_profiles_id_fk(*), fame_heuristics!inner(*)"
         )
         .not("fame_heuristics.status", "eq", "rejected")
-        .order("created_at", { ascending: false })
+        .order("createdAt", { ascending: false })
         .range(start, end);
 
       if (error) {
@@ -38,8 +37,8 @@ export function useFameBurst(userId: string | null) {
 
       const { data: interactions } = await supabase
         .from("post_interactions")
-        .select("post_id, type, user_id")
-        .in("post_id", postIds);
+        .select("postId, type, userId")
+        .in("postId", postIds);
 
       const countsMap: Record<
         string,
@@ -56,7 +55,7 @@ export function useFameBurst(userId: string | null) {
       }
 
       for (const ix of interactions || []) {
-        const c = countsMap[ix.post_id];
+        const c = countsMap[ix.postId];
         if (c) {
           const key =
             ix.type === "echo"
@@ -68,24 +67,17 @@ export function useFameBurst(userId: string | null) {
                   : "hugs";
           c[key] = (c[key] || 0) + 1;
         }
-        if (userId && ix.user_id === userId) {
-          const u = userMap[ix.post_id];
+        if (userId && ix.userId === userId) {
+          const u = userMap[ix.postId];
           if (u) u[ix.type as keyof typeof u] = true;
         }
       }
 
-      const data: FameBurstItem[] = posts.map((post) => {
-        const transformed = transformRow<Record<string, unknown>>(post);
-        if (transformed.fameHeuristics !== undefined) {
-          transformed.fame_heuristics = transformed.fameHeuristics;
-          delete transformed.fameHeuristics;
-        }
-        return {
-          ...transformed,
-          counts: countsMap[post.id],
-          myInteractions: userMap[post.id],
-        } as FameBurstItem;
-      });
+      const data = posts.map((post) => ({
+        ...post,
+        counts: countsMap[post.id],
+        myInteractions: userMap[post.id],
+      })) as FameBurstItem[];
 
       return {
         data,
@@ -116,8 +108,8 @@ export function useFamePost(postId: string | null, userId: string | null) {
 
       const { data: interactions } = await supabase
         .from("post_interactions")
-        .select("post_id, type, user_id")
-        .eq("post_id", postId);
+        .select("postId, type, userId")
+        .eq("postId", postId);
 
       let hugs = 0,
         echoes = 0,
@@ -136,7 +128,7 @@ export function useFamePost(postId: string | null, userId: string | null) {
       }
 
       for (const ix of interactions || []) {
-        if (userId && ix.user_id === userId) {
+        if (userId && ix.userId === userId) {
           if (ix.type === "hug") hug = true;
           else if (ix.type === "echo") echo = true;
           else if (ix.type === "cast") cast = true;
@@ -144,14 +136,8 @@ export function useFamePost(postId: string | null, userId: string | null) {
         }
       }
 
-      const transformed = transformRow<Record<string, unknown>>(post);
-      if (transformed.fameHeuristics !== undefined) {
-        transformed.fame_heuristics = transformed.fameHeuristics;
-        delete transformed.fameHeuristics;
-      }
-
       return {
-        ...transformed,
+        ...post,
         counts: { hugs, echoes, casts, anchors },
         myInteractions: { hug, echo, cast, anchor },
       } as FameBurstItem;
@@ -175,9 +161,9 @@ export function useToggleFameInteraction(userId: string | null) {
 
       const { data: existing } = await supabase
         .from("post_interactions")
-        .select("post_id")
-        .eq("post_id", realPostId)
-        .eq("user_id", userId)
+        .select("postId")
+        .eq("postId", realPostId)
+        .eq("userId", userId)
         .eq("type", type)
         .maybeSingle();
 
@@ -185,14 +171,14 @@ export function useToggleFameInteraction(userId: string | null) {
         const { error } = await supabase
           .from("post_interactions")
           .delete()
-          .eq("post_id", realPostId)
-          .eq("user_id", userId)
+          .eq("postId", realPostId)
+          .eq("userId", userId)
           .eq("type", type);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("post_interactions")
-          .insert({ post_id: realPostId, user_id: userId, type });
+          .insert({ postId: realPostId, userId, type });
         if (error) throw error;
       }
     },
