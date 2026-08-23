@@ -2,7 +2,14 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { FileText, Search, TrendingUp, Video, X } from "lucide-react-native";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, ScrollView, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -21,8 +28,18 @@ export function SearchScreen() {
   const { session, showAuthModal } = useAuth();
   const [query, setQuery] = useState("");
 
-  const { data: trendingWaves = [], isLoading: isLoadingWaves } = useTrendingWaves();
-  const { data: popularTags = [], isLoading: isLoadingTags } = usePopularTags();
+  const {
+    data: trendingWaves = [],
+    isLoading: isLoadingWaves,
+    refetch: refetchWaves,
+    isRefetching: isRefetchingWaves,
+  } = useTrendingWaves();
+  const {
+    data: popularTags = [],
+    isLoading: isLoadingTags,
+    refetch: refetchTags,
+    isRefetching: isRefetchingTags,
+  } = usePopularTags();
 
   const trimmedQuery = query.trim().toLowerCase();
   const filteredWaves = trimmedQuery
@@ -113,7 +130,17 @@ export function SearchScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetchingWaves || isRefetchingTags}
+            onRefresh={() => {
+              refetchWaves();
+              refetchTags();
+            }}
+            tintColor={colors.primary}
+          />
+        }>
         {/* Popular Tags Section */}
         <View className="mt-6">
           <View className="px-6 mb-6">

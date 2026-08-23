@@ -10,7 +10,7 @@ import {
   Video,
 } from "lucide-react-native";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -136,7 +136,7 @@ export default function NotificationsScreen() {
   const [filter, setFilter] = useState<FilterType>("all");
 
   const userId = session?.user?.id || null;
-  const { data: notifications = [], isLoading } = useNotifications(userId);
+  const { data: notifications = [], isLoading, refetch, isRefetching } = useNotifications(userId);
   const markRead = useMarkNotificationsRead(userId);
 
   useRealtimeNotifications(userId);
@@ -297,6 +297,13 @@ export default function NotificationsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching && !isLoading}
+            onRefresh={refetch}
+            tintColor={colors.primary}
+          />
+        }
         ListEmptyComponent={
           isLoading ? (
             <View className="flex-1 items-center justify-center p-12 py-32">

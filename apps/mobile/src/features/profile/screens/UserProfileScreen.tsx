@@ -10,7 +10,7 @@ import {
   RepeatIcon,
   Send,
 } from "lucide-react-native";
-import { Image as RNImage, ScrollView, View } from "react-native";
+import { RefreshControl, Image as RNImage, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Avatar } from "@/components/ui/avatar";
@@ -39,8 +39,18 @@ export function UserProfileScreen() {
     username: string;
   }>();
 
-  const { data: statsData, isLoading: isStatsLoading } = useUserProfileStats(userId);
-  const { data: wavesData, isLoading: isWavesLoading } = useUserWaves(userId);
+  const {
+    data: statsData,
+    isLoading: isStatsLoading,
+    refetch: refetchStats,
+    isRefetching: isRefetchingStats,
+  } = useUserProfileStats(userId);
+  const {
+    data: wavesData,
+    isLoading: isWavesLoading,
+    refetch: refetchWaves,
+    isRefetching: isRefetchingWaves,
+  } = useUserWaves(userId);
 
   const fallbackUsername = paramUsername && paramUsername !== "undefined" ? paramUsername : "";
   const username = statsData?.profile?.username || fallbackUsername;
@@ -61,7 +71,17 @@ export function UserProfileScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 120 }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetchingStats || isRefetchingWaves}
+            onRefresh={() => {
+              refetchStats();
+              refetchWaves();
+            }}
+            tintColor={colors.primary}
+          />
+        }>
         {/* Profile Card */}
         <View className="px-4">
           <Glass radius={32} className="p-8 border border-border items-center">

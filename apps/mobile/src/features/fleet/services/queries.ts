@@ -472,3 +472,84 @@ export function useCreateFleetPost() {
     },
   });
 }
+
+export function useEditPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      postId,
+      content,
+      mediaUrl,
+      mediaType,
+      authorProfile,
+    }: {
+      postId: string;
+      content: string;
+      mediaUrl?: string | null;
+      mediaType?: string | null;
+      authorProfile: { id: string };
+    }) => {
+      let uploadedUrl: string | null = mediaUrl ?? null;
+      let uploadedMediaType: string | null = mediaType ?? null;
+
+      if (mediaUrl && mediaUrl !== "") {
+        const mimeMap: Record<string, string> = {
+          image: "image/jpeg",
+          video: "video/mp4",
+          pdf: "application/pdf",
+        };
+        const extMap: Record<string, string> = {
+          image: "jpg",
+          video: "mp4",
+          pdf: "pdf",
+        };
+        const resolvedType = mediaType ?? "image";
+        const ext = extMap[resolvedType] ?? "jpg";
+        const path = `posts/${authorProfile.id}/${generateUUID()}.${ext}`;
+
+        await uploadMedia(
+          { uri: mediaUrl, name: path, type: mimeMap[resolvedType] ?? "image/jpeg" },
+          path
+        );
+
+        uploadedUrl = getMediaUrl(path);
+        uploadedMediaType = mimeMap[resolvedType] ?? "image/jpeg";
+      }
+
+      const { data, error } = await supabase
+        .from("fleet_posts")
+        .update({
+          content,
+          media_url: uploadedUrl,
+          media_type: uploadedMediaType,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", postId)
+        .select("*, author:profiles!fleet_posts_author_id_profiles_id_fk(*)")
+        .single();
+
+      if (error) throw error;
+      return transformRow<FleetPostWithAuthor>(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
+    },
+  });
+}
+
+export function useDeletePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (postId: string) => {
+      const { error } = await supabase.from("fleet_posts").delete().eq("id", postId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
+    },
+  });
+}

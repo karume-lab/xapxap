@@ -6,7 +6,7 @@ import BottomSheet, {
 import { useRouter } from "expo-router";
 import { ArrowLeft, Clock, Plus, Users } from "lucide-react-native";
 import { useCallback, useRef } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { RefreshControl, ScrollView, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import { useColors } from "@/hooks/use-colors";
 export function FleetScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { data: fleets } = useFleets();
+  const { data: fleets, refetch, isRefetching } = useFleets();
   const colors = useColors();
   const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -56,7 +56,14 @@ export function FleetScreen() {
           paddingHorizontal: 24,
           paddingBottom: 120,
         }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={colors.primary}
+          />
+        }>
         {(fleets || []).map((deck) => (
           <TouchableOpacity
             key={deck.id}

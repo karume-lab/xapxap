@@ -9,7 +9,7 @@ import {
   Zap,
 } from "lucide-react-native";
 import { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
 import { Button } from "@/components/ui/button";
@@ -24,10 +24,18 @@ import { useColors } from "@/hooks/use-colors";
 export function WalletScreen() {
   const insets = useSafeAreaInsets();
   const { session } = useAuth();
-  const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
-  const { data: activity, isLoading: isActivityLoading } = useGemActivity(
-    session?.user?.id || null
-  );
+  const {
+    data: wallet,
+    isLoading: isWalletLoading,
+    refetch: refetchWallet,
+    isRefetching: isRefetchingWallet,
+  } = useWalletBalance(session?.user?.id || null);
+  const {
+    data: activity,
+    isLoading: isActivityLoading,
+    refetch: refetchActivity,
+    isRefetching: isRefetchingActivity,
+  } = useGemActivity(session?.user?.id || null);
   const colors = useColors();
   const router = useRouter();
 
@@ -44,7 +52,17 @@ export function WalletScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 24 }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetchingWallet || isRefetchingActivity}
+            onRefresh={() => {
+              refetchWallet();
+              refetchActivity();
+            }}
+            tintColor={colors.primary}
+          />
+        }>
         <View className="mt-4 mb-8 flex-row items-center">
           <Button
             variant="ghost"

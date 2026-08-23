@@ -4,13 +4,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { ArrowLeft, Download, Heart, MessageCircle, Share2 } from "lucide-react-native";
+import {
+  ArrowLeft,
+  Download,
+  Heart,
+  MessageCircle,
+  MoreHorizontal,
+  Pencil,
+  Share2,
+  Trash2,
+} from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
   Share,
   StyleSheet,
+  TextInput,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -32,6 +42,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/contexts/auth-context";
 import { useFamePost, useToggleFameInteraction } from "@/features/fame/services/queries";
+import { useDeletePost, useEditPost } from "@/features/fleet/services/queries";
 import { CommentsSheet } from "@/features/waves/components/CommentsSheet";
 import { useColors } from "@/hooks/use-colors";
 
@@ -58,6 +69,14 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const { session, showAuthModal } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editText, setEditText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const editPost = useEditPost();
+  const deletePost = useDeletePost();
 
   // Dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -70,7 +89,41 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
     setDialogOpen(true);
   };
 
+  const handleStartEdit = () => {
+    setEditText(item?.content || "");
+    setEditing(true);
+    setShowMenu(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!item || !session?.user?.id) return;
+    try {
+      await editPost.mutateAsync({
+        postId: item.id,
+        content: editText,
+        authorProfile: { id: session.user.id },
+      });
+      setEditing(false);
+    } catch {
+      showDialog("Error", "Could not update your wave.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!item) return;
+    setDeleting(true);
+    try {
+      await deletePost.mutateAsync(item.id);
+      router.back();
+    } catch {
+      showDialog("Error", "Could not delete the wave.");
+      setDeleting(false);
+    }
+  };
+
   const { data: item, isLoading } = useFamePost(postId, session?.user?.id || null);
+
+  const isAuthor = session?.user?.id && item?.author?.id === session.user.id;
 
   const handleDownload = async () => {
     if (!item?.mediaUrl) return;
@@ -228,6 +281,45 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
         </Button>
       </View>
 
+      {/* More Menu Button (author only) */}
+      {isAuthor && !editing && (
+        <View
+          style={{ position: "absolute", top: insets.top + 12, right: 16, zIndex: 50 }}
+          pointerEvents="box-none">
+          <Button
+            variant="ghost"
+            onPress={() => setShowMenu(!showMenu)}
+            className="w-10 h-10 rounded-full bg-muted/60 backdrop-blur-xl items-center justify-center border border-border p-0 min-w-0 min-h-0">
+            <Icon as={MoreHorizontal} size={20} className="text-foreground" />
+          </Button>
+
+          {/* Dropdown Menu */}
+          {showMenu && (
+            <View
+              className="absolute right-0 top-12 bg-background border border-border rounded-2xl overflow-hidden shadow-lg"
+              style={{ width: 160 }}>
+              <Button
+                variant="ghost"
+                onPress={handleStartEdit}
+                className="flex-row items-center gap-3 px-4 py-3 rounded-none justify-start min-h-0 min-w-0 bg-transparent active:bg-muted">
+                <Icon as={Pencil} size={16} className="text-foreground" />
+                <Text className="text-foreground text-sm font-medium">Edit Wave</Text>
+              </Button>
+              <Button
+                variant="ghost"
+                onPress={() => {
+                  setConfirmDeleteOpen(true);
+                  setShowMenu(false);
+                }}
+                className="flex-row items-center gap-3 px-4 py-3 rounded-none justify-start min-h-0 min-w-0 bg-transparent active:bg-muted">
+                <Icon as={Trash2} size={16} className="text-destructive" />
+                <Text className="text-destructive text-sm font-medium">Delete Wave</Text>
+              </Button>
+            </View>
+          )}
+        </View>
+      )}
+
       {/* Background Media */}
       {renderMedia()}
 
@@ -372,6 +464,76 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
           </View>
         </GestureHandlerRootView>
       </Modal>
+
+      {/* Edit Overlay */}
+      {editing && (
+        <View
+          className="absolute inset-0 bg-background/95 z-40"
+          style={{
+            paddingTop: insets.top + 60,
+            paddingBottom: insets.bottom + 20,
+            paddingHorizontal: 24,
+          }}>
+          <Text className="text-foreground font-bold text-lg mb-4">Edit Wave</Text>
+          <TextInput
+            value={editText}
+            onChangeText={setEditText}
+            multiline
+            className="text-foreground text-base leading-6 bg-muted rounded-2xl p-4 border border-border min-h-[120px]"
+            placeholderTextColor={colors.mutedForeground}
+            placeholder="What's on your mind?"
+            textAlignVertical="top"
+          />
+          <View className="flex-row gap-3 mt-4">
+            <Button
+              variant="ghost"
+              onPress={() => setEditing(false)}
+              className="flex-1 h-14 rounded-2xl bg-muted border border-border">
+              <Text className="text-foreground font-bold">Cancel</Text>
+            </Button>
+            <Button
+              onPress={handleSaveEdit}
+              disabled={!editText.trim() || editPost.isPending}
+              className="flex-1 h-14 rounded-2xl bg-primary">
+              {editPost.isPending ? (
+                <ActivityIndicator color={colors.primaryForeground} />
+              ) : (
+                <Text className="text-primary-foreground font-bold">Save</Text>
+              )}
+            </Button>
+          </View>
+        </View>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <DialogContent className="mx-6">
+          <DialogHeader>
+            <DialogTitle>Delete Wave</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this wave? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-2 flex-row gap-3">
+            <Button
+              variant="ghost"
+              onPress={() => setConfirmDeleteOpen(false)}
+              className="flex-1 rounded-full bg-muted border border-border">
+              <Text className="text-foreground font-bold">Cancel</Text>
+            </Button>
+            <Button
+              onPress={handleDelete}
+              disabled={deleting}
+              className="flex-1 rounded-full bg-destructive">
+              {deleting ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-destructive-foreground font-bold">Delete</Text>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* In-app alert dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
