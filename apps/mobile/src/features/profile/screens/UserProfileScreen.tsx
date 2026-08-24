@@ -66,7 +66,11 @@ export function UserProfileScreen() {
   } = useUserWaves(userId, session?.user?.id || null);
 
   const fallbackUsername = paramUsername && paramUsername !== "undefined" ? paramUsername : "";
-  const username = statsData?.profile?.username || fallbackUsername;
+  const profileData: { username: string; avatarUrl: string | null } = statsData?.profile
+    ? { username: statsData.profile.username, avatarUrl: statsData.profile.avatarUrl }
+    : { username: fallbackUsername, avatarUrl: null };
+  const username = profileData.username || fallbackUsername;
+  const avatarUrl = profileData.avatarUrl ?? undefined;
 
   return (
     <View className="flex-1 bg-background">
@@ -98,7 +102,7 @@ export function UserProfileScreen() {
         {/* Profile Card */}
         <View className="px-4">
           <Glass radius={32} className="p-8 border border-border items-center">
-            <Avatar url={statsData?.profile?.avatarUrl} username={username} size={120} ring />
+            <Avatar url={avatarUrl} username={username} size={120} ring />
 
             <View className="flex-row items-center mt-4 gap-2">
               <Text className="text-foreground text-3xl font-bold">@{username}</Text>

@@ -69,6 +69,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const { session, showAuthModal } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState("");
@@ -234,7 +235,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
 
     return (
       <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
-        <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="cover" />
+        <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="contain" />
       </View>
     );
   };
@@ -373,8 +374,23 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
               </View>
             </Button>
             <Text className="text-foreground/95 text-base leading-6 font-medium">
-              {item.content}
+              {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
             </Text>
+            {showMore ? (
+              <Button
+                variant="ghost"
+                onPress={() => setShowMore(false)}
+                className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
+                Read Less
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                onPress={() => setShowMore(true)}
+                className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
+                Read More
+              </Button>
+            )}
           </View>
 
           {/* Engagement Buttons */}
@@ -435,7 +451,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
               <Icon as={Share2} className="text-foreground" size={26} />
             </Button>
 
-            {item.mediaUrl && (
+            {item.mediaUrl && !isAuthor && (
               <Button
                 variant="ghost"
                 onPress={handleDownload}

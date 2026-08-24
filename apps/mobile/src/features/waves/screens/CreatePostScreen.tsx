@@ -221,7 +221,7 @@ export function CreatePostScreen() {
                     <Image
                       source={{ uri: media.uri }}
                       style={StyleSheet.absoluteFill}
-                      contentFit="cover"
+                      contentFit="contain"
                     />
                   )}
                   {media.type === "video" && videoPlayer && (

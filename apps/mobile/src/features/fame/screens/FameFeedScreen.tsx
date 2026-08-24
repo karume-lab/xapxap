@@ -74,8 +74,10 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
   const router = useRouter();
   const colors = useColors();
   const [timeLeft, setTimeLeft] = useState(60);
+  const [showMore, setShowMore] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const { session, showAuthModal } = useAuth();
+  const isAuthor = item.author.id === session?.user?.id;
   const { mutate: toggleInteraction } = useToggleFameInteraction(session?.user?.id || null);
 
   // Dialog state
@@ -204,7 +206,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
     if (item.mediaUrl) {
       return (
         <View style={StyleSheet.absoluteFill} className="bg-zinc-950">
-          <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="cover" />
+          <Image source={imageUrl} style={StyleSheet.absoluteFill} contentFit="contain" />
         </View>
       );
     }
@@ -289,32 +291,34 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
           pointerEvents="box-none">
           <View className={cn("flex-1", isTextOnly && "items-center")} pointerEvents="box-none">
             {isTextOnly && (
-              <Button
-                variant="ghost"
-                onPress={() =>
-                  router.push({
-                    pathname: "/profile/[id]",
-                    params: { id: item.author.id, username: item.author.username },
-                  })
-                }
-                className="justify-start items-center flex-row gap-3 mb-4 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
-                <View className="flex-row items-center gap-3">
-                  <Avatar
-                    url={item.author.avatarUrl}
-                    username={item.author.username}
-                    size={48}
-                    ring
-                  />
-                  <View>
-                    <Text className="font-bold text-foreground text-lg">
-                      @{item.author.username}
-                    </Text>
-                    <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
-                      Rising Star
-                    </Text>
+              <View className="flex-row items-end gap-3 mb-4">
+                <Button
+                  variant="ghost"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/profile/[id]",
+                      params: { id: item.author.id, username: item.author.username },
+                    })
+                  }
+                  className="justify-start items-center flex-row gap-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+                  <View className="flex-row items-center gap-3">
+                    <Avatar
+                      url={item.author.avatarUrl}
+                      username={item.author.username}
+                      size={48}
+                      ring
+                    />
+                    <View>
+                      <Text className="font-bold text-foreground text-lg">
+                        @{item.author.username}
+                      </Text>
+                      <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                        Rising Star
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </Button>
+                </Button>
+              </View>
             )}
             <Text
               className={cn(
@@ -322,9 +326,28 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
                   ? "text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]"
                   : "text-base leading-7 text-foreground/95 font-medium"
               )}
-              numberOfLines={isTextOnly ? undefined : 3}>
-              {item.content}
+              numberOfLines={showMore ? undefined : 3}>
+              {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
             </Text>
+            {(item.content?.length ?? 0) > 200 ? (
+              <View className="mt-2 flex-row justify-end">
+                {showMore ? (
+                  <Button
+                    variant="ghost"
+                    onPress={() => setShowMore(false)}
+                    className="text-primary text-xs font-bold uppercase tracking-wider">
+                    Read Less
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    onPress={() => setShowMore(true)}
+                    className="text-primary text-xs font-bold uppercase tracking-wider">
+                    Read More
+                  </Button>
+                )}
+              </View>
+            ) : null}
             {!isTextOnly && (
               <Button
                 variant="ghost"
@@ -411,7 +434,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
               <Icon as={Share2} className="text-foreground" size={26} />
             </Button>
 
-            {item.mediaUrl && (
+            {item.mediaUrl && !isAuthor && (
               <Button
                 variant="ghost"
                 onPress={handleDownload}

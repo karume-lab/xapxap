@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FleetPostWithAuthor } from "@xapxap/types";
+import { notificationKeys } from "@/features/notifications/services/queries";
 import { supabase } from "@/lib/supabase";
 import { commentsKeys } from "./queries";
 
@@ -30,6 +31,25 @@ export function useAddComment() {
         .single();
 
       if (error) throw error;
+
+      // Send notification to post owner (if not self)
+      if (author.id) {
+        const { data: post } = await supabase
+          .from("fleet_posts")
+          .select("authorId")
+          .eq("id", postId)
+          .single();
+
+        if (post?.authorId && post.authorId !== author.id) {
+          await supabase.from("notifications").insert({
+            userId: post.authorId,
+            actorId: author.id,
+            type: "comment",
+            content: `${author.username} commented on your wave`,
+          });
+        }
+      }
+
       return { newComment: data as FleetPostWithAuthor, postId };
     },
     onSuccess: (res) => {
@@ -67,6 +87,24 @@ export function useToggleCommentLike(userId: string | null) {
           .from("post_interactions")
           .insert({ postId: commentId, userId, type: "hug" });
         if (error) throw error;
+      }
+
+      // Send notification to comment owner (if not self)
+      if (userId) {
+        const { data: comment } = await supabase
+          .from("fleet_posts")
+          .select("authorId")
+          .eq("id", commentId)
+          .single();
+
+        if (comment?.authorId && comment.authorId !== userId) {
+          await supabase.from("notifications").insert({
+            userId: comment.authorId,
+            actorId: userId,
+            type: "hug",
+            content: `${userId.substring(0, 8)}... liked your comment`,
+          });
+        }
       }
 
       return { postId: realPostId };
@@ -108,6 +146,13 @@ export function useToggleCommentLike(userId: string | null) {
         for (const [key, data] of context.previous) {
           queryClient.setQueryData(key, data);
         }
+      }
+    },
+    onSuccess: (res, _vars, context) => {
+      const pId = res?.postId || context?.realPostId;
+      if (pId) {
+        queryClient.invalidateQueries({ queryKey: ["comments", pId] });
+        queryClient.invalidateQueries({ queryKey: notificationKeys.all });
       }
     },
     onSettled: (res, _err, _vars, context) => {

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { FleetDeck, FleetPostWithAuthor, PollWithDetails, Profile } from "@xapxap/types";
+import { notificationKeys } from "@/features/notifications/services/queries";
 import { generateUUID, getMediaUrl, supabase, uploadMedia } from "@/lib/supabase";
 
 export async function fetchInteractions(
@@ -326,6 +327,24 @@ export function useToggleFleetInteraction(userId: string | null) {
         const { error } = await supabase.from("post_interactions").insert({ postId, userId, type });
         if (error) throw error;
       }
+
+      // Send notification to post owner (if not self)
+      if (userId) {
+        const { data: post } = await supabase
+          .from("fleet_posts")
+          .select("authorId")
+          .eq("id", postId)
+          .single();
+
+        if (post?.authorId && post.authorId !== userId) {
+          await supabase.from("notifications").insert({
+            userId: post.authorId,
+            actorId: userId,
+            type: type,
+            content: `${userId.substring(0, 8)}... interacted with your wave`,
+          });
+        }
+      }
     },
     onMutate: async ({ postId, type }) => {
       await queryClient.cancelQueries({ queryKey: fleetKeys.all });
@@ -403,6 +422,11 @@ export function useToggleFleetInteraction(userId: string | null) {
       if (context?.previous) {
         queryClient.setQueriesData({ queryKey: fleetKeys.all }, context.previous);
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: fleetKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["fame"] });
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: fleetKeys.all });

@@ -11,12 +11,14 @@ import {
   Users,
   Wifi,
   WifiOff,
+  X,
   Zap,
 } from "lucide-react-native";
 import { useState } from "react";
 import { Pressable, ScrollView, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
@@ -42,11 +44,11 @@ export function ProfileScreen() {
   const { profile, session, signOut, showAuthModal } = useAuth();
   const { dataSaver, toggle: toggleDataSaver } = useDataSaver();
   const router = useRouter();
-
-  const [currency, setCurrency] = useState("KES");
+  const [showFullAvatar, setShowFullAvatar] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [fleetComingSoon, setFleetComingSoon] = useState(false);
   const [modPanelComingSoon, setModPanelComingSoon] = useState(false);
+  const [currency, setCurrency] = useState("KES");
 
   const { data: wallet, isLoading: isWalletLoading } = useWalletBalance(session?.user?.id || null);
   const gemsBalance = wallet?.balance ?? 0;
@@ -78,90 +80,102 @@ export function ProfileScreen() {
 
   const isCaptain = profile?.role === "captain";
 
+  const handleFullAvatarPress = () => {
+    setShowFullAvatar(true);
+  };
+
   return (
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Top User Card */}
       <View className="px-6 mb-8 mt-6">
-        <Pressable onPress={() => router.push("/profile/edit")}>
-          <Glass radius={24} className="p-5 border border-border">
-            {/* User Info Row */}
-            <View className="flex-row items-center mb-6">
-              <View className="relative mr-4">
-                {profile?.avatarUrl ? (
-                  <View className="w-20 h-20 rounded-full overflow-hidden items-center justify-center">
-                    <Image
-                      source={{ uri: profile.avatarUrl }}
-                      style={{ width: 80, height: 80 }}
-                      contentFit="cover"
-                    />
-                  </View>
+        <View className="flex-row items-start gap-3">
+          <Pressable
+            onPress={handleFullAvatarPress}
+            className="flex-row items-center gap-3 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
+            <Avatar url={profile?.avatarUrl} username={profile?.username} size={48} />
+          </Pressable>
+          <Avatar url={profile?.avatarUrl} username={profile?.username} size={48} />
+        </View>
+        <Glass radius={24} className="p-5 border border-border">
+          {/* User Info Row */}
+          <View className="flex-row items-center mb-6">
+            <View className="relative mr-4">
+              {profile?.avatarUrl ? (
+                <View className="w-20 h-20 rounded-full overflow-hidden items-center justify-center">
+                  <Image
+                    source={{ uri: profile.avatarUrl }}
+                    style={{ width: 80, height: 80 }}
+                    contentFit="cover"
+                  />
+                </View>
+              ) : (
+                <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
+                  <Text className="text-3xl font-bold text-foreground">
+                    {profile?.username?.[0]?.toUpperCase() ?? ""}
+                  </Text>
+                </View>
+              )}
+              <Pressable
+                onPress={() => router.push("/profile/edit")}
+                className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
+                <Icon as={Camera} size={14} className="text-primary-foreground" />
+              </Pressable>
+            </View>
+            <View className="flex-1">
+              <View className="flex-row items-center gap-2 mb-1">
+                {profile ? (
+                  <Text className="text-xl font-bold text-foreground">@{profile.username}</Text>
                 ) : (
-                  <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
-                    <Text className="text-3xl font-bold text-foreground">
-                      {profile?.username?.[0]?.toUpperCase() ?? ""}
+                  <Skeleton className="h-6 w-32" />
+                )}
+                {profile?.role && (
+                  <View className="bg-muted px-2 py-0.5 rounded-full">
+                    <Text className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {profile.role}
                     </Text>
                   </View>
                 )}
-                <View className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">
-                  <Icon as={Camera} size={14} className="text-primary-foreground" />
-                </View>
               </View>
-              <View className="flex-1">
-                <View className="flex-row items-center gap-2 mb-1">
-                  {profile ? (
-                    <Text className="text-xl font-bold text-foreground">@{profile.username}</Text>
-                  ) : (
-                    <Skeleton className="h-6 w-32" />
-                  )}
-                  {profile?.role && (
-                    <View className="bg-muted px-2 py-0.5 rounded-full">
-                      <Text className="text-[10px] font-bold text-muted-foreground uppercase">
-                        {profile.role}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-                {session?.user?.email ? (
-                  <Text className="text-muted-foreground text-sm" numberOfLines={1}>
-                    {session.user.email}
-                  </Text>
-                ) : (
-                  <Skeleton className="h-4 w-40 mt-1" />
-                )}
-              </View>
-              <View className="w-8 h-8 rounded-full bg-muted/50 items-center justify-center ml-2">
-                <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
-              </View>
-            </View>
-
-            {/* Stats Row */}
-            <View className="flex-row gap-3 mb-6">
-              <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-primary/10 border border-primary/30">
-                <Icon as={Zap} size={14} className="text-primary" />
-                <Text className="text-primary font-bold text-[13px]" numberOfLines={1}>
-                  {gemsBalance} gems ≈ ${gemsValue}
+              {session?.user?.email ? (
+                <Text className="text-muted-foreground text-sm" numberOfLines={1}>
+                  {session.user.email}
                 </Text>
-              </View>
-              <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-[#0ea5e9]/10 border border-[#0ea5e9]/20">
-                <Icon as={Users} size={14} className="text-[#0ea5e9]" />
-                <Text className="text-[#0ea5e9] font-bold text-[13px]" numberOfLines={1}>
-                  0 Crew
-                </Text>
-              </View>
+              ) : (
+                <Skeleton className="h-4 w-40 mt-1" />
+              )}
             </View>
+            <View className="w-8 h-8 rounded-full bg-muted/50 items-center justify-center ml-2">
+              <Icon as={ChevronRightIcon} size={16} className="text-muted-foreground" />
+            </View>
+          </View>
 
-            {/* Level Progress */}
-            <View>
-              <View className="flex-row justify-between items-center mb-3">
-                <Text className="text-foreground font-bold text-base">Drifter</Text>
-                <Text className="text-muted-foreground text-[11px]">0 pts • 100 to Sailor</Text>
-              </View>
-              <View className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                <View className="h-full bg-primary" style={{ width: "0%" }} />
-              </View>
+          {/* Stats Row */}
+          <View className="flex-row gap-3 mb-6">
+            <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-primary/10 border border-primary/30">
+              <Icon as={Zap} size={14} className="text-primary" />
+              <Text className="text-primary font-bold text-[13px]" numberOfLines={1}>
+                {gemsBalance} gems ≈ ${gemsValue}
+              </Text>
             </View>
-          </Glass>
-        </Pressable>
+            <View className="flex-1 flex-row items-center justify-center gap-2 py-3 px-2 rounded-lg bg-[#0ea5e9]/10 border border-[#0ea5e9]/20">
+              <Icon as={Users} size={14} className="text-[#0ea5e9]" />
+              <Text className="text-[#0ea5e9] font-bold text-[13px]" numberOfLines={1}>
+                0 Crew
+              </Text>
+            </View>
+          </View>
+
+          {/* Level Progress */}
+          <View>
+            <View className="flex-row justify-between items-center mb-3">
+              <Text className="text-foreground font-bold text-base">Drifter</Text>
+              <Text className="text-muted-foreground text-[11px]">0 pts • 100 to Sailor</Text>
+            </View>
+            <View className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+              <View className="h-full bg-primary" style={{ width: "0%" }} />
+            </View>
+          </View>
+        </Glass>
       </View>
 
       <ScrollView
@@ -354,6 +368,19 @@ export function ProfileScreen() {
         title="Moderator Panel"
         description="Manage reported waves and moderate your community. Launching soon!"
       />
+      {showFullAvatar && (
+        <Pressable
+          className="absolute inset-0 bg-black/80 flex items-center justify-center z-999"
+          onPress={() => setShowFullAvatar(false)}>
+          <Image
+            source={{ uri: profile?.avatarUrl || "" }}
+            style={{ maxWidth: "90%", maxHeight: "90%" }}
+          />
+          <Pressable onPress={() => setShowFullAvatar(false)} className="absolute top-10 right-10">
+            <Icon as={X} size={24} className="text-white" />
+          </Pressable>
+        </Pressable>
+      )}
     </View>
   );
 }

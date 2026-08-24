@@ -65,7 +65,7 @@ export function SearchScreen() {
           <Image
             source={{ uri: mediaUrl }}
             style={{ width: "100%", height: "100%" }}
-            contentFit="cover"
+            contentFit="contain"
           />
           <View className="absolute inset-0 items-center justify-center">
             <View className="w-10 h-10 rounded-full bg-black/50 items-center justify-center">
@@ -95,7 +95,7 @@ export function SearchScreen() {
         <Image
           source={{ uri: mediaUrl }}
           style={{ width: "100%", height: "100%" }}
-          contentFit="cover"
+          contentFit="contain"
         />
       </View>
     );
