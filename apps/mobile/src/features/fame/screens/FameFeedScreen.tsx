@@ -18,6 +18,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
+  ScrollView,
   Share,
   StyleSheet,
   useWindowDimensions,
@@ -291,22 +292,14 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
         <View className="flex-1" pointerEvents="box-none">
           {isTextOnly ? (
             <View className="flex-1 items-center justify-center px-2" pointerEvents="box-none">
-              <View pointerEvents="auto">
-                <Text className="text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]">
-                  {showMore
-                    ? item.content
-                    : `${item.content?.substring(0, 200)}${(item.content?.length ?? 0) > 200 ? "..." : ""}`}
-                </Text>
-                {(item.content?.length ?? 0) > 200 ? (
-                  <View className="mt-3 items-center">
-                    <Button
-                      variant="ghost"
-                      onPress={() => setShowMore(!showMore)}
-                      className="text-primary text-xs font-bold uppercase tracking-wider">
-                      {showMore ? "Read Less" : "Read More"}
-                    </Button>
-                  </View>
-                ) : null}
+              <View className="max-h-[70%]" pointerEvents="auto">
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ alignItems: "center" }}>
+                  <Text className="text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]">
+                    {item.content}
+                  </Text>
+                </ScrollView>
               </View>
             </View>
           ) : (
