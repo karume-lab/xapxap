@@ -18,7 +18,6 @@ import { useState } from "react";
 import { Pressable, ScrollView, Switch, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Glass } from "@/components/layout/Glass";
-import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ComingSoonSheet } from "@/components/ui/coming-soon-sheet";
 import { Icon } from "@/components/ui/icon";
@@ -88,33 +87,27 @@ export function ProfileScreen() {
     <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
       {/* Top User Card */}
       <View className="px-6 mb-8 mt-6">
-        <View className="flex-row items-start gap-3">
-          <Pressable
-            onPress={handleFullAvatarPress}
-            className="flex-row items-center gap-3 p-0 h-auto w-auto bg-transparent active:bg-transparent min-w-0 min-h-0">
-            <Avatar url={profile?.avatarUrl} username={profile?.username} size={48} />
-          </Pressable>
-          <Avatar url={profile?.avatarUrl} username={profile?.username} size={48} />
-        </View>
         <Glass radius={24} className="p-5 border border-border">
           {/* User Info Row */}
           <View className="flex-row items-center mb-6">
             <View className="relative mr-4">
-              {profile?.avatarUrl ? (
-                <View className="w-20 h-20 rounded-full overflow-hidden items-center justify-center">
-                  <Image
-                    source={{ uri: profile.avatarUrl }}
-                    style={{ width: 80, height: 80 }}
-                    contentFit="cover"
-                  />
-                </View>
-              ) : (
-                <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
-                  <Text className="text-3xl font-bold text-foreground">
-                    {profile?.username?.[0]?.toUpperCase() ?? ""}
-                  </Text>
-                </View>
-              )}
+              <Pressable onPress={handleFullAvatarPress}>
+                {profile?.avatarUrl ? (
+                  <View className="w-20 h-20 rounded-full overflow-hidden items-center justify-center">
+                    <Image
+                      source={{ uri: profile.avatarUrl }}
+                      style={{ width: 80, height: 80 }}
+                      contentFit="cover"
+                    />
+                  </View>
+                ) : (
+                  <View className="w-20 h-20 rounded-full bg-muted items-center justify-center">
+                    <Text className="text-3xl font-bold text-foreground">
+                      {profile?.username?.[0]?.toUpperCase() ?? ""}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
               <Pressable
                 onPress={() => router.push("/profile/edit")}
                 className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary items-center justify-center border-2 border-background">

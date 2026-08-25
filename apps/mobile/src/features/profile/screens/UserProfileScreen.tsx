@@ -187,8 +187,8 @@ export function UserProfileScreen() {
                       <View className="rounded-3xl overflow-hidden bg-background/40 border border-border">
                         <RNImage
                           source={{ uri: wave.mediaUrl }}
-                          style={{ width: "100%", height: 200 }}
-                          resizeMode="cover"
+                          style={{ width: "100%", height: 200, borderRadius: 12 }}
+                          resizeMode="contain"
                         />
                         <View className="absolute bottom-3 left-3 bg-background/60 px-3 py-1.5 rounded-full flex-row items-center gap-2 border border-border">
                           <Icon as={CloudIcon} size={12} className="text-foreground" />

@@ -261,7 +261,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
 
       {/* Overlays */}
       <View
-        className={cn("absolute inset-0 p-6", isTextOnly ? "justify-center" : "justify-end")}
+        className="absolute inset-0 p-6 justify-end"
         style={{
           paddingTop: insets.top + 85,
           paddingBottom: insets.bottom + 80,
@@ -285,52 +285,19 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
           </View>
         )}
 
-        {/* Bottom: Post Info & Engagement */}
-        <View
-          className={cn("flex-row items-end justify-between gap-6", isTextOnly && "items-center")}
-          pointerEvents="box-none">
-          <View className={cn("flex-1", isTextOnly && "items-center")} pointerEvents="box-none">
-            {isTextOnly && (
-              <View className="flex-row items-end gap-3 mb-4">
-                <Button
-                  variant="ghost"
-                  onPress={() =>
-                    router.push({
-                      pathname: "/profile/[id]",
-                      params: { id: item.author.id, username: item.author.username },
-                    })
-                  }
-                  className="justify-start items-center flex-row gap-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
-                  <View className="flex-row items-center gap-3">
-                    <Avatar
-                      url={item.author.avatarUrl}
-                      username={item.author.username}
-                      size={48}
-                      ring
-                    />
-                    <View>
-                      <Text className="font-bold text-foreground text-lg">
-                        @{item.author.username}
-                      </Text>
-                      <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
-                        Rising Star
-                      </Text>
-                    </View>
-                  </View>
-                </Button>
-              </View>
-            )}
+        {/* Centered text for text-only posts */}
+        {isTextOnly && (
+          <View
+            pointerEvents="box-none"
+            className="absolute left-6 right-6 items-center"
+            style={{ top: insets.top + 140, bottom: insets.bottom + 200 }}>
             <Text
-              className={cn(
-                isTextOnly
-                  ? "text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]"
-                  : "text-base leading-7 text-foreground/95 font-medium"
-              )}
+              className="text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]"
               numberOfLines={showMore ? undefined : 3}>
               {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
             </Text>
             {(item.content?.length ?? 0) > 200 ? (
-              <View className="mt-2 flex-row justify-end">
+              <View className="mt-2" pointerEvents="auto">
                 {showMore ? (
                   <Button
                     variant="ghost"
@@ -348,34 +315,64 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
                 )}
               </View>
             ) : null}
+          </View>
+        )}
+
+        {/* Bottom: Post Info & Engagement */}
+        <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
+          <View className="flex-1" pointerEvents="box-none">
             {!isTextOnly && (
-              <Button
-                variant="ghost"
-                onPress={() =>
-                  router.push({
-                    pathname: "/profile/[id]",
-                    params: { id: item.author.id, username: item.author.username },
-                  })
-                }
-                className="justify-start items-center flex-row gap-3 mt-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
-                <View className="flex-row items-center gap-3">
-                  <Avatar
-                    url={item.author.avatarUrl}
-                    username={item.author.username}
-                    size={48}
-                    ring
-                  />
-                  <View>
-                    <Text className="font-bold text-foreground text-lg">
-                      @{item.author.username}
-                    </Text>
-                    <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
-                      Rising Star
-                    </Text>
+              <>
+                <Text
+                  className="text-base leading-7 text-foreground/95 font-medium"
+                  numberOfLines={showMore ? undefined : 3}>
+                  {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
+                </Text>
+                {(item.content?.length ?? 0) > 200 ? (
+                  <View className="mt-2 flex-row justify-end">
+                    {showMore ? (
+                      <Button
+                        variant="ghost"
+                        onPress={() => setShowMore(false)}
+                        className="text-primary text-xs font-bold uppercase tracking-wider">
+                        Read Less
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        onPress={() => setShowMore(true)}
+                        className="text-primary text-xs font-bold uppercase tracking-wider">
+                        Read More
+                      </Button>
+                    )}
                   </View>
-                </View>
-              </Button>
+                ) : null}
+              </>
             )}
+            <Button
+              variant="ghost"
+              onPress={() =>
+                router.push({
+                  pathname: "/profile/[id]",
+                  params: { id: item.author.id, username: item.author.username },
+                })
+              }
+              className="justify-start items-center flex-row gap-3 mt-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+              <View className="flex-row items-center gap-3">
+                <Avatar
+                  url={item.author.avatarUrl}
+                  username={item.author.username}
+                  size={48}
+                  ring
+                />
+                <View>
+                  <Text className="font-bold text-foreground text-lg">@{item.author.username}</Text>
+                  <Text className="text-primary text-[10px] font-bold uppercase tracking-tighter">
+                    Rising Star
+                  </Text>
+                </View>
+              </View>
+            </Button>
           </View>
 
           {/* Engagement Buttons */}
