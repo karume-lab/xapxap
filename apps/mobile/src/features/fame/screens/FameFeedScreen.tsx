@@ -261,10 +261,12 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
 
       {/* Overlays */}
       <View
-        className="absolute inset-0 p-6 justify-end"
+        className="absolute inset-0 flex-col"
         style={{
           paddingTop: insets.top + 85,
           paddingBottom: insets.bottom + 80,
+          paddingLeft: 24,
+          paddingRight: 24,
           pointerEvents: "box-none",
         }}>
         {/* Top: Fame Time Remaining (Hidden by default) */}
@@ -285,70 +287,54 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
           </View>
         )}
 
-        {/* Centered text for text-only posts */}
-        {isTextOnly && (
-          <View
-            pointerEvents="box-none"
-            className="absolute left-6 right-6 items-center"
-            style={{ top: insets.top + 140, bottom: insets.bottom + 200 }}>
-            <Text
-              className="text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]"
-              numberOfLines={showMore ? undefined : 3}>
-              {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
-            </Text>
-            {(item.content?.length ?? 0) > 200 ? (
-              <View className="mt-2" pointerEvents="auto">
-                {showMore ? (
-                  <Button
-                    variant="ghost"
-                    onPress={() => setShowMore(false)}
-                    className="text-primary text-xs font-bold uppercase tracking-wider">
-                    Read Less
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    onPress={() => setShowMore(true)}
-                    className="text-primary text-xs font-bold uppercase tracking-wider">
-                    Read More
-                  </Button>
-                )}
-              </View>
-            ) : null}
-          </View>
-        )}
-
-        {/* Bottom: Post Info & Engagement */}
-        <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
-          <View className="flex-1" pointerEvents="box-none">
-            {!isTextOnly && (
-              <>
-                <Text
-                  className="text-base leading-7 text-foreground/95 font-medium"
-                  numberOfLines={showMore ? undefined : 3}>
-                  {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
+        {/* Text content area */}
+        <View className="flex-1" pointerEvents="box-none">
+          {isTextOnly ? (
+            <View className="flex-1 items-center justify-center px-2" pointerEvents="box-none">
+              <View pointerEvents="auto">
+                <Text className="text-2xl text-center leading-9 text-foreground/95 font-[Inter_400Regular]">
+                  {showMore
+                    ? item.content
+                    : `${item.content?.substring(0, 200)}${(item.content?.length ?? 0) > 200 ? "..." : ""}`}
                 </Text>
                 {(item.content?.length ?? 0) > 200 ? (
-                  <View className="mt-2 flex-row justify-end">
-                    {showMore ? (
-                      <Button
-                        variant="ghost"
-                        onPress={() => setShowMore(false)}
-                        className="text-primary text-xs font-bold uppercase tracking-wider">
-                        Read Less
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        onPress={() => setShowMore(true)}
-                        className="text-primary text-xs font-bold uppercase tracking-wider">
-                        Read More
-                      </Button>
-                    )}
+                  <View className="mt-3 items-center">
+                    <Button
+                      variant="ghost"
+                      onPress={() => setShowMore(!showMore)}
+                      className="text-primary text-xs font-bold uppercase tracking-wider">
+                      {showMore ? "Read Less" : "Read More"}
+                    </Button>
                   </View>
                 ) : null}
-              </>
-            )}
+              </View>
+            </View>
+          ) : (
+            <View className="justify-end">
+              <Text
+                className="text-base leading-7 text-foreground/95 font-medium"
+                numberOfLines={showMore ? undefined : 3}>
+                {showMore
+                  ? item.content
+                  : `${item.content?.substring(0, 200)}${(item.content?.length ?? 0) > 200 ? "..." : ""}`}
+              </Text>
+              {(item.content?.length ?? 0) > 200 ? (
+                <View className="mt-2 flex-row justify-end">
+                  <Button
+                    variant="ghost"
+                    onPress={() => setShowMore(!showMore)}
+                    className="text-primary text-xs font-bold uppercase tracking-wider">
+                    {showMore ? "Read Less" : "Read More"}
+                  </Button>
+                </View>
+              ) : null}
+            </View>
+          )}
+        </View>
+
+        {/* Bottom: Author & Engagement */}
+        <View className="flex-row items-end justify-between gap-6" pointerEvents="box-none">
+          <View className="flex-1" pointerEvents="box-none">
             <Button
               variant="ghost"
               onPress={() =>
@@ -357,7 +343,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
                   params: { id: item.author.id, username: item.author.username },
                 })
               }
-              className="justify-start items-center flex-row gap-3 mt-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
+              className="justify-start items-center flex-row gap-3 p-0 px-0 py-0 h-auto w-auto bg-transparent active:bg-transparent">
               <View className="flex-row items-center gap-3">
                 <Avatar
                   url={item.author.avatarUrl}

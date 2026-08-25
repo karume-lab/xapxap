@@ -80,7 +80,7 @@ export function useRealtimeNotifications(userId: string | null) {
           event: "INSERT",
           schema: "public",
           table: "notifications",
-          filter: `user_id=eq.${userId}`,
+          filter: `"userId"=eq.${userId}`,
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ["notifications"] });

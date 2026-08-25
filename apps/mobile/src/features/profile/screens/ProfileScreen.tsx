@@ -361,19 +361,20 @@ export function ProfileScreen() {
         title="Moderator Panel"
         description="Manage reported waves and moderate your community. Launching soon!"
       />
-      {showFullAvatar && (
+      {showFullAvatar && profile?.avatarUrl ? (
         <Pressable
-          className="absolute inset-0 bg-black/80 flex items-center justify-center z-999"
+          className="absolute inset-0 bg-black/80 items-center justify-center z-50"
           onPress={() => setShowFullAvatar(false)}>
           <Image
-            source={{ uri: profile?.avatarUrl || "" }}
-            style={{ maxWidth: "90%", maxHeight: "90%" }}
+            source={{ uri: profile.avatarUrl }}
+            style={{ width: "90%", height: "90%" }}
+            contentFit="contain"
           />
           <Pressable onPress={() => setShowFullAvatar(false)} className="absolute top-10 right-10">
             <Icon as={X} size={24} className="text-white" />
           </Pressable>
         </Pressable>
-      )}
+      ) : null}
     </View>
   );
 }
