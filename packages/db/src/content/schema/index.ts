@@ -13,28 +13,28 @@ import {
 
 export const fleetDecks = pgTable("fleet_decks", {
   id: uuid("id").primaryKey().defaultRandom(),
-  captainId: uuid("captain_id")
+  captainId: uuid("captainId")
     .references(() => profiles.id, { onDelete: "cascade" })
     .notNull(),
   name: varchar("name", { length: 60 }).notNull(),
   description: text("description"),
   category: varchar("category", { length: 50 }),
-  isOpen: boolean("is_open").default(true),
-  memberCount: integer("member_count").default(0).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  isOpen: boolean("isOpen").default(true),
+  memberCount: integer("memberCount").default(0).notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 });
 
 export const fleetDeckMembers = pgTable(
   "fleet_deck_members",
   {
-    deckId: uuid("deck_id")
+    deckId: uuid("deckId")
       .references(() => fleetDecks.id, { onDelete: "cascade" })
       .notNull(),
-    userId: uuid("user_id")
+    userId: uuid("userId")
       .references(() => profiles.id, { onDelete: "cascade" })
       .notNull(),
     role: varchar("role", { length: 20 }).default("member"),
-    joinedAt: timestamp("joined_at", { withTimezone: true }).defaultNow(),
+    joinedAt: timestamp("joinedAt", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.deckId, t.userId] }),
@@ -43,52 +43,52 @@ export const fleetDeckMembers = pgTable(
 
 export const fleetPosts = pgTable("fleet_posts", {
   id: uuid("id").primaryKey().defaultRandom(),
-  authorId: uuid("author_id")
+  authorId: uuid("authorId")
     .references(() => profiles.id, { onDelete: "cascade" })
     .notNull(),
-  parentId: uuid("parent_id").references((): AnyPgColumn => fleetPosts.id, {
+  parentId: uuid("parentId").references((): AnyPgColumn => fleetPosts.id, {
     onDelete: "cascade",
   }),
-  deckId: uuid("deck_id").references(() => fleetDecks.id, {
+  deckId: uuid("deckId").references(() => fleetDecks.id, {
     onDelete: "set null",
   }),
   content: text("content"),
-  mediaUrl: text("media_url"),
-  mediaType: varchar("media_type", { length: 100 }),
+  mediaUrl: text("mediaUrl"),
+  mediaType: varchar("mediaType", { length: 100 }),
   checksum: text("checksum"),
   resolution: integer("resolution"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
 });
 
 export const polls = pgTable("polls", {
   id: uuid("id").primaryKey().defaultRandom(),
-  postId: uuid("post_id")
+  postId: uuid("postId")
     .references(() => fleetPosts.id, { onDelete: "cascade" })
     .notNull(),
   question: text("question").notNull(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  expiresAt: timestamp("expiresAt", { withTimezone: true }).notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 });
 
 export const pollOptions = pgTable("poll_options", {
   id: uuid("id").primaryKey().defaultRandom(),
-  pollId: uuid("poll_id")
+  pollId: uuid("pollId")
     .references(() => polls.id, { onDelete: "cascade" })
     .notNull(),
-  optionText: text("option_text").notNull(),
+  optionText: text("optionText").notNull(),
 });
 
 export const pollVotes = pgTable(
   "poll_votes",
   {
-    optionId: uuid("option_id")
+    optionId: uuid("optionId")
       .references(() => pollOptions.id, { onDelete: "cascade" })
       .notNull(),
-    userId: uuid("user_id")
+    userId: uuid("userId")
       .references(() => profiles.id, { onDelete: "cascade" })
       .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.optionId, t.userId] }),
@@ -98,14 +98,14 @@ export const pollVotes = pgTable(
 export const postInteractions = pgTable(
   "post_interactions",
   {
-    postId: uuid("post_id")
+    postId: uuid("postId")
       .references(() => fleetPosts.id, { onDelete: "cascade" })
       .notNull(),
-    userId: uuid("user_id")
+    userId: uuid("userId")
       .references(() => profiles.id, { onDelete: "cascade" })
       .notNull(),
     type: varchar("type", { length: 10 }).notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.postId, t.userId, t.type] }),
@@ -121,10 +121,10 @@ export const tags = pgTable("tags", {
 export const postTags = pgTable(
   "post_tags",
   {
-    postId: uuid("post_id")
+    postId: uuid("postId")
       .references(() => fleetPosts.id, { onDelete: "cascade" })
       .notNull(),
-    tagId: uuid("tag_id")
+    tagId: uuid("tagId")
       .references(() => tags.id, { onDelete: "cascade" })
       .notNull(),
   },

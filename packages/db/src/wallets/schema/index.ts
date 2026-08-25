@@ -16,35 +16,35 @@ export const transactionStatusEnum = pgEnum("transaction_status", [
 ]);
 
 export const wallets = pgTable("wallets", {
-  userId: uuid("user_id")
+  userId: uuid("userId")
     .primaryKey()
     .references(() => profiles.id, { onDelete: "cascade" }),
   balance: integer("balance").default(0).notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
 });
 
 export const gemTransactions = pgTable("gem_transactions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  senderId: uuid("sender_id").references(() => profiles.id),
-  receiverId: uuid("receiver_id").references(() => profiles.id),
+  senderId: uuid("senderId").references(() => profiles.id),
+  receiverId: uuid("receiverId").references(() => profiles.id),
   amount: integer("amount").notNull(),
   type: transactionTypeEnum("type").notNull(),
   status: transactionStatusEnum("status").default("completed"),
-  referenceId: varchar("reference_id", { length: 255 }),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  referenceId: varchar("referenceId", { length: 255 }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
 });
 
 export const payoutRequests = pgTable("payout_requests", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
+  userId: uuid("userId")
     .references(() => profiles.id, { onDelete: "cascade" })
     .notNull(),
-  gemAmount: integer("gem_amount").notNull(),
-  fiatAmount: decimal("fiat_amount", { precision: 10, scale: 2 }).notNull(),
-  fiatCurrency: varchar("fiat_currency", { length: 3 }).default("KES"),
-  mobileMoneyNumber: varchar("mobile_money_number", { length: 20 }).notNull(),
+  gemAmount: integer("gemAmount").notNull(),
+  fiatAmount: decimal("fiatAmount", { precision: 10, scale: 2 }).notNull(),
+  fiatCurrency: varchar("fiatCurrency", { length: 3 }).default("KES"),
+  mobileMoneyNumber: varchar("mobileMoneyNumber", { length: 20 }).notNull(),
   provider: varchar("provider", { length: 50 }).notNull(),
   status: transactionStatusEnum("status").default("pending"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  processedAt: timestamp("processed_at", { withTimezone: true }),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  processedAt: timestamp("processedAt", { withTimezone: true }),
 });

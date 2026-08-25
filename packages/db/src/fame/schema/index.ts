@@ -9,29 +9,29 @@ export const fameStatusEnum = pgEnum("fame_status", [
 ]);
 
 export const fameHeuristics = pgTable("fame_heuristics", {
-  postId: uuid("post_id")
+  postId: uuid("postId")
     .primaryKey()
     .references(() => fleetPosts.id, { onDelete: "cascade" }),
   status: fameStatusEnum("status").default("evaluating"),
-  checksumVerified: boolean("checksum_verified").default(false),
-  resolutionMeetsFloor: boolean("resolution_meets_floor").default(false),
-  sentimentScore: decimal("sentiment_score", { precision: 5, scale: 4 }),
-  tagCorrelationScore: decimal("tag_correlation_score", {
+  checksumVerified: boolean("checksumVerified").default(false),
+  resolutionMeetsFloor: boolean("resolutionMeetsFloor").default(false),
+  sentimentScore: decimal("sentimentScore", { precision: 5, scale: 4 }),
+  tagCorrelationScore: decimal("tagCorrelationScore", {
     precision: 5,
     scale: 4,
   }),
-  burstStartedAt: timestamp("burst_started_at", { withTimezone: true }),
-  burstEndedAt: timestamp("burst_ended_at", { withTimezone: true }),
-  viewsCount: integer("views_count").default(0),
-  completionRate: decimal("completion_rate", {
+  burstStartedAt: timestamp("burstStartedAt", { withTimezone: true }),
+  burstEndedAt: timestamp("burstEndedAt", { withTimezone: true }),
+  viewsCount: integer("viewsCount").default(0),
+  completionRate: decimal("completionRate", {
     precision: 5,
     scale: 4,
   }).default("0"),
-  latencyOfInterestMs: integer("latency_of_interest_ms"),
-  followConversionRate: decimal("follow_conversion_rate", {
+  latencyOfInterestMs: integer("latencyOfInterestMs"),
+  followConversionRate: decimal("followConversionRate", {
     precision: 5,
     scale: 4,
   }).default("0"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).defaultNow(),
 });
