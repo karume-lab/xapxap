@@ -28,7 +28,13 @@ export function Avatar({ url, username, size = 40, ring = false }: AvatarProps) 
   if (url) {
     return (
       <View style={containerStyle}>
-        <Image source={{ uri: url }} className="w-full h-full" contentFit="cover" />
+        <Image
+          source={{ uri: url }}
+          style={{ width: size, height: size }}
+          contentFit="cover"
+          cachePolicy="memory-disk"
+          transition={300}
+        />
       </View>
     );
   }

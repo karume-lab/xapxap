@@ -21,6 +21,7 @@ export function useFameBurst(userId: string | null) {
         .select(
           "*, author:profiles!fleet_posts_author_id_profiles_id_fk(*), fame_heuristics!inner(*)"
         )
+        .is("parentId", null)
         .not("fame_heuristics.status", "eq", "rejected")
         .order("createdAt", { ascending: false })
         .range(start, end);
