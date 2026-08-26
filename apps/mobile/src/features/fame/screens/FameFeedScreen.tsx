@@ -182,23 +182,32 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
     }
 
     if (isDocType(item.mediaType)) {
+      const fileName = item.mediaUrl?.split("/").pop() ?? "Document";
+      const ext = fileName.split(".").pop()?.toUpperCase() ?? "DOC";
       return (
         <View
           style={StyleSheet.absoluteFill}
           className="bg-zinc-900 items-center justify-center px-8">
-          <View className="w-20 h-24 rounded-xl bg-magenta/10 border border-magenta/30 items-center justify-center mb-4">
-            <Icon as={FileText} size={36} className="text-magenta" />
+          <View className="w-40 h-52 rounded-2xl bg-magenta/5 border border-magenta/20 items-center justify-center mb-6 relative overflow-hidden">
+            <View className="absolute top-0 left-0 right-0 h-8 bg-magenta/10 border-b border-magenta/20 flex-row items-center px-3 gap-1.5">
+              <View className="w-2 h-2 rounded-full bg-magenta/40" />
+              <View className="w-2 h-2 rounded-full bg-magenta/30" />
+              <View className="w-2 h-2 rounded-full bg-magenta/20" />
+            </View>
+            <Icon as={FileText} size={48} className="text-magenta/60 mt-4" />
+            <Text className="text-magenta/80 text-[10px] font-bold uppercase tracking-widest mt-2">
+              {ext}
+            </Text>
           </View>
+          <Text className="text-white/50 text-xs font-medium tracking-wide">{fileName}</Text>
           {item.content ? (
             <Text
-              className="text-white text-base font-semibold text-center leading-6"
-              numberOfLines={3}>
+              className="text-white/70 text-sm text-center leading-5 mt-2 px-4"
+              numberOfLines={2}>
               {item.content}
             </Text>
-          ) : (
-            <Text className="text-white/60 text-sm">Document</Text>
-          )}
-          <Text className="text-white/40 text-xs mt-2">Tap to view full document</Text>
+          ) : null}
+          <Text className="text-white/30 text-[11px] mt-3">Tap to view full document</Text>
         </View>
       );
     }
@@ -302,7 +311,7 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
                 </ScrollView>
               </View>
             </View>
-          ) : (
+          ) : isDocument ? null : (
             <View className="justify-end">
               <Text
                 className="text-base leading-7 text-foreground/95 font-medium"
