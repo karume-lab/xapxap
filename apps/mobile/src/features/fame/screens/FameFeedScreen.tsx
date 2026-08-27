@@ -6,14 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as MediaLibrary from "expo-media-library";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import {
-  Download,
-  FileText,
-  Heart,
-  MessageCircle,
-  Share2,
-  SparklesIcon,
-} from "lucide-react-native";
+import { Download, Heart, MessageCircle, Share2, SparklesIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,6 +20,7 @@ import {
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 import { ErrorBoundary } from "@/components/error-boundary/ErrorBoundary";
 import { Glass } from "@/components/layout/Glass";
 import { XapXapHeader } from "@/components/layout/XapXapHeader";
@@ -182,32 +176,19 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
     }
 
     if (isDocType(item.mediaType)) {
-      const fileName = item.mediaUrl?.split("/").pop() ?? "Document";
-      const ext = fileName.split(".").pop()?.toUpperCase() ?? "DOC";
+      const uri = typeof item.mediaUrl === "string" ? item.mediaUrl : "";
+      const googleDocsUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(uri)}`;
       return (
         <View
-          style={StyleSheet.absoluteFill}
-          className="bg-zinc-900 items-center justify-center px-8">
-          <View className="w-40 h-52 rounded-2xl bg-magenta/5 border border-magenta/20 items-center justify-center mb-6 relative overflow-hidden">
-            <View className="absolute top-0 left-0 right-0 h-8 bg-magenta/10 border-b border-magenta/20 flex-row items-center px-3 gap-1.5">
-              <View className="w-2 h-2 rounded-full bg-magenta/40" />
-              <View className="w-2 h-2 rounded-full bg-magenta/30" />
-              <View className="w-2 h-2 rounded-full bg-magenta/20" />
-            </View>
-            <Icon as={FileText} size={48} className="text-magenta/60 mt-4" />
-            <Text className="text-magenta/80 text-[10px] font-bold uppercase tracking-widest mt-2">
-              {ext}
-            </Text>
-          </View>
-          <Text className="text-white/50 text-xs font-medium tracking-wide">{fileName}</Text>
-          {item.content ? (
-            <Text
-              className="text-white/70 text-sm text-center leading-5 mt-2 px-4"
-              numberOfLines={2}>
-              {item.content}
-            </Text>
-          ) : null}
-          <Text className="text-white/30 text-[11px] mt-3">Tap to view full document</Text>
+          style={[StyleSheet.absoluteFill, { paddingTop: insets.top + 85 }]}
+          className="bg-zinc-950">
+          <WebView
+            source={{ uri: googleDocsUrl }}
+            style={{ flex: 1, backgroundColor: "transparent" }}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            pointerEvents="none"
+          />
         </View>
       );
     }
@@ -268,6 +249,27 @@ function FameItem({ item, onShowComments, onPressPost, isActive, isScreenFocused
           pointerEvents: "none",
         }}
       />
+
+      {/* View Full Document CTA */}
+      {isDocument && (
+        <View
+          style={{
+            position: "absolute",
+            top: SCREEN_HEIGHT * 0.62,
+            left: 0,
+            right: 0,
+            alignItems: "center",
+          }}
+          pointerEvents="box-none">
+          <Button
+            variant="ghost"
+            onPress={onPressPost}
+            className="flex-row items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 bg-black/50"
+            style={{ backdropFilter: "blur(12px)" }}>
+            <Text className="text-white text-sm font-bold tracking-wide">View Full Document</Text>
+          </Button>
+        </View>
+      )}
 
       {/* Overlays */}
       <View

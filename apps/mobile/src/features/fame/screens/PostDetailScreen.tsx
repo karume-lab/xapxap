@@ -374,23 +374,31 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
               </View>
             </Button>
             <Text className="text-foreground/95 text-base leading-6 font-medium">
-              {showMore ? item.content : `${item.content?.substring(0, 200)}...`}
+              {showMore
+                ? item.content
+                : `${item.content?.substring(0, 200)}${(item.content?.length ?? 0) > 200 ? "..." : ""}`}
             </Text>
-            {showMore ? (
-              <Button
-                variant="ghost"
-                onPress={() => setShowMore(false)}
-                className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
-                Read Less
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                onPress={() => setShowMore(true)}
-                className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
-                Read More
-              </Button>
-            )}
+            {(item.content?.length ?? 0) > 200 ? (
+              showMore ? (
+                <Button
+                  variant="ghost"
+                  onPress={() => setShowMore(false)}
+                  className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
+                  <Text className="text-primary text-xs font-bold uppercase tracking-wider">
+                    Read Less
+                  </Text>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  onPress={() => setShowMore(true)}
+                  className="text-primary text-xs font-bold uppercase tracking-wider mt-2">
+                  <Text className="text-primary text-xs font-bold uppercase tracking-wider">
+                    Read More
+                  </Text>
+                </Button>
+              )
+            ) : null}
           </View>
 
           {/* Engagement Buttons */}
